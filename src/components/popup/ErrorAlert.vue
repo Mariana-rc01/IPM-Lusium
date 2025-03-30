@@ -2,7 +2,7 @@
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { AlertTriangle } from 'lucide-vue-next'
 import { onClickOutside } from '@vueuse/core'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 
 const props = defineProps({
     message: {
@@ -14,6 +14,12 @@ const props = defineProps({
 const emit = defineEmits(['close'])
 const alertRef = ref(null)
 
+onMounted(() => {
+    setTimeout(() => {
+        emit('close')
+    }, 5000)
+})
+
 onClickOutside(alertRef, () => {
     emit('close')
 })
@@ -22,10 +28,10 @@ onClickOutside(alertRef, () => {
 <template>
   <div ref="alertRef" class="fixed bottom-4 right-4 z-50">
     <Alert variant="destructive" class="cursor-pointer" @click="emit('close')">
-      <div class="flex items-start gap-2"> <!-- Alteração aqui -->
-        <AlertTriangle class="w-4 h-4 mt-[2px]" /> <!-- Ajuste de tamanho e margem -->
+      <div class="flex items-start gap-2">
+        <AlertTriangle class="w-4 h-4 mt-[2px]" />
         <div>
-          <AlertTitle class="leading-5">Erro!</AlertTitle> <!-- Ajuste de line-height -->
+          <AlertTitle class="leading-5">Erro!</AlertTitle>
           <AlertDescription class="mt-1">
             {{ message }}
           </AlertDescription>
