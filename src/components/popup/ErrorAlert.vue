@@ -13,30 +13,51 @@ const props = defineProps({
 
 const emit = defineEmits(['close'])
 const alertRef = ref(null)
+const isClosing = ref(false)
 
 onMounted(() => {
     setTimeout(() => {
-        emit('close')
+        closeWithAnimation()
     }, 5000)
 })
 
 onClickOutside(alertRef, () => {
-    emit('close')
+    closeWithAnimation()
 })
+
+function closeWithAnimation() {
+    isClosing.value = true
+    setTimeout(() => {
+        emit('close')
+    }, 500)
+}
 </script>
 
+<style>
+.slide-right-enter-active, .slide-right-leave-active {
+  transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+}
+
+.slide-right-enter-from, .slide-right-leave-to {
+  transform: translateX(100%);
+  opacity: 0;
+}
+</style>
+
 <template>
-  <div ref="alertRef" class="fixed bottom-4 right-4 z-50">
-    <Alert variant="destructive" class="cursor-pointer" @click="emit('close')">
-      <div class="flex items-start gap-2">
-        <AlertTriangle class="w-4 h-4 mt-[2px]" />
-        <div>
-          <AlertTitle class="leading-5">Erro!</AlertTitle>
-          <AlertDescription class="mt-1">
-            {{ message }}
-          </AlertDescription>
+  <transition name="slide-right">
+    <div v-if="!isClosing" ref="alertRef" class="fixed bottom-4 right-4 z-50">
+      <Alert variant="destructive" class="cursor-pointer" @click="closeWithAnimation">
+        <div class="flex items-start gap-2">
+          <AlertTriangle class="w-4 h-4 mt-[2px]" />
+          <div>
+            <AlertTitle class="leading-5">Erro!</AlertTitle>
+            <AlertDescription class="mt-1">
+              {{ message }}
+            </AlertDescription>
+          </div>
         </div>
-      </div>
-    </Alert>
-  </div>
+      </Alert>
+    </div>
+  </transition>
 </template>
