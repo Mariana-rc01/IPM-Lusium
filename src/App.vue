@@ -1,36 +1,27 @@
 <template>
   <div class="bg-gray-50 min-h-screen">
-    <header class="p-4 bg-white border-b mb-4">
+    <header v-if="$route.name !== 'login'" class="p-4 bg-white border-b mb-4" >
       <div class="max-w-6xl mx-auto">
         <h1 class="text-xl font-bold mb-4">Demonstração do Componente de Horário</h1>
         <div class="flex gap-4">
-          <button 
-            @click="currentView = 'student'" 
+          <router-link
+            to="/aluno"
             class="px-4 py-2 rounded-md"
-            :class="currentView === 'student' ? 'bg-green-500 text-white' : 'bg-gray-200'"
+            :class="$route.name === 'student' ? 'bg-green-500 text-white' : 'bg-gray-200'"
           >
             Visão do Aluno
-          </button>
-          <button 
-            @click="currentView = 'teacher'" 
+          </router-link>
+          <router-link
+            to="/docente"
             class="px-4 py-2 rounded-md"
-            :class="currentView === 'teacher' ? 'bg-green-500 text-white' : 'bg-gray-200'"
+            :class="$route.name === 'teacher' ? 'bg-green-500 text-white' : 'bg-gray-200'"
           >
             Visão do Docente
-          </button>
+          </router-link>
         </div>
       </div>
     </header>
 
-    <!-- Switches the component/view/page rendered according to a variable -->
-    <component :is="currentView === 'student' ? StudentView : TeacherView" />
+    <router-view />
   </div>
 </template>
-
-<script setup lang="ts">
-import { ref } from 'vue';
-import StudentView from './views/StudentView.vue';
-import TeacherView from './views/TeacherView.vue';
-
-const currentView = ref<'student' | 'teacher'>('student');
-</script>
