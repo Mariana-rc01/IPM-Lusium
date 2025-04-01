@@ -1,6 +1,6 @@
 <template>
   <div class="bg-white min-h-screen">
-    <header v-if="$route.name !== 'login'" class="p-4 bg-gray-50 border-b mb-4" >
+    <header v-if="$route.name !== 'login' && $route.name !== 'home'" class="p-4 bg-gray-50 border-b mb-4" >
       <div class="max-w-6xl mx-auto">
         <h1 class="text-xl font-bold mb-4">Demonstração do Componente de Horário</h1>
         <div class="flex gap-4">
