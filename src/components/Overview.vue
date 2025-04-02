@@ -25,6 +25,8 @@ const color = '#064e3b' // emerald-900
     :categories="['percentagem']" 
     :index="'name'" 
     :rounded-corners="4" 
-    :colors="[color]" 
+    :colors="[color]"
+    :y-formatter="(value => value + '%')"
+    :show-legend="false"
   />
 </template>
