@@ -13,22 +13,29 @@ import {
 } from '@/components/ui/tabs'
 import Overview from '@/components/Overview.vue'
 import RecentTickets from '@/components/RecentTickets.vue'
+import { ref } from 'vue'
+
+const role = ref('diretor') // *****TEMP***** Pode ser 'aluno', 'diretor' ou 'professor'
+
 </script>
 
 <template>
   <div class="hidden flex-col md:flex">
     <div class="flex-1 space-y-4 p-8 pt-6">
       <div class="flex items-center justify-between space-y-2">
-        <h2 class="text-3xl font-bold tracking-tight text-zinc-950">
-          Página Inicial
+        <h2
+          class="text-3xl font-bold tracking-tight text-zinc-950"
+          :class="{ 'mb-12': role !== 'diretor' }"
+        >
+          Página Principal
         </h2>
-        <div class="flex items-center space-x-2">
+        <div v-if="role === 'diretor'" class="flex items-center space-x-2">
           <Button class="bg-emerald-900">Publicar Horários</Button>
         </div>
       </div>
       <Tabs default-value="overview" class="space-y-4">
         <TabsContent value="overview" class="space-y-4">
-          <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <div v-if="role === 'diretor'" class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <Card class="border-2 border-emerald-200 text-emerald-900">
               <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle class="text-sm font-medium">
@@ -86,7 +93,7 @@ import RecentTickets from '@/components/RecentTickets.vue'
             </Card>
           </div>
           <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-            <Card class="col-span-4 border-2 border-emerald-200 text-emerald-900">
+            <Card v-if="role != 'aluno'" class="col-span-4 border-2 border-emerald-200 text-emerald-900">
               <CardHeader>
                 <CardTitle>Ocupação dos turnos</CardTitle>
               </CardHeader>
@@ -94,7 +101,10 @@ import RecentTickets from '@/components/RecentTickets.vue'
                 <Overview />
               </CardContent>
             </Card>
-            <Card class="col-span-3 border-2 border-emerald-200">
+            <Card 
+              class="col-span-3 border-2 border-emerald-200" 
+              :class="{ 'lg:col-span-7': role === 'aluno' }"
+            >
               <CardHeader>
                 <CardTitle class="text-emerald-900">Pedidos recentes</CardTitle>
                 <CardDescription>
