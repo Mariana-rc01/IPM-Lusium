@@ -15,11 +15,35 @@
           />
         </div>
   
-        <!-- Botão de criar novo aluno (opcional) -->
-        <button class="flex items-center gap-2 px-4 py-2 rounded-md text-sm border border-emerald-500 text-emerald-700 bg-white hover:bg-emerald-50">
-          <PlusCircleIcon class="h-4 w-4" />
-          Criar novo aluno
-        </button>
+        <!-- Filter -->
+        <DropdownMenu>
+          <DropdownMenuTrigger as="button" class="border border-emerald-300 px-3 py-2 rounded-md flex items-center gap-2 text-sm hover:bg-emerald-50">
+            <SlidersHorizontalIcon class="h-4 w-4" />
+            Filtrar
+          </DropdownMenuTrigger>
+
+          <DropdownMenuContent class="w-48">
+            <DropdownMenuItem @click="applyFilter('ano1')">1º Ano</DropdownMenuItem>
+            <DropdownMenuItem @click="applyFilter('ano2')">2º Ano</DropdownMenuItem>
+            <DropdownMenuItem @click="applyFilter('ano3')">3º Ano</DropdownMenuItem>
+            <DropdownMenuSeparator />
+
+            <DropdownMenuItem @click="applyFilter('Trabalhador-Estudante')">
+              <BriefcaseIcon class="h-4 w-4 mr-2" />
+              Trabalhador Estudante
+            </DropdownMenuItem>
+            <DropdownMenuItem @click="applyFilter('Atleta')">
+              <DumbbellIcon class="h-4 w-4 mr-2" />
+              Atleta
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+
+            <DropdownMenuItem @click="clearFilters">
+              <Trash2 class="h-4 w-4 mr-2" />
+              Limpar Filtros
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
       <!-- Students table -->
       <div class="border border-emerald-200 rounded-lg overflow-hidden">
@@ -58,7 +82,6 @@
               <td class="py-3 px-4 text-sm truncate">{{ aluno.numero }}</td>
               <td class="py-3 px-4 text-sm truncate">{{ aluno.nome }}</td>
               <td class="py-3 px-4 text-sm truncate">
-                <!-- Exemplo de apresentação de estatuto com ícone -->
                 <div class="flex items-center gap-2">
                   <div v-if="aluno.estatuto === 'Trabalhador-Estudante'">
                     <BriefcaseIcon class="h-5 w-5" />
@@ -90,7 +113,7 @@
         <div class="flex items-center gap-4">
             <div class="flex items-center gap-2">
                 <BriefcaseIcon class="h-5 w-5" />
-                <span class="text-sm">Trabalhador-Estudante</span>
+                <span class="text-sm">Trabalhador Estudante</span>
             </div>
             <div class="w-[1px] h-[20px] bg-zinc-900"></div>
             <div class="flex items-center gap-2">
@@ -164,9 +187,9 @@
     ChevronsRightIcon,
     ChevronsUpDownIcon,
     Trash2,
-    PlusCircleIcon,
     BriefcaseIcon,
     DumbbellIcon,
+    SlidersHorizontalIcon,
     UserCircleIcon,
     CalendarIcon
   } from 'lucide-vue-next'
@@ -180,16 +203,25 @@
     SelectTrigger,
     SelectValue
   } from '@/components/ui/select'
+  import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger
+  } from '@/components/ui/dropdown-menu'
   
   // Types
   interface Aluno {
     numero: string
     nome: string
     estatuto: string
+    ano: number
   }
   
   // States
   const searchQuery = ref('')
+  const selectedFilter = ref('')
   const currentPage = ref(1)
   const rowsPerPage = ref('5')
   const sortColumn = ref<'numero' | 'nome' | 'estatuto' | null>(null)
@@ -200,52 +232,62 @@
     {
       numero: 'a104725',
       nome: 'Afonso Dionisio Santos',
-      estatuto: 'Trabalhador-Estudante'
+      estatuto: 'Trabalhador-Estudante',
+      ano: 3
     },
     {
       numero: 'a104732',
       nome: 'Afonso Gonçalves Pedreira',
-      estatuto: 'Atleta'
+      estatuto: 'Atleta',
+      ano: 3
     },
     {
       numero: 'a104527',
       nome: 'Afonso Gregório de Sousa',
-      estatuto: 'Trabalhador-Estudante'
+      estatuto: 'Trabalhador-Estudante',
+      ano: 2
     },
     {
       numero: 'a104338',
       nome: 'Alex Araujo da Silva',
-      estatuto: 'Nenhum'
+      estatuto: 'Nenhum',
+      ano: 3
     },
     {
       numero: 'a104612',
       nome: 'Alexandre Antes Dias',
-      estatuto: 'Trabalhador-Estudante'
+      estatuto: 'Trabalhador-Estudante',
+      ano: 2
     },
     {
       numero: 'a104765',
       nome: 'Alexandre de Oliveira Monsanto',
-      estatuto: 'Nenhum'
+      estatuto: 'Nenhum',
+      ano: 1
     },
     {
       numero: 'a104920',
       nome: 'Alexandre Marques Miranda',
-      estatuto: 'Atleta'
+      estatuto: 'Atleta',
+      ano: 1
     },
     {
       numero: 'a105011',
       nome: 'Ana Carolina Penha Cerqueira',
-      estatuto: 'Nenhum'
+      estatuto: 'Nenhum',
+      ano: 3
     },
     {
       numero: 'a105288',
       nome: 'Júda Rodrigues Coelho',
-      estatuto: 'Atleta'
+      estatuto: 'Atleta',
+      ano: 2
     },
     {
       numero: 'a105469',
       nome: 'Ana Margarida Campos Pires',
-      estatuto: 'Trabalhador-Estudante'
+      estatuto: 'Trabalhador-Estudante',
+      ano: 3
     }
   ])
   
@@ -260,6 +302,29 @@
         aluno.nome.toLowerCase().includes(query) ||
         aluno.numero.toLowerCase().includes(query)
       )
+    }
+  
+    // Dropdown filter
+    if (selectedFilter.value) {
+      switch (selectedFilter.value) {
+        case 'ano1':
+          result = result.filter((aluno) => aluno.ano === 1)
+          break
+        case 'ano2':
+          result = result.filter((aluno) => aluno.ano === 2)
+          break
+        case 'ano3':
+          result = result.filter((aluno) => aluno.ano === 3)
+          break
+        case 'Trabalhador-Estudante':
+          result = result.filter((aluno) => aluno.estatuto === 'Trabalhador-Estudante')
+          break
+        case 'Atleta':
+          result = result.filter((aluno) => aluno.estatuto === 'Atleta')
+          break
+        default:
+          break
+      }
     }
     
     // Apply sorting
@@ -301,6 +366,16 @@
       sortColumn.value = column
       sortDirection.value = 'asc'
     }
+  }
+  
+  function applyFilter(filterKey: string) {
+    selectedFilter.value = filterKey
+    currentPage.value = 1
+  }
+  
+  function clearFilters() {
+    selectedFilter.value = ''
+    currentPage.value = 1
   }
   </script>
   
