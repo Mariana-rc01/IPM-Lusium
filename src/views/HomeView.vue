@@ -15,7 +15,7 @@ import Overview from '@/components/Overview.vue'
 import RecentTickets from '@/components/RecentTickets.vue'
 import { ref } from 'vue'
 
-const role = ref('diretor') // *****TEMP***** Pode ser 'aluno', 'diretor' ou 'professor'
+const role = ref('diretor') // *****TEMP***** Pode ser 'aluno', 'diretor' ou 'docente'
 
 </script>
 
