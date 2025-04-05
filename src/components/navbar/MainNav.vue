@@ -8,6 +8,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu'
 
 const userRole = ref(localStorage.getItem('userRole') || 'student')
@@ -62,10 +63,11 @@ const toggleRole = () => {
         <DropdownMenuTrigger class="text-sm font-medium text-muted-foreground transition-colors hover:text-primary">
           Alunos
         </DropdownMenuTrigger>
-        <DropdownMenuContent>
+        <DropdownMenuContent class="w-56" align="end">
           <DropdownMenuItem as-child>
             <a href="/alunos" class="w-full">Todos os alunos</a>
           </DropdownMenuItem>
+          <DropdownMenuSeparator />
           <DropdownMenuItem as-child>
             <a href="/alunos/nao-alocados" class="w-full">Alunos não alocados</a>
           </DropdownMenuItem>
