@@ -178,7 +178,7 @@
   <script setup lang="ts">
   import { ref, computed } from 'vue'
 
-  const role = ref('diretor') // *****TEMP***** Pode ser 'aluno', 'diretor' ou 'professor'
+  const role = ref('diretor') // *****TEMP***** Pode ser 'aluno', 'diretor' ou 'docente'
 
   import {
     ChevronLeftIcon,
