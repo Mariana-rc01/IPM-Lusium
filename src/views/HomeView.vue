@@ -17,6 +17,47 @@ import { ref } from 'vue'
 
 const role = ref('diretor') // *****TEMP***** Pode ser 'aluno', 'diretor' ou 'docente'
 
+interface Ticket {
+  iniciais: string
+  nome: string
+  email: string
+  dataTicket: string
+}
+
+// Example data
+const recentTickets = ref<Ticket[]>([
+    {
+      iniciais: 'AS',
+      nome: 'Afonso Dionísio Santos',
+      email: 'a104276@alunos.uminho.pt',
+      dataTicket: '23/02/2025',
+    },
+    {
+      iniciais: 'AP',
+      nome: 'Ana Margarida Campos Pires',
+      email: 'a96060@alunos.uminho.pt',
+      dataTicket: '23/02/2025',
+    },
+    {
+      iniciais: 'JC',
+      nome: 'José Francisco Creissac Freitas Campos',
+      email: 'jfc@di.uminho.pt',
+      dataTicket: '22/02/2025',
+    },
+    {
+      iniciais: 'PP',
+      nome: 'Pedro Figueiredo Pereira',
+      email: 'a104082@alunos.uminho.pt',
+      dataTicket: '22/02/2025',
+    },
+    {
+      iniciais: 'OB',
+      nome: 'Orlando Manuel Oliveira Belo',
+      email: 'obelo@di.uminho.pt',
+      dataTicket: '21/02/2025',
+    }
+  ])
+
 </script>
 
 <template>
@@ -30,7 +71,7 @@ const role = ref('diretor') // *****TEMP***** Pode ser 'aluno', 'diretor' ou 'do
           Página Principal
         </h2>
         <div v-if="role === 'diretor'" class="flex items-center space-x-2">
-          <Button class="bg-emerald-900">Publicar Horários</Button>
+          <Button class="bg-emerald-900 hover:bg-emerald-400">Publicar Horários</Button>
         </div>
       </div>
       <Tabs default-value="overview" class="space-y-4">
@@ -112,7 +153,7 @@ const role = ref('diretor') // *****TEMP***** Pode ser 'aluno', 'diretor' ou 'do
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <RecentTickets />
+                <RecentTickets :recentTickets="recentTickets" />
               </CardContent>
             </Card>
           </div>
