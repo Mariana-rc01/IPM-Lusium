@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { AlertTriangle } from 'lucide-vue-next'
+import { Rocket } from 'lucide-vue-next'
 import { onClickOutside } from '@vueuse/core'
 import { ref, onMounted } from 'vue'
 
@@ -47,11 +47,11 @@ function closeWithAnimation() {
 <template>
   <transition name="slide-right">
     <div v-if="!isClosing" ref="alertRef" class="fixed bottom-4 right-4 z-50">
-      <Alert variant="destructive" class="cursor-pointer" @click="closeWithAnimation">
+      <Alert class="cursor-pointer" @click="closeWithAnimation">
         <div class="flex items-start gap-2">
-          <AlertTriangle class="w-4 h-4 mt-[2px]" />
+          <Rocket class="w-4 h-4" />
           <div>
-            <AlertTitle class="leading-5">Erro!</AlertTitle>
+            <AlertTitle class="leading-5">Sucesso!</AlertTitle>
             <AlertDescription class="mt-1 pe-[150px]">
               {{ message }}
             </AlertDescription>

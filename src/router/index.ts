@@ -6,6 +6,7 @@ import TicketsView from '@/views/TicketsView.vue'
 import ClassroomsView from '@/views/ClassroomsView.vue'
 import StudentsView from '@/views/StudentsView.vue'
 import HomeView from '@/views/HomeView.vue'
+import AssignScheduleView from '@/views/AssignScheduleView.vue'
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -45,10 +46,16 @@ const router = createRouter({
         component: StudentsView
     },
     {
+        path: '/alocar-horario',
+        name: 'allocate-schedule',
+        component: AssignScheduleView
+    },
+    {
         path: '/home',
         name: 'home',
         component: HomeView
     }
+
     ]
 })
 
