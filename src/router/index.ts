@@ -3,6 +3,10 @@ import LoginView from '@/views/LoginView.vue'
 import StudentView from '@/views/StudentView.vue'
 import TeacherView from '@/views/TeacherView.vue'
 import TicketsView from '@/views/TicketsView.vue'
+import ClassroomsView from '@/views/ClassroomsView.vue'
+import StudentsView from '@/views/StudentsView.vue'
+import HomeView from '@/views/HomeView.vue'
+import AssignScheduleView from '@/views/AssignScheduleView.vue'
 import ShiftEditView from '@/views/ShiftEditView.vue'
 
 const router = createRouter({
@@ -33,10 +37,31 @@ const router = createRouter({
         component: TicketsView
     },
     {
+        path: '/classrooms',
+        name: 'classrooms',
+        component: ClassroomsView
+    },
+    {
+        path: '/students',
+        name: 'students',
+        component: StudentsView
+    },
+    {
+        path: '/alocar-horario',
+        name: 'allocate-schedule',
+        component: AssignScheduleView
+    },
+    {
         path: '/turnos',
         name: 'shift',
         component: ShiftEditView,
+    },
+    {
+        path: '/home',
+        name: 'home',
+        component: HomeView
     }
+
     ]
 })
 
