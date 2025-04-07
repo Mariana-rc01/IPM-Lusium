@@ -52,7 +52,7 @@ function closeWithAnimation() {
           <AlertTriangle class="w-4 h-4 mt-[2px]" />
           <div>
             <AlertTitle class="leading-5">Erro!</AlertTitle>
-            <AlertDescription class="mt-1">
+            <AlertDescription class="mt-1 pe-[150px]">
               {{ message }}
             </AlertDescription>
           </div>

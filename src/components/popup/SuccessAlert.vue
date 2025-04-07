@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { AlertTriangle } from 'lucide-vue-next'
+import { Rocket } from 'lucide-vue-next'
 import { onClickOutside } from '@vueuse/core'
 import { ref, onMounted } from 'vue'
-import { Rocket } from 'lucide-vue-next'
 
 const props = defineProps({
     message: {
@@ -53,7 +52,7 @@ function closeWithAnimation() {
           <Rocket class="w-4 h-4" />
           <div>
             <AlertTitle class="leading-5">Sucesso!</AlertTitle>
-            <AlertDescription class="mt-1">
+            <AlertDescription class="mt-1 pe-[150px]">
               {{ message }}
             </AlertDescription>
           </div>

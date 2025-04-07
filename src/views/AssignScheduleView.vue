@@ -372,7 +372,7 @@ const AssignSchedule = () => {
   const validation = validateSchedule();
 
   if (!validation.valid) {
-    modalMessage.value = `Erros:\n${validation.issues.join('\n')}`;
+    modalMessage.value = `Erros:\n${validation.issues.join('. ')}`;
     showModal.value = true;
     return;
   }
