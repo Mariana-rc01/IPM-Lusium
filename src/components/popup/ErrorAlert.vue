@@ -47,7 +47,7 @@ function closeWithAnimation() {
 <template>
   <transition name="slide-right">
     <div v-if="!isClosing" ref="alertRef" class="fixed bottom-4 right-4 z-50">
-      <Alert variant="destructive" class="cursor-pointer" @click="closeWithAnimation">
+      <Alert variant="destructive" class="cursor-pointer bg-white" @click="closeWithAnimation">
         <div class="flex items-start gap-2">
           <AlertTriangle class="w-4 h-4 mt-[2px]" />
           <div>

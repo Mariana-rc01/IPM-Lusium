@@ -8,23 +8,23 @@
 
       <div class="flex flex-col md:flex-row gap-6">
         <!-- Left side -->
-        <div class="md:w-64 mt-8">
-          <h2 class="text-xl font-semibold mb-4">Informação:</h2>
-          <div class="space-y-4 text-base">
-            <div>
-              <p class="font-medium text-emerald-600">Horário:</p>
+        <div class="md:w-64 mt-16 space-y-6">
+          <h2 class="text-xl font-bold mb-4">Informação:</h2>
+          <div class="space-y-6 text-base pl-4">
+            <div class="flex">
+              <p class="font-semibold mr-1">Horário:</p>
               <p>{{ shift.horario }}</p>
             </div>
-            <div>
-              <p class="font-medium" :class="isOverCapacity ? 'text-red-600' : 'text-emerald-600'">Número de alunos:</p>
+            <div class="flex">
+              <p class="font-semibold mr-1">Número de alunos:</p>
               <p :class="isOverCapacity ? 'text-red-600' : ''">{{ students.length }}</p>
             </div>
-            <div>
-              <p class="font-medium text-emerald-600">Sala:</p>
+            <div class="flex">
+              <p class="font-semibold mr-1">Sala:</p>
               <p>{{ shift.sala }}</p>
             </div>
-            <div>
-              <p class="font-medium" :class="isOverCapacity ? 'text-red-600' : 'text-emerald-600'">Capacidade:</p>
+            <div class="flex">
+              <p class="font-semibold mr-1">Capacidade:</p>
               <p :class="isOverCapacity ? 'text-red-600' : ''">{{ shift.capacidade }}</p>
             </div>
           </div>
@@ -62,7 +62,6 @@
                           <ChevronsUpDownIcon class="h-4 w-4 ml-1" />
                         </button>
                       </th>
-                      <th class="py-3 px-4 text-center text-emerald-500 font-medium text-sm">Ações</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -86,7 +85,7 @@
                   <div class="flex items-center gap-2">
                     <span class="text-sm">Linhas por página</span>
                     <Select v-model="studentsPerPage">
-                      <SelectTrigger class="compact-select-trigger border-emerald-200">
+                      <SelectTrigger class="border border-emerald-200 h-8 w-16 px-2 text-sm">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -123,7 +122,7 @@
 
               <!-- Add students button -->
               <div class="mt-4 flex justify-end max-w-3xl mx-auto">
-                <Button @click="showAddStudentsDialog = true" class="bg-emerald-600 hover:bg-emerald-700">
+                <Button @click="showAddStudentsDialog = true" class="bg-emerald-900 hover:bg-emerald-800">
                   Adicionar Alunos
                 </Button>
               </div>
@@ -163,7 +162,7 @@
                         <Checkbox
                           :checked="selectedRoom === room.id"
                           @update:checked="selectRoom(room.id)"
-                          class="border-emerald-500 data-[state=checked]:bg-emerald-500 data-[state=checked]:text-white"
+                          class="border-emerald-800 bg-white data-[state=checked]:bg-emerald-800 data-[state=checked]:border-emerald-800 data-[state=checked]:text-emerald-800"
                         />
                       </td>
                     </tr>
@@ -172,13 +171,13 @@
               </div>
 
               <!-- Pagination for rooms -->
-              <div class="flex justify-between items-center mt-4 max-w-3xl mx-auto">
+              <div class="flex justify-between items-center mt-4 gap-8 max-w-3xl mx-auto">
                 <div></div>
                 <div class="flex items-center gap-4">
                   <div class="flex items-center gap-2">
                     <span class="text-sm">Linhas por página</span>
                     <Select v-model="roomsPerPage">
-                      <SelectTrigger class="compact-select-trigger border-emerald-200">
+                        <SelectTrigger class="border border-emerald-200 h-8 w-16 px-2 text-sm">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -215,7 +214,7 @@
 
               <!-- Update room button -->
               <div class="mt-4 flex justify-end max-w-3xl mx-auto">
-                <Button @click="checkRoomCapacityAndUpdate" class="bg-emerald-600 hover:bg-emerald-700">
+                <Button @click="checkRoomCapacityAndUpdate" class="bg-emerald-900 hover:bg-emerald-800">
                   Atualizar Sala
                 </Button>
               </div>
@@ -228,198 +227,160 @@
       <Dialog :open="showAddStudentsDialog" @update:open="showAddStudentsDialog = $event" :modal="true">
         <DialogContent class="sm:max-w-[600px]">
           <DialogHeader>
-            <DialogTitle>Adicionar Alunos</DialogTitle>
-            <DialogDescription class="text-emerald-500">
-              Aqui pode adicionar alunos ao turno!
-            </DialogDescription>
-            <div class="absolute right-4 top-4 flex items-center gap-2">
-              <InfoIcon class="h-5 w-5 text-gray-500 hover:text-gray-700 cursor-pointer" @click="toggleInfoTooltip" />
-              <button class="text-gray-500 hover:text-gray-700" @click="showAddStudentsDialog = false">
-                <XIcon class="h-5 w-5" />
-              </button>
-            </div>
+        <DialogTitle>Adicionar Alunos</DialogTitle>
+        <DialogDescription class="text-emerald-500">
+          Aqui pode adicionar alunos ao turno!
+        </DialogDescription>
+        <div class="absolute right-4 top-4 flex items-center gap-2">
+          <InfoIcon class="h-5 w-5 text-gray-500 hover:text-gray-700 cursor-pointer" @click="toggleInfoTooltip" />
+          <button class="text-gray-500 hover:text-gray-700" @click="showAddStudentsDialog = false">
+            <XIcon class="h-5 w-5" />
+          </button>
+        </div>
           </DialogHeader>
 
           <!-- Info tooltip -->
-          <div v-if="showInfoTooltip"
-            class="absolute right-4 top-14 bg-white border border-gray-200 rounded-md shadow-lg p-3 max-w-xs z-50">
-            <p>Aqui pode adicionar um ou vários alunos ao turno.</p>
-            <p class="mt-1">Utilize a barra de pesquisa para encontrar os alunos e adicione-os à lista. Quando todos os alunos estiverem selecionados, basta pressionar o botão Acrescentar Alunos para concluir a operação.</p>
-            <p class="mt-1">Caso a capacidade da sala seja ultrapassada com os alunos adicionados, será exibido um aviso.</p>
+          <div v-if="showInfoTooltip" class="absolute right-4 top-14 bg-white border border-gray-200 rounded-md shadow-lg p-3 max-w-xs z-50">
+        <p>Aqui pode adicionar um ou vários alunos ao turno.</p>
+        <p class="mt-1">Utilize a barra de pesquisa para encontrar os alunos e adicione-os à lista. Quando todos os alunos estiverem selecionados, basta pressionar o botão Acrescentar Alunos para concluir a operação.</p>
+        <p class="mt-1">Caso a capacidade da sala seja ultrapassada com os alunos adicionados, será exibido um aviso.</p>
           </div>
+
+          <!-- Error Message -->
+          <ErrorAlert v-if="showMessageErrorDialog" :message="errorMessageDialog || ''" @close="errorMessageDialog = null" />
+
+          <ConfirmModal v-if="showModalStudents" :message="modalMessageStudents" @save="confirmAddStudents" @cancel="showModalStudents = false"/>
 
           <!-- Search bar -->
           <div class="mb-4 relative">
-            <Input v-model="searchQuery" placeholder="Procurar por número ou nome..."
-              class="w-full border-emerald-200 focus:border-emerald-500 focus:ring-emerald-500"/>
+        <Input v-model="searchQuery" placeholder="Procurar por número ou nome..."
+          class="w-full border-emerald-200 focus:border-emerald-500 focus:ring-emerald-500"/>
 
-            <!-- Search results dropdown -->
-            <div v-if="searchQuery && filteredAvailableStudents.length > 0" class="absolute z-10 mt-1 w-full bg-white border border-emerald-200 rounded-md shadow-lg max-h-60 overflow-auto">
-              <div v-for="student in filteredAvailableStudents" :key="student.id"
-                @click="addToSelection(student)" class="p-2 hover:bg-gray-100 cursor-pointer">
-                <div class="flex items-center">
-                  <div>
-                    <div class="text-sm font-medium">{{ student.numero }} - {{ student.nome }}</div>
-                    <div class="flex items-center text-xs text-gray-500">
-                      <BriefcaseIcon v-if="student.estatuto === 'Trabalhador-Estudante'" class="h-3 w-3 mr-1" />
-                      <DumbbellIcon v-else-if="student.estatuto === 'Atleta'" class="h-3 w-3 mr-1" />
-                      <span>{{ student.estatuto }}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+        <!-- Search results dropdown -->
+        <div v-if="searchQuery && filteredAvailableStudents.length > 0" class="absolute z-10 mt-1 w-full bg-white border border-emerald-200 rounded-md shadow-lg max-h-60 overflow-auto">
+          <div v-for="student in filteredAvailableStudents" :key="student.id"
+            @click="addToSelection(student)" class="p-2 hover:bg-gray-100 cursor-pointer">
+            <div class="flex items-center">
+          <div>
+            <div class="text-sm font-medium">{{ student.numero }} - {{ student.nome }}</div>
+            <div class="flex items-center text-xs text-gray-500">
+              <BriefcaseIcon v-if="student.estatuto === 'Trabalhador-Estudante'" class="h-3 w-3 mr-1" />
+              <DumbbellIcon v-else-if="student.estatuto === 'Atleta'" class="h-3 w-3 mr-1" />
+              <span>{{ student.estatuto }}</span>
             </div>
+          </div>
+            </div>
+          </div>
+        </div>
 
-            <div v-else-if="searchQuery && filteredAvailableStudents.length === 0" class="absolute z-10 mt-1 w-full bg-white border border-emerald-200 rounded-md shadow-lg p-4 text-center text-gray-500">
-              Nenhum aluno encontrado
-            </div>
+        <div v-else-if="searchQuery && filteredAvailableStudents.length === 0" class="absolute z-10 mt-1 w-full bg-white border border-emerald-200 rounded-md shadow-lg p-4 text-center text-gray-500">
+          Nenhum aluno encontrado
+        </div>
           </div>
 
           <!-- Selected Students Table -->
           <div class="border border-emerald-200 rounded-lg overflow-hidden">
-            <table class="w-full table-fixed">
-              <colgroup>
-                <col class="w-[20%]" /> <!-- Number -->
-                <col class="w-[50%]" /> <!-- Name -->
-                <col class="w-[20%]" /> <!-- Estatuto -->
-                <col class="w-[10%]" /> <!-- Remove -->
-              </colgroup>
-              <thead>
-                <tr class="border-b border-emerald-200">
-                  <th class="py-3 px-4 text-left text-emerald-500 font-medium text-sm">
-                    <div class="flex items-center">
-                      Número
-                      <ChevronsUpDownIcon class="h-4 w-4 ml-1" />
-                    </div>
-                  </th>
-                  <th class="py-3 px-4 text-left text-emerald-500 font-medium text-sm">
-                    <div class="flex items-center">
-                      Nome
-                      <ChevronsUpDownIcon class="h-4 w-4 ml-1" />
-                    </div>
-                  </th>
-                  <th class="py-3 px-4 text-center text-emerald-500 font-medium text-sm">Estatuto</th>
-                  <th class="py-3 px-4 text-center text-emerald-500 font-medium text-sm"></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="student in selectedStudents" :key="student.id"
-                  class="border-b border-emerald-100 hover:bg-gray-50">
-                  <td class="py-3 px-4 text-sm truncate">{{ student.numero }}</td>
-                  <td class="py-3 px-4 text-sm truncate">{{ student.nome }}</td>
-                  <td class="py-3 px-4 text-sm text-center">
-                    <div class="flex justify-center">
-                      <BriefcaseIcon v-if="student.estatuto === 'Trabalhador-Estudante'" class="h-5 w-5" />
-                      <DumbbellIcon v-else-if="student.estatuto === 'Atleta'" class="h-5 w-5" />
-                    </div>
-                  </td>
-                  <td class="py-3 px-4 text-sm text-center">
-                    <button @click="removeFromSelection(student)" class="text-black hover:text-gray-700">
-                      <Trash2 class="h-5 w-5 mx-auto" />
-                    </button>
-                  </td>
-                </tr>
-                <tr v-if="selectedStudents.length === 0">
-                  <td colspan="4" class="py-4 text-center text-gray-500 text-sm">
-                    Nenhum aluno selecionado
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+        <table class="w-full table-fixed">
+          <colgroup>
+            <col class="w-[20%]" /> <!-- Number -->
+            <col class="w-[50%]" /> <!-- Name -->
+            <col class="w-[20%]" /> <!-- Estatuto -->
+            <col class="w-[10%]" /> <!-- Remove -->
+          </colgroup>
+          <thead>
+            <tr class="border-b border-emerald-200">
+          <th class="py-3 px-4 text-left text-emerald-500 font-medium text-sm">
+            <div class="flex items-center">
+              Número
+              <ChevronsUpDownIcon class="h-4 w-4 ml-1" />
+            </div>
+          </th>
+          <th class="py-3 px-4 text-left text-emerald-500 font-medium text-sm">
+            <div class="flex items-center">
+              Nome
+              <ChevronsUpDownIcon class="h-4 w-4 ml-1" />
+            </div>
+          </th>
+          <th class="py-3 px-4 text-center text-emerald-500 font-medium text-sm">Estatuto</th>
+          <th class="py-3 px-4 text-center text-emerald-500 font-medium text-sm"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="student in selectedStudents" :key="student.id"
+          class="border-b border-emerald-100 hover:bg-gray-50">
+          <td class="py-3 px-4 text-sm truncate">{{ student.numero }}</td>
+          <td class="py-3 px-4 text-sm truncate">{{ student.nome }}</td>
+          <td class="py-3 px-4 text-sm text-center">
+            <div class="flex justify-center">
+              <BriefcaseIcon v-if="student.estatuto === 'Trabalhador-Estudante'" class="h-5 w-5" />
+              <DumbbellIcon v-else-if="student.estatuto === 'Atleta'" class="h-5 w-5" />
+            </div>
+          </td>
+          <td class="py-3 px-4 text-sm text-center">
+            <button @click="removeFromSelection(student)" class="text-black hover:text-gray-700">
+              <Trash2 class="h-5 w-5 mx-auto" />
+            </button>
+          </td>
+            </tr>
+            <tr v-if="selectedStudents.length === 0">
+          <td colspan="4" class="py-4 text-center text-gray-500 text-sm">
+            Nenhum aluno selecionado
+          </td>
+            </tr>
+          </tbody>
+        </table>
           </div>
 
           <!-- Pagination for selected students -->
           <div v-if="selectedStudents.length > 0" class="flex justify-end items-center mt-2">
-            <span class="text-sm">Página 1 de 1</span>
+        <span class="text-sm">Página 1 de 1</span>
           </div>
 
           <!-- Legend -->
           <div class="flex items-center gap-4 mt-4">
-            <div class="flex items-center gap-2">
-              <BriefcaseIcon class="h-5 w-5" />
-              <span class="text-sm">Trabalhador Estudante</span>
-            </div>
-            <div class="w-[1px] h-[20px] bg-zinc-300"></div>
-            <div class="flex items-center gap-2">
-              <DumbbellIcon class="h-5 w-5" />
-              <span class="text-sm">Atleta</span>
-            </div>
+        <div class="flex items-center gap-2">
+          <BriefcaseIcon class="h-5 w-5" />
+          <span class="text-sm">Trabalhador Estudante</span>
+        </div>
+        <div class="w-[1px] h-[20px] bg-zinc-300"></div>
+        <div class="flex items-center gap-2">
+          <DumbbellIcon class="h-5 w-5" />
+          <span class="text-sm">Atleta</span>
+        </div>
           </div>
 
           <DialogFooter>
-            <Button @click="showAddStudentsDialog = false" variant="outline">Cancelar</Button>
-            <Button @click="checkCapacityAndAddStudents" class="bg-emerald-600 hover:bg-emerald-700">
-              Acrescentar Alunos
-            </Button>
+        <Button @click="checkCapacityAndAddStudents" class="bg-emerald-900 hover:bg-emerald-700">
+          Acrescentar Alunos
+        </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      <!-- Success notifications -->
-      <div class="fixed bottom-4 right-4 z-50 flex flex-col gap-2">
-        <div v-for="(toast, index) in toasts" :key="index"
-          class="bg-white border border-gray-200 rounded-lg shadow-md p-4 max-w-md transition-all duration-300 transform translate-y-0 opacity-100"
-          :class="{ 'translate-y-2 opacity-0': toast.isExiting }">
-          <div class="flex items-center">
-            <div class="flex-shrink-0 mr-3">
-              <RocketIcon class="h-5 w-5 text-emerald-500" />
-            </div>
-            <div class="flex-1">
-              <p class="font-medium">{{ toast.title }}</p>
-              <p v-if="toast.message" class="text-sm text-gray-500 mt-1">{{ toast.message }}</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      <!-- Pop-ups -->
 
-      <!-- Confirmation dialogs -->
+      <ConfirmModal v-if="showModal" :message="modalMessage" @save="confirmRoomChange" @cancel="showModal = false"/>
 
-      <!-- Confirmation for adding students -->
-      <AlertDialog :open="showAddConfirmation" @update:open="showAddConfirmation = $event">
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Aviso</AlertDialogTitle>
-            <AlertDialogDescription>
-              A sala não tem capacidade para adicionar os alunos pretendidos. Tem a certeza que pretende adicionar os alunos?
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter class="flex items-center justify-between">
-            <AlertDialogCancel @click="showAddConfirmation = false">Cancelar</AlertDialogCancel>
-            <AlertDialogAction @click="confirmAddStudents" class="bg-red-600 hover:bg-red-700">Adicionar</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <ErrorAlert v-if="errorMessage" :message="errorMessage" @close="errorMessage = null" />
 
-      <!-- Confirmation for changing room -->
-      <AlertDialog :open="showRoomChangeConfirmation" @update:open="showRoomChangeConfirmation = $event">
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Aviso</AlertDialogTitle>
-            <AlertDialogDescription>
-              A sala não tem capacidade para todos os alunos. Tem a certeza que quer alterar?
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter class="flex items-center justify-between">
-            <AlertDialogCancel @click="showRoomChangeConfirmation = false">Cancelar</AlertDialogCancel>
-            <AlertDialogAction @click="confirmRoomChange" class="bg-red-600 hover:bg-red-700">Alterar</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <SuccessAlert v-if="showModalSucess" :message="modalMessageSuccess || ''" @close="modalMessageSuccess = null" />
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed } from 'vue'
+import { nextTick as vueNextTick } from 'vue';
 import {ChevronLeftIcon, ChevronRightIcon, ChevronsLeftIcon, ChevronsRightIcon, ChevronsUpDownIcon,
-Trash2, BriefcaseIcon, DumbbellIcon, InfoIcon,XIcon, AlertTriangleIcon, RocketIcon} from 'lucide-vue-next'
+Trash2, BriefcaseIcon, DumbbellIcon, InfoIcon,XIcon} from 'lucide-vue-next'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Checkbox } from '@/components/ui/checkbox'
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select'
 import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs'
 import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle} from '@/components/ui/dialog'
-import {AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription,
-AlertDialogFooter, AlertDialogHeader, AlertDialogTitle} from '@/components/ui/alert-dialog'
+import SuccessAlert from '@/components/popup/SuccessAlert.vue'
+import ConfirmModal from '@/components/popup/ConfirmModal.vue'
+import ErrorAlert from '@/components/popup/ErrorAlert.vue'
 
 interface Student {
     id: number
@@ -442,16 +403,22 @@ interface Shift {
     capacidade: number
 }
 
-interface Toast {
-    id: number
-    title: string
-    message: string
-    type: 'success' | 'error' | 'warning' | 'info'
-    duration: number
-    isExiting: boolean
-}
+const showModalSucess = ref(false)
+const modalMessageSuccess = ref<string | null>(null)
 
-const ucName = ref('IPM - ')
+const showModal = ref(false)
+const modalMessage = ref('')
+
+const showModalStudents = ref(false)
+const modalMessageStudents = ref('')
+
+const errorMessage = ref<string | null>(null)
+const showMessageError = ref(false)
+
+const errorMessageDialog = ref<string | null>(null)
+const showMessageErrorDialog = ref(false)
+
+const ucName = ref('IPM')
 const shiftCode = ref('PL4')
 
 // TODO - change when we have JSON server
@@ -510,10 +477,6 @@ const selectedRoom = ref(1)
 const showAddStudentsDialog = ref(false)
 const searchQuery = ref('')
 const selectedStudents = ref<Student[]>([])
-const showAddConfirmation = ref(false)
-const showRoomChangeConfirmation = ref(false)
-const toasts = ref<Toast[]>([])
-const nextToastId = ref(1)
 const showInfoTooltip = ref(false)
 
 const isOverCapacity = computed(() => {
@@ -603,35 +566,6 @@ function toggleInfoTooltip() {
     showInfoTooltip.value = !showInfoTooltip.value
 }
 
-// Toast methods
-function showToast(title: string, message: string = '', type: 'success' | 'error' | 'warning' | 'info' = 'success', duration: number = 5000) {
-    const id = nextToastId.value++
-    const toast: Toast = {
-        id,
-        title,
-        message,
-        type,
-        duration,
-        isExiting: false
-    }
-
-    toasts.value.push(toast)
-
-    setTimeout(() => {
-        const index = toasts.value.findIndex(t => t.id === id)
-        if (index !== -1) {
-        toasts.value[index].isExiting = true
-        setTimeout(() => {
-            removeToast(index)
-        }, 300)
-        }
-    }, duration)
-}
-
-function removeToast(index: number) {
-    toasts.value.splice(index, 1)
-}
-
 // Methods for student pagination and sorting
 function goToStudentPage(page: number) {
     currentStudentPage.value = page
@@ -670,24 +604,22 @@ function selectRoom(roomId: number) {
 }
 
 function checkRoomCapacityAndUpdate() {
-    const selectedRoomData = rooms.value.find(room => room.id === selectedRoom.value)
-    if (selectedRoomData) {
-        // Check if the new room has enough capacity
-        if (selectedRoomData.capacidade < students.value.length) {
-        // Show confirmation dialog
-        showRoomChangeConfirmation.value = true
-        } else {
-        // Update room directly
-        updateRoom(selectedRoomData)
-        }
+  const selectedRoomData = rooms.value.find(room => room.id === selectedRoom.value);
+  if (selectedRoomData) {
+    if (selectedRoomData.capacidade < students.value.length) {
+      modalMessage.value = 'A sala não tem capacidade para todos os alunos. Tem a certeza que quer alterar?';
+      showModal.value = true;
+    } else {
+      updateRoom(selectedRoomData);
     }
+  }
 }
 
 function confirmRoomChange() {
     const selectedRoomData = rooms.value.find(room => room.id === selectedRoom.value)
     if (selectedRoomData) {
         updateRoom(selectedRoomData)
-        showRoomChangeConfirmation.value = false
+        showModal.value = false
     }
 }
 
@@ -695,10 +627,12 @@ function updateRoom(roomData: Room) {
     shift.value.sala = roomData.sala
     shift.value.capacidade = roomData.capacidade
 
-    // Show toast notification
-    showToast(
-        'A sala deste turno foi alterada com sucesso!'
-    )
+    showModalSucess.value = false;
+    nextTick(() => {
+      modalMessageSuccess.value = 'A sala deste turno foi alterada com sucesso!';
+      showModalSucess.value = true;
+    });
+
 }
 
 // Student management
@@ -707,11 +641,11 @@ function removeStudent(student: Student) {
     if (index !== -1) {
         students.value.splice(index, 1)
 
-        // Show toast notification
-        showToast(
-        'O aluno foi removido com sucesso!',
-        'O aluno já não se encontra neste turno.'
-        )
+        showModalSucess.value = false;
+        nextTick(() => {
+          modalMessageSuccess.value = 'O aluno foi removido com sucesso!';
+          showModalSucess.value = true;
+        });
     }
 }
 
@@ -733,25 +667,28 @@ function removeFromSelection(student: Student) {
 
 function checkCapacityAndAddStudents() {
     if (selectedStudents.value.length === 0) {
-        showToast(
-        'Aviso',
-        'Nenhum aluno selecionado!',
-        'warning'
-        )
-        return
+        showMessageErrorDialog.value = true;
+        errorMessageDialog.value = 'Nenhum aluno selecionado!';
+        setTimeout(() => {
+            errorMessageDialog.value = null;
+            showMessageErrorDialog.value = false;
+        }, 1000);
+        return;
     }
 
-    // Check if adding these students would exceed room capacity
+    // Verifica se a capacidade será ultrapassada
     if (students.value.length + selectedStudents.value.length > shift.value.capacidade) {
-        showAddConfirmation.value = true
+        modalMessageStudents.value = 'A capacidade da sala será ultrapassada. Deseja continuar?';
+        showModalStudents.value = true;
     } else {
-        addSelectedStudents()
+        addSelectedStudents();
     }
 }
 
 function confirmAddStudents() {
     addSelectedStudents()
-    showAddConfirmation.value = false
+    showModalStudents.value = false;
+    modalMessageStudents.value = '';
 }
 
 function addSelectedStudents() {
@@ -769,11 +706,17 @@ function addSelectedStudents() {
     searchQuery.value = ''
     showInfoTooltip.value = false
 
-    // Show toast notification
-    showToast(
-        'Alunos adicionados com sucesso!'
-    )
+    showModalSucess.value = false;
+    nextTick(() => {
+      modalMessageSuccess.value = 'Alunos adicionados com sucesso!';
+      showModalSucess.value = true;
+    });
 }
+
+function nextTick(callback: () => void) {
+  vueNextTick(callback);
+}
+
 </script>
 
 <style scoped>

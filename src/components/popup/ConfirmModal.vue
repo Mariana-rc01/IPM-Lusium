@@ -34,10 +34,18 @@ function handleSave() {
 <template>
   <transition name="slide-right">
     <div v-if="!isClosing" ref="alertRef" class="fixed bottom-4 right-4 z-50">
-      <Alert class="w-[500px] min-h-[200px] p-6 border-2 border-red-200">
+      <Alert class="w-[400px] min-h-[150px] pr-6 border-2 border-red-200 relative">
         <div class="flex flex-col gap-4">
+          <!-- Close Icon -->
+          <button class="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+            @click="handleCancel">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+
           <div class="flex items-start gap-4">
-            <AlertTriangle class="w-8 h-8 text-red-500" />
+            <AlertTriangle class="w-7 h-7 text-red-500" />
             <div>
               <AlertTitle class="leading-6 text-lg font-semibold text-red-500">Aviso!</AlertTitle>
               <AlertDescription class="mt-2 text-gray-700">
@@ -45,17 +53,9 @@ function handleSave() {
               </AlertDescription>
             </div>
           </div>
-          <div class="flex justify-end gap-4 mt-4">
-            <button
-              class="px-4 py-2 text-sm rounded-md bg-gray-200 hover:bg-gray-300"
-              @click="handleCancel"
-            >
-              Cancelar
-            </button>
-            <button
-              class="px-4 py-2 text-sm rounded-md bg-red-500 text-white hover:bg-emerald-600"
-              @click="handleSave"
-            >
+          <div class="flex justify-end gap-2 mt-2">
+            <button class="px-4 py-2 text-sm rounded-md bg-red-500 text-white hover:bg-red-700"
+              @click="handleSave">
               Guardar
             </button>
           </div>
