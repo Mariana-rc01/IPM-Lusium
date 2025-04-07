@@ -62,6 +62,9 @@
     <ConfirmModal v-if="showModal" :message="modalMessage"
       @save="handleConfirm"
       @cancel="handleCancel"/>
+
+    <SuccessAlert v-if="showModalSucess" :message="modalMessageSuccess || ''" @close="modalMessageSuccess = null" />
+
   </div>
 
 </template>
@@ -73,6 +76,7 @@ import { ScrollArea } from '../components/ui/scroll-area'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Button } from '@/components/ui/button'
 import ConfirmModal from '@/components/popup/ConfirmModal.vue'
+import SuccessAlert from '@/components/popup/SuccessAlert.vue'
 
 interface ClassBlock {
   id: string
@@ -95,6 +99,9 @@ interface Course {
 
 const showModal = ref(false)
 const modalMessage = ref('')
+
+const showModalSucess = ref(false)
+const modalMessageSuccess = ref<string | null>(null)
 
 const availableCourses = ref<Course[]>([
   {
@@ -370,9 +377,17 @@ const AssignSchedule = () => {
     return;
   }
 
-  modalMessage.value = 'Schedule successfully allocated!';
-  showModal.value = true;
+  showModalSucess.value = false;
+  nextTick(() => {
+    modalMessageSuccess.value = 'Horário alocado com sucesso!';
+    showModalSucess.value = true;
+  });
   // TODO - Remove the old schedule and add the new one to the JSON server
   // TODO - Update the number of students in the selected shifts
 };
+import { nextTick as vueNextTick } from 'vue';
+
+function nextTick(callback: () => void) {
+  vueNextTick(callback);
+}
 </script>
