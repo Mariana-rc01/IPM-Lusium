@@ -33,8 +33,8 @@
         <!-- Right side -->
         <div class="flex-1">
           <!-- Tabs -->
-          <Tabs default-value="alunos" class="mb-6 mt-2">
-            <TabsList class="grid w-full grid-cols-2">
+            <Tabs default-value="alunos" class="mb-4 mt-2">
+            <TabsList class="grid grid-cols-2 w-[400px] mx-auto">
               <TabsTrigger value="alunos">Alunos Inscritos</TabsTrigger>
               <TabsTrigger value="salas">Salas Disponíveis</TabsTrigger>
             </TabsList>
@@ -231,11 +231,9 @@
         <DialogDescription class="text-emerald-500">
           Aqui pode adicionar alunos ao turno!
         </DialogDescription>
-        <div class="absolute right-4 top-4 flex items-center gap-2">
-          <InfoIcon class="h-5 w-5 text-gray-500 hover:text-gray-700 cursor-pointer" @click="toggleInfoTooltip" />
-          <button class="text-gray-500 hover:text-gray-700" @click="showAddStudentsDialog = false">
-            <XIcon class="h-5 w-5" />
-          </button>
+        <div class="absolute right-4 top-4 flex items-center gap-8">
+          <InfoIcon class="h-4 w-4 text-gray-500 hover:text-gray-700 cursor-pointer" @click="toggleInfoTooltip" />
+          <button class="text-gray-800 hover:text-gray-800" @click="showAddStudentsDialog = false"></button>
         </div>
           </DialogHeader>
 
@@ -361,7 +359,12 @@
 
       <ConfirmModal v-if="showModal" :message="modalMessage" @save="confirmRoomChange" @cancel="showModal = false"/>
 
-      <ErrorAlert v-if="errorMessage" :message="errorMessage" @close="errorMessage = null" />
+      <ConfirmModal v-if="showModalRemoveStudent" :message="modalMessageRemoveStudent"
+        @save="confirmRemoveStudent"
+        @cancel="() => { showModalRemoveStudent = false; selectedStudentToRemove = null; }"
+      />
+
+      <ErrorAlert v-if="showMessageError" :message="errorMessage || ''" @close="errorMessage = null" />
 
       <SuccessAlert v-if="showModalSucess" :message="modalMessageSuccess || ''" @close="modalMessageSuccess = null" />
     </div>
@@ -371,7 +374,7 @@
 import { ref, computed } from 'vue'
 import { nextTick as vueNextTick } from 'vue';
 import {ChevronLeftIcon, ChevronRightIcon, ChevronsLeftIcon, ChevronsRightIcon, ChevronsUpDownIcon,
-Trash2, BriefcaseIcon, DumbbellIcon, InfoIcon,XIcon} from 'lucide-vue-next'
+Trash2, BriefcaseIcon, DumbbellIcon, InfoIcon} from 'lucide-vue-next'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -408,6 +411,9 @@ const modalMessageSuccess = ref<string | null>(null)
 
 const showModal = ref(false)
 const modalMessage = ref('')
+
+const showModalRemoveStudent = ref(false)
+const modalMessageRemoveStudent = ref('')
 
 const showModalStudents = ref(false)
 const modalMessageStudents = ref('')
@@ -478,6 +484,7 @@ const showAddStudentsDialog = ref(false)
 const searchQuery = ref('')
 const selectedStudents = ref<Student[]>([])
 const showInfoTooltip = ref(false)
+const selectedStudentToRemove = ref<Student | null>(null);
 
 const isOverCapacity = computed(() => {
     return students.value.length > shift.value.capacidade
@@ -635,18 +642,30 @@ function updateRoom(roomData: Room) {
 
 }
 
-// Student management
+// Remove student
 function removeStudent(student: Student) {
-    const index = students.value.findIndex(s => s.id === student.id)
-    if (index !== -1) {
-        students.value.splice(index, 1)
+    modalMessageRemoveStudent.value = `Tem a certeza que deseja remover o aluno ${student.nome}?`;
+    showModalRemoveStudent.value = true;
+    selectedStudentToRemove.value = student;
+}
 
+function confirmRemoveStudent() {
+    if (selectedStudentToRemove.value) {
+        const index = selectedStudentToRemove.value
+            ? students.value.findIndex(s => s.id === selectedStudentToRemove.value?.id)
+            : -1;
+        if (index !== -1) {
+            students.value.splice(index, 1);
+        }
         showModalSucess.value = false;
         nextTick(() => {
-          modalMessageSuccess.value = 'O aluno foi removido com sucesso!';
-          showModalSucess.value = true;
+            modalMessageSuccess.value = 'O aluno foi removido com sucesso!';
+            showModalSucess.value = true;
         });
     }
+    selectedStudentToRemove.value = null;
+    showModalRemoveStudent.value = false;
+    modalMessageRemoveStudent.value = '';
 }
 
 // Add students dialog management
