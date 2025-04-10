@@ -30,8 +30,6 @@ import { Button } from '@/components/ui/button'
                         </div>
                     </div>
                     <div class="grid grid-cols-4 row-span-4 gap-3 max-w-xl">
-                        <h1 class="text-xl font-bold text-emerald-500">Interesses</h1>
-                        <h1 class="text-xl col-span-3">Tecnologia, automobilismo, jogos de computador.</h1>
                         <h1 class="text-xl font-bold text-emerald-500">Objetivos</h1>
                         <h1 class="text-xl col-span-3">Realizar o curso. Ter um horário de acordo com o que lhe convém.</h1>
                         <h1 class="text-xl font-bold text-emerald-500">Desafios</h1>
