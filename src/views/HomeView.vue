@@ -32,30 +32,35 @@ const recentTickets = ref<Ticket[]>([
       nome: 'Afonso Dionísio Santos',
       email: 'a104276@alunos.uminho.pt',
       dataTicket: '23/02/2025',
+      subject: 'Assunto A',
     },
     {
       iniciais: 'AP',
       nome: 'Ana Margarida Campos Pires',
       email: 'a96060@alunos.uminho.pt',
       dataTicket: '23/02/2025',
+      subject: 'Assunto relativo ao pedido enviado',
     },
     {
       iniciais: 'JC',
       nome: 'José Francisco Creissac Freitas Campos',
       email: 'jfc@di.uminho.pt',
       dataTicket: '22/02/2025',
+      subject: 'Assunto do pedido',
     },
     {
       iniciais: 'PP',
       nome: 'Pedro Figueiredo Pereira',
       email: 'a104082@alunos.uminho.pt',
       dataTicket: '22/02/2025',
+      subject: 'Assunto D',
     },
     {
       iniciais: 'OB',
       nome: 'Orlando Manuel Oliveira Belo',
       email: 'obelo@di.uminho.pt',
       dataTicket: '21/02/2025',
+      subject: 'Assunto do pedido enviado no dia 21',
     }
   ])
 
