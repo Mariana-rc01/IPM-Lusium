@@ -7,6 +7,7 @@ import ClassroomsView from '@/views/ClassroomsView.vue'
 import StudentsView from '@/views/StudentsView.vue'
 import HomeView from '@/views/HomeView.vue'
 import AssignScheduleView from '@/views/AssignScheduleView.vue'
+import ShiftEditView from '@/views/ShiftEditView.vue'
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -49,6 +50,11 @@ const router = createRouter({
         path: '/alocar-horario',
         name: 'allocate-schedule',
         component: AssignScheduleView
+    },
+    {
+        path: '/turnos',
+        name: 'shift',
+        component: ShiftEditView,
     },
     {
         path: '/home',
