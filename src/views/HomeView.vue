@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/tabs'
 import Overview from '@/components/Overview.vue'
 import RecentTickets from '@/components/RecentTickets.vue'
+import Timetable from '../components/Timetable.vue';
 import { ref } from 'vue'
 
 const role = ref('diretor') // *****TEMP***** Pode ser 'aluno', 'diretor' ou 'docente'
@@ -24,7 +25,7 @@ interface Ticket {
   dataTicket: string
 }
 
-// Example data
+// Example data for recent tickets
 const recentTickets = ref<Ticket[]>([
     {
       iniciais: 'AS',
@@ -58,6 +59,93 @@ const recentTickets = ref<Ticket[]>([
     }
   ])
 
+  // Example data for timetable
+  const studentBlocks = [
+    {
+      name: 'IPM - PL4',
+      room: 'CP1 - 1.17',
+      day: 0, // Monday
+      startHour: '9:00',
+      endHour: '11:00', // 2-hour class
+      occupancy: {
+        current: 31,
+        total: 35,
+        percentage: 88.57
+      }
+    },
+    {
+      name: 'CG - T1',
+      room: 'CP1 - 0.08',
+      day: 0, // Monday
+      startHour: '11:00',
+      endHour: '13:00', // 2-hour class
+      occupancy: {
+        current: 94,
+        total: 95,
+        percentage: 98.94
+      }
+    },
+    {
+      name: 'PL - PL6',
+      room: 'CP1 - 0.17',
+      day: 1, // Tuesday
+      startHour: '9:00',
+      endHour: '11:00', // 2-hour class
+      occupancy: {
+        current: 45,
+        total: 45,
+        percentage: 100.00
+      }
+    },
+    {
+      name: 'IPM - T1',
+      room: 'CP1 - 0.08',
+      day: 2, // Wednesday
+      startHour: '11:00',
+      endHour: '13:00', // 2-hour class
+      occupancy: {
+        current: 55,
+        total: 95,
+        percentage: 57.89
+      }
+    },
+    {
+      name: 'CG - PL3',
+      room: 'CP2 - 2.09',
+      day: 3, // Thursday
+      startHour: '8:00',
+      endHour: '10:00', // 2-hour class
+      occupancy: {
+        current: 30,
+        total: 35,
+        percentage: 85.71
+      }
+    },
+    {
+      name: 'SSI - PL1',
+      room: 'CP1 - 2.21',
+      day: 3, // Thursday
+      startHour: '10:00',
+      endHour: '12:00', // 2-hour class
+      occupancy: {
+        current: 84,
+        total: 95,
+        percentage: 88.42
+      }
+    },
+    {
+      name: 'PL - T1',
+      room: 'CP1 - 0.08',
+      day: 4, // Friday
+      startHour: '9:00',
+      endHour: '11:00', // 2-hour class
+      occupancy: {
+        current: 94,
+        total: 95,
+        percentage: 98.94
+      }
+    }
+  ];
 </script>
 
 <template>
@@ -142,10 +230,15 @@ const recentTickets = ref<Ticket[]>([
                 <Overview />
               </CardContent>
             </Card>
-            <Card 
-              class="col-span-3 border-2 border-emerald-200" 
-              :class="{ 'lg:col-span-7': role === 'aluno' }"
-            >
+            <Card v-else class="col-span-4 border-2 border-emerald-200 text-emerald-900">
+              <CardHeader>
+                <CardTitle>Horário</CardTitle>
+              </CardHeader>
+              <CardContent class="pl-2">
+                <Timetable mode="student" :blocks="studentBlocks" />
+              </CardContent>
+            </Card>
+            <Card class="col-span-3 border-2 border-emerald-200" :class="{ 'h-min': role === 'aluno' }">
               <CardHeader>
                 <CardTitle class="text-emerald-900">Pedidos recentes</CardTitle>
                 <CardDescription>
