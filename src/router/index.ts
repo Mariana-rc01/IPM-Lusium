@@ -9,6 +9,7 @@ import HomeView from "@/views/HomeView.vue";
 import AssignScheduleView from "@/views/AssignScheduleView.vue";
 import ShiftEditView from "@/views/ShiftEditView.vue";
 import ProfileView from "@/views/ProfileView.vue";
+import CourseListView from "@/views/CourseListView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -66,6 +67,11 @@ const router = createRouter({
       path: "/profile",
       name: "profile",
       component: ProfileView,
+    },
+    {
+      path: "/courses",
+      name: "coursesList",
+      component: CourseListView,
     },
   ],
 });
