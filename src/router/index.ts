@@ -10,6 +10,7 @@ import AssignScheduleView from "@/views/AssignScheduleView.vue";
 import ShiftEditView from "@/views/ShiftEditView.vue";
 import ProfileView from "@/views/ProfileView.vue";
 import CourseListView from "@/views/CourseListView.vue";
+import NonAllocatedStudentsView from "@/views/NonAllocatedStudentsView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -72,6 +73,11 @@ const router = createRouter({
       path: "/courses",
       name: "coursesList",
       component: CourseListView,
+    },
+    {
+      path: "/students/non-allocated",
+      name: "nonAllocatedStudentsList",
+      component: NonAllocatedStudentsView,
     },
   ],
 });
