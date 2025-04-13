@@ -751,7 +751,6 @@
     {"id": 542, "shiftId": 132, "studentId": 46},
     {"id": 543, "shiftId": 121, "studentId": 46},
     {"id": 544, "shiftId": 156, "studentId": 46},
-
     {"id": 569, "shiftId": 58, "studentId": 49},
     {"id": 570, "shiftId": 68, "studentId": 49},
     {"id": 571, "shiftId": 105, "studentId": 49},
@@ -1186,7 +1185,6 @@
     {"id": 1065, "shiftId": 133, "studentId": 89},
     {"id": 1066, "shiftId": 127, "studentId": 89},
     {"id": 1067, "shiftId": 151, "studentId": 89}
-
   ],
   "noAllocations": [
     {"id": 1, "studentId": 7},
