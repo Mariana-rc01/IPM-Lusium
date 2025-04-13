@@ -23,6 +23,7 @@ interface Ticket {
   nome: string
   email: string
   dataTicket: string
+  subject: string
 }
 
 // Example data for recent tickets
@@ -235,7 +236,7 @@ const recentTickets = ref<Ticket[]>([
                 <Overview />
               </CardContent>
             </Card>
-            <Card v-else class="col-span-4 border-2 border-emerald-200 text-emerald-900">
+            <Card v-else class="col-span-4 border-2 border-emerald-200 text-emerald-900 h-[500px] overflow-y-auto">
               <CardHeader>
                 <CardTitle>Horário</CardTitle>
               </CardHeader>
@@ -243,7 +244,7 @@ const recentTickets = ref<Ticket[]>([
                 <Timetable mode="student" :blocks="studentBlocks" />
               </CardContent>
             </Card>
-            <Card class="col-span-3 border-2 border-emerald-200" :class="{ 'h-min': role === 'aluno' }">
+            <Card class="col-span-3 border-2 border-emerald-200">
               <CardHeader>
                 <CardTitle class="text-emerald-900">Pedidos recentes</CardTitle>
                 <CardDescription>
