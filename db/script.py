@@ -2,7 +2,7 @@ import json
 from datetime import datetime, timedelta
 
 # Load the JSON
-with open('dados.json', 'r') as f:
+with open('db.json', 'r') as f:
     data = json.load(f)
 
 # Mapping of shifts by course and type, with capacity control
