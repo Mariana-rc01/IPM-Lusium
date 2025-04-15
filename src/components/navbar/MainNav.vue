@@ -11,7 +11,8 @@ import {
   DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu'
 
-const userRole = ref(localStorage.getItem('userRole') || 'student')
+const initialRole = localStorage.getItem('userRole') || 'student';
+const userRole = ref(initialRole)
 const router = useRouter()
 
 const links = computed(() => {
@@ -48,28 +49,28 @@ const toggleRole = () => {
 </script>
 
 <template>
-  <nav :class="cn('flex items-center justify-between w-full', $attrs.class ?? '')">
+  <nav :class="cn('flex items-center justify-between w-full border-none', $attrs.class ?? '')">
     <div class="flex items-center space-x-4 lg:space-x-6">
       <a
         v-for="(link, index) in links.slice(0, 3)"
         :key="link.href"
         :href="link.href"
-        class="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+        class="text-sm font-medium text-black transition-colors hover:text-primary"
       >
         {{ link.label }}
       </a>
       
       <DropdownMenu v-if="userRole === 'diretor'">
-        <DropdownMenuTrigger class="text-sm font-medium text-muted-foreground transition-colors hover:text-primary">
+        <DropdownMenuTrigger class="text-sm font-medium text-black transition-colors hover:text-primary">
           Alunos
         </DropdownMenuTrigger>
         <DropdownMenuContent class="w-56" align="end">
           <DropdownMenuItem as-child>
-            <a href="/alunos" class="w-full">Todos os alunos</a>
+            <a href="/alunos" class="w-full text-black">Todos os alunos</a>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem as-child>
-            <a href="/alunos/nao-alocados" class="w-full">Alunos não alocados</a>
+            <a href="/alunos/nao-alocados" class="w-full text-black">Alunos não alocados</a>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -78,7 +79,7 @@ const toggleRole = () => {
         v-for="link in links.slice(3)"
         :key="link.href"
         :href="link.href"
-        class="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+        class="text-sm font-medium text-black transition-colors hover:text-primary"
       >
         {{ link.label }}
       </a>
@@ -94,3 +95,7 @@ const toggleRole = () => {
     </div>
   </nav>
 </template>
+
+<style scoped>
+/* Você também pode adicionar estilos adicionais aqui se necessário */
+</style>
