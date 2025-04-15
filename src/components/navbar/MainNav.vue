@@ -95,7 +95,3 @@ const toggleRole = () => {
     </div>
   </nav>
 </template>
-
-<style scoped>
-/* Você também pode adicionar estilos adicionais aqui se necessário */
-</style>
