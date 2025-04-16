@@ -28,11 +28,11 @@ async function onSubmit(event: Event) {
   }
 
   try {
-    // Faz a requisição ao db.json
+    // Makes a request to db.json
     const response = await axios.get('/db/db.json');
     const data = response.data;
 
-    // Verifica o tipo de usuário com base no ID
+    // Checks the user type based on the ID
     let user = null;
     if (userId.value.startsWith('d')) {
       user = data.directors.find((u: any) => u.id === userId.value && u.password === password.value);
@@ -43,7 +43,7 @@ async function onSubmit(event: Event) {
     }
 
     if (user) {
-      // Armazena o estado globalmente
+      // Stores the state globally
       const userStore = useUserStore();
       userStore.setUser({
         id: user.id,
@@ -51,7 +51,7 @@ async function onSubmit(event: Event) {
         type: userId.value.startsWith('d') ? 'director' : userId.value.startsWith('t') ? 'teacher' : 'student',
       });
 
-      // Redireciona com base no tipo de usuário
+      // Redirects based on the user type
       router.push('/home');
     } else {
       errorMessage.value = 'Credenciais inválidas! Verifique o ID e a palavra-passe.';
