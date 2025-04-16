@@ -51,12 +51,12 @@ const router = createRouter({
       component: StudentsView,
     },
     {
-      path: "/alocar-horario/:idAluno",
+      path: "/allocate/:idStudent",
       name: "allocate-schedule",
       component: AssignScheduleView,
     },
     {
-      path: "/turnos",
+      path: "/shifts/:idShift",
       name: "shift",
       component: ShiftEditView,
     },

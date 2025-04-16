@@ -18,14 +18,14 @@ const router = useRouter()
 const links = computed(() => {
   const commonLinks = [
     { href: '/home', label: 'Home Page' },
-    { href: '/unidadescurriculares', label: 'Unidades Curriculares' },
-    { href: '/pedidos', label: 'Pedidos' }
+    { href: '/courses', label: 'Unidades Curriculares' },
+    { href: '/tickets', label: 'Pedidos' }
   ]
 
   if (userRole.value === 'diretor') {
     return [
       ...commonLinks,
-      { href: '/salas', label: 'Salas' }
+      { href: '/classrooms', label: 'Salas' }
     ]
   } else {
     return [
@@ -66,11 +66,11 @@ const toggleRole = () => {
         </DropdownMenuTrigger>
         <DropdownMenuContent class="w-56" align="end">
           <DropdownMenuItem as-child>
-            <a href="/alunos" class="w-full text-black">Todos os alunos</a>
+            <a href="/students" class="w-full text-black">Todos os alunos</a>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem as-child>
-            <a href="/alunos/nao-alocados" class="w-full text-black">Alunos não alocados</a>
+            <a href="/students/non-allocated" class="w-full text-black">Alunos não alocados</a>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

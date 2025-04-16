@@ -103,7 +103,7 @@ interface Course {
 }
 
 const route = useRoute();
-const studentId = ref<string>(route.params.idAluno as string);
+const studentId = ref<string>(route.params.idStudent as string);
 const enrolledCourses = ref<string[]>([]);
 const allocations = ref<string[]>([]);
 
