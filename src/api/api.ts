@@ -157,9 +157,9 @@ export async function getAvailableCourses(enrolledCourses: string[]) {
     });
 }
 
-// -----------------------
+// --------------------------
 // Functions for Allocations
-// -----------------------
+// --------------------------
 
 // Get all allocations to calculate the last ID
 export async function getAllAllocations() {
@@ -187,4 +187,15 @@ export async function createAllocation(allocation: { id: string; studentId: stri
 // Delete an allocation by ID
 export async function deleteAllocation(allocationId: string) {
   await API.delete(`/allocations/${allocationId}`);
+}
+
+// Add a student to the noAllocations table
+export async function addStudentToNoAllocations(studentId: string) {
+  const response = await API.get('/noAllocations');
+  const noAllocations = response.data;
+
+  const exists = noAllocations.some((entry: any) => entry.studentId === studentId);
+  if (!exists) {
+    await API.post('/noAllocations', { studentId });
+  }
 }

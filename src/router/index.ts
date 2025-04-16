@@ -51,7 +51,7 @@ const router = createRouter({
       component: StudentsView,
     },
     {
-      path: "/alocar-horario",
+      path: "/alocar-horario/:idAluno",
       name: "allocate-schedule",
       component: AssignScheduleView,
     },
