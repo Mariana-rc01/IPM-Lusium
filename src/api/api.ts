@@ -24,7 +24,7 @@ export async function list_RequestsStudents_by_id(id: number) {
     });
     return dict;
   }
-  
+
 // Gets all the requests from the teacher with the corresponding id
 export async function list_RequestsTeachers_by_id(id: number) {
   const response = await API.get('/requestsTeachers');
@@ -35,7 +35,7 @@ export async function list_RequestsTeachers_by_id(id: number) {
   });
   return dict;
 }
-  
+
 // Gets all the requests from the director
 export async function list_RequestsDirector_by_id() {
   const response = await API.get('/requestsDirector');
@@ -45,4 +45,4 @@ export async function list_RequestsDirector_by_id() {
     dict[item.id] = item;
   });
   return dict;
-}  
+}

@@ -17,7 +17,7 @@ const router = useRouter()
 
 const links = computed(() => {
   const commonLinks = [
-    { href: '/homepage', label: 'Home Page' },
+    { href: '/home', label: 'Home Page' },
     { href: '/unidadescurriculares', label: 'Unidades Curriculares' },
     { href: '/pedidos', label: 'Pedidos' }
   ]
