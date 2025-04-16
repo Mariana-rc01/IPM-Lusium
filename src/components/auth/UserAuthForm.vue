@@ -1,20 +1,18 @@
 <script setup lang="ts">
-import { useRoute } from 'vue-router'
-import { useUserStore } from '../../stores/user'
-import axios from 'axios'
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { ref } from 'vue'
-import ErrorAlert from '@/components/popup/ErrorAlert.vue'
-import { useRouter } from 'vue-router'
+import { useRouter } from 'vue-router';
+import { useUserStore } from '../../stores/user';
+import { ref } from 'vue';
+import { authenticateUser } from '@/api/api';
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import ErrorAlert from '@/components/popup/ErrorAlert.vue';
 
-const router = useRouter()
-const isLoading = ref(false)
-const errorMessage = ref<string | null>(null)
-const userId = ref('')
-const password = ref('')
+const router = useRouter();
+const isLoading = ref(false);
+const errorMessage = ref<string | null>(null);
+const userId = ref('');
+const password = ref('');
 
 async function onSubmit(event: Event) {
   event.preventDefault();
@@ -28,37 +26,18 @@ async function onSubmit(event: Event) {
   }
 
   try {
-    // Makes a request to db.json
-    const response = await axios.get('/db/db.json');
-    const data = response.data;
+    // Authenticate user using the API
+    const user = await authenticateUser(userId.value, password.value);
 
-    // Checks the user type based on the ID
-    let user = null;
-    if (userId.value.startsWith('d')) {
-      user = data.directors.find((u: any) => u.id === userId.value && u.password === password.value);
-    } else if (userId.value.startsWith('t')) {
-      user = data.teachers.find((u: any) => u.id === userId.value && u.password === password.value);
-    } else if (userId.value.startsWith('a')) {
-      user = data.students.find((u: any) => u.id === userId.value && u.password === password.value);
-    }
+    // Store the user state globally
+    const userStore = useUserStore();
+    userStore.setUser(user);
 
-    if (user) {
-      // Stores the state globally
-      const userStore = useUserStore();
-      userStore.setUser({
-        id: user.id,
-        name: user.name,
-        type: userId.value.startsWith('d') ? 'director' : userId.value.startsWith('t') ? 'teacher' : 'student',
-      });
-
-      // Redirects based on the user type
-      router.push('/home');
-    } else {
-      errorMessage.value = 'Credenciais inválidas! Verifique o ID e a palavra-passe.';
-    }
-  } catch (error) {
+    // Redirect based on the user type
+    router.push('/home');
+  } catch (error: any) {
     console.error('Erro na autenticação:', error);
-    errorMessage.value = 'Erro ao iniciar sessão. Por favor, tente novamente mais tarde.';
+    errorMessage.value = error.message || 'Erro ao iniciar sessão. Por favor, tente novamente mais tarde.';
   } finally {
     isLoading.value = false;
   }
