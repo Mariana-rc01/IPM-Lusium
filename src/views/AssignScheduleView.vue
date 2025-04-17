@@ -197,7 +197,7 @@ const saveSchedule = async () => {
         await createAllocation({
           id: String(lastId + index + 1),
           studentId: studentId.value,
-          shiftId,
+          shiftId: Number(shiftId),
         });
       })
     );

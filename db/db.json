@@ -1614,7 +1614,7 @@
       "from": "09:00",
       "to": "11:00",
       "teacherId": 1,
-      "totalStudentsRegistered": 23
+      "totalStudentsRegistered": 24
     },
     {
       "id": "2",
@@ -1662,7 +1662,7 @@
       "from": "09:00",
       "to": "11:00",
       "teacherId": 2,
-      "totalStudentsRegistered": 16
+      "totalStudentsRegistered": 17
     },
     {
       "id": "6",
@@ -1734,7 +1734,7 @@
       "from": "09:00",
       "to": "11:00",
       "teacherId": 2,
-      "totalStudentsRegistered": 16
+      "totalStudentsRegistered": 17
     },
     {
       "id": "13",
@@ -1794,7 +1794,7 @@
       "from": "10:00",
       "to": "12:00",
       "teacherId": 2,
-      "totalStudentsRegistered": 16
+      "totalStudentsRegistered": 17
     },
     {
       "id": "18",
@@ -1842,7 +1842,7 @@
       "from": "11:00",
       "to": "13:00",
       "teacherId": 2,
-      "totalStudentsRegistered": 25
+      "totalStudentsRegistered": 26
     },
     {
       "id": "23",
@@ -1902,7 +1902,7 @@
       "from": "11:00",
       "to": "13:00",
       "teacherId": 3,
-      "totalStudentsRegistered": 24
+      "totalStudentsRegistered": 25
     },
     {
       "id": "28",
@@ -1950,7 +1950,7 @@
       "from": "11:00",
       "to": "13:00",
       "teacherId": 3,
-      "totalStudentsRegistered": 17
+      "totalStudentsRegistered": 18
     },
     {
       "id": "32",
@@ -1986,7 +1986,7 @@
       "from": "11:00",
       "to": "13:00",
       "teacherId": 3,
-      "totalStudentsRegistered": 25
+      "totalStudentsRegistered": 26
     },
     {
       "id": "36",
@@ -2034,7 +2034,7 @@
       "from": "14:00",
       "to": "16:00",
       "teacherId": 3,
-      "totalStudentsRegistered": 16
+      "totalStudentsRegistered": 17
     },
     {
       "id": "40",
@@ -2058,7 +2058,7 @@
       "from": "14:00",
       "to": "16:00",
       "teacherId": 3,
-      "totalStudentsRegistered": 16
+      "totalStudentsRegistered": 17
     },
     {
       "id": "42",
@@ -2142,7 +2142,7 @@
       "from": "14:00",
       "to": "16:00",
       "teacherId": 4,
-      "totalStudentsRegistered": 16
+      "totalStudentsRegistered": 17
     },
     {
       "id": "49",
@@ -2406,7 +2406,7 @@
       "from": "11:00",
       "to": "13:00",
       "teacherId": 5,
-      "totalStudentsRegistered": 24
+      "totalStudentsRegistered": 23
     },
     {
       "id": "71",
@@ -2646,7 +2646,7 @@
       "from": "14:00",
       "to": "16:00",
       "teacherId": 1,
-      "totalStudentsRegistered": 8
+      "totalStudentsRegistered": 9
     },
     {
       "id": "91",
@@ -3234,7 +3234,7 @@
       "from": "11:00",
       "to": "13:00",
       "teacherId": 1,
-      "totalStudentsRegistered": 26
+      "totalStudentsRegistered": 27
     },
     {
       "id": "140",
@@ -3433,7 +3433,7 @@
       "courseId": 15,
       "type": "PL",
       "name": "PL2",
-      "classroomId": 7,
+      "classroomId": "6",
       "day": 0,
       "from": "18:00",
       "to": "20:00",
@@ -5136,81 +5136,6 @@
       "id": "416",
       "shiftId": 146,
       "studentId": "a36"
-    },
-    {
-      "id": "417",
-      "shiftId": 58,
-      "studentId": "a37"
-    },
-    {
-      "id": "418",
-      "shiftId": 67,
-      "studentId": "a37"
-    },
-    {
-      "id": "419",
-      "shiftId": 105,
-      "studentId": "a37"
-    },
-    {
-      "id": "420",
-      "shiftId": 60,
-      "studentId": "a37"
-    },
-    {
-      "id": "421",
-      "shiftId": 106,
-      "studentId": "a37"
-    },
-    {
-      "id": "422",
-      "shiftId": 62,
-      "studentId": "a37"
-    },
-    {
-      "id": "423",
-      "shiftId": 70,
-      "studentId": "a37"
-    },
-    {
-      "id": "424",
-      "shiftId": 73,
-      "studentId": "a37"
-    },
-    {
-      "id": "425",
-      "shiftId": 61,
-      "studentId": "a37"
-    },
-    {
-      "id": "426",
-      "shiftId": 81,
-      "studentId": "a37"
-    },
-    {
-      "id": "427",
-      "shiftId": 77,
-      "studentId": "a37"
-    },
-    {
-      "id": "428",
-      "shiftId": 93,
-      "studentId": "a37"
-    },
-    {
-      "id": "429",
-      "shiftId": 132,
-      "studentId": "a37"
-    },
-    {
-      "id": "430",
-      "shiftId": 121,
-      "studentId": "a37"
-    },
-    {
-      "id": "431",
-      "shiftId": 156,
-      "studentId": "a37"
     },
     {
       "id": "432",
@@ -7888,59 +7813,134 @@
       "studentId": "a89"
     },
     {
-      "id": "1068",
-      "studentId": "a1",
-      "shiftId": "41"
-    },
-    {
       "id": "1069",
       "studentId": "a1",
-      "shiftId": "11"
+      "shiftId": 5
     },
     {
       "id": "1071",
       "studentId": "a1",
-      "shiftId": "5"
-    },
-    {
-      "id": "1072",
-      "studentId": "a1",
-      "shiftId": "17"
-    },
-    {
-      "id": "1073",
-      "studentId": "a1",
-      "shiftId": "31"
-    },
-    {
-      "id": "1074",
-      "studentId": "a1",
-      "shiftId": "34"
-    },
-    {
-      "id": "1070",
-      "studentId": "a1",
-      "shiftId": "1"
+      "shiftId": 27
     },
     {
       "id": "1076",
       "studentId": "a1",
-      "shiftId": "39"
+      "shiftId": 11
+    },
+    {
+      "id": "1070",
+      "studentId": "a1",
+      "shiftId": 17
     },
     {
       "id": "1077",
       "studentId": "a1",
-      "shiftId": "22"
+      "shiftId": 39
     },
     {
       "id": "1078",
       "studentId": "a1",
-      "shiftId": "46"
+      "shiftId": 1
     },
     {
       "id": "1075",
       "studentId": "a1",
-      "shiftId": "48"
+      "shiftId": 34
+    },
+    {
+      "id": "1072",
+      "studentId": "a1",
+      "shiftId": 41
+    },
+    {
+      "id": "1073",
+      "studentId": "a1",
+      "shiftId": 31
+    },
+    {
+      "id": "1074",
+      "studentId": "a1",
+      "shiftId": 48
+    },
+    {
+      "id": "1081",
+      "studentId": "a37",
+      "shiftId": 62
+    },
+    {
+      "id": "1084",
+      "studentId": "a37",
+      "shiftId": 121
+    },
+    {
+      "id": "1092",
+      "studentId": "a37",
+      "shiftId": 77
+    },
+    {
+      "id": "1082",
+      "studentId": "a37",
+      "shiftId": 81
+    },
+    {
+      "id": "1093",
+      "studentId": "a37",
+      "shiftId": 73
+    },
+    {
+      "id": "1091",
+      "studentId": "a37",
+      "shiftId": 90
+    },
+    {
+      "id": "1083",
+      "studentId": "a37",
+      "shiftId": 58
+    },
+    {
+      "id": "1080",
+      "studentId": "a37",
+      "shiftId": 67
+    },
+    {
+      "id": "1079",
+      "studentId": "a37",
+      "shiftId": 60
+    },
+    {
+      "id": "1086",
+      "studentId": "a37",
+      "shiftId": 93
+    },
+    {
+      "id": "1087",
+      "studentId": "a37",
+      "shiftId": 132
+    },
+    {
+      "id": "1088",
+      "studentId": "a37",
+      "shiftId": 106
+    },
+    {
+      "id": "1089",
+      "studentId": "a37",
+      "shiftId": 139
+    },
+    {
+      "id": "1090",
+      "studentId": "a37",
+      "shiftId": 105
+    },
+    {
+      "id": "1085",
+      "studentId": "a37",
+      "shiftId": 61
+    },
+    {
+      "id": "1094",
+      "studentId": "a37",
+      "shiftId": 156
     }
   ],
   "noAllocations": [
@@ -8061,7 +8061,7 @@
     {
       "id": "6",
       "name": "1.15",
-      "capacity": 50,
+      "capacity": 15,
       "buildingId": 1
     },
     {

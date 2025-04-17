@@ -17,15 +17,15 @@
             </div>
             <div class="flex">
               <p class="font-semibold mr-1">Número de alunos:</p>
-              <p :class="isOverCapacity ? 'text-red-600' : ''">{{ students.length }}</p>
+              <p :class="isOverCapacity ? 'text-red-600' : ''">{{ shift.totalStudentsRegistered }}</p>
             </div>
             <div class="flex">
               <p class="font-semibold mr-1">Sala:</p>
-              <p>{{ shift.sala }}</p>
+              <p>{{ shift.classroomId }}</p>
             </div>
             <div class="flex">
               <p class="font-semibold mr-1">Capacidade:</p>
-              <p :class="isOverCapacity ? 'text-red-600' : ''">{{ shift.capacidade }}</p>
+                <p :class="isOverCapacity ? 'text-red-600' : ''">{{ shift.capacity }}</p>
             </div>
           </div>
         </div>
@@ -51,13 +51,13 @@
                   <thead>
                     <tr class="border-b border-emerald-200">
                       <th class="py-3 px-4 text-left text-emerald-500 font-medium text-sm">
-                        <button @click="sortStudents('numero')" class="flex items-center">
+                        <button @click="sortStudents('id')" class="flex items-center">
                           Número
                           <ChevronsUpDownIcon class="h-4 w-4 ml-1" />
                         </button>
                       </th>
                       <th class="py-3 px-4 text-left text-emerald-500 font-medium text-sm">
-                        <button @click="sortStudents('nome')" class="flex items-center">
+                        <button @click="sortStudents('name')" class="flex items-center">
                           Nome
                           <ChevronsUpDownIcon class="h-4 w-4 ml-1" />
                         </button>
@@ -65,9 +65,9 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="student in paginatedStudents" :key="student.numero" class="border-b border-emerald-100 hover:bg-gray-50">
-                      <td class="py-3 px-4 text-sm truncate">{{ student.numero }}</td>
-                      <td class="py-3 px-4 text-sm truncate">{{ student.nome }}</td>
+                    <tr v-for="student in paginatedStudents" :key="student.id" class="border-b border-emerald-100 hover:bg-gray-50">
+                      <td class="py-3 px-4 text-sm truncate">{{ student.id }}</td>
+                      <td class="py-3 px-4 text-sm truncate">{{ student.name }}</td>
                       <td class="py-3 px-4 text-sm text-center">
                         <button @click="removeStudent(student)" class="text-black hover:text-gray-700">
                           <Trash2 class="h-5 w-5 mx-auto" />
@@ -140,13 +140,13 @@
                   <thead>
                     <tr class="border-b border-emerald-200">
                       <th class="py-3 px-4 text-left text-emerald-500 font-medium text-sm">
-                        <button @click="sortRooms('sala')" class="flex items-center">
+                        <button @click="sortRooms('id')" class="flex items-center">
                           Nº da Sala
                           <ChevronsUpDownIcon class="h-4 w-4 ml-1" />
                         </button>
                       </th>
                       <th class="py-3 px-4 text-left text-emerald-500 font-medium text-sm">
-                        <button @click="sortRooms('capacidade')" class="flex items-center">
+                        <button @click="sortRooms('capacity')" class="flex items-center">
                           Capacidade
                           <ChevronsUpDownIcon class="h-4 w-4 ml-1" />
                         </button>
@@ -156,12 +156,12 @@
                   </thead>
                   <tbody>
                     <tr v-for="room in paginatedRooms" :key="room.id" class="border-b border-emerald-100 hover:bg-gray-50">
-                      <td class="py-3 px-4 text-sm truncate">{{ room.sala }}</td>
-                      <td class="py-3 px-4 text-sm truncate">{{ room.capacidade }}</td>
+                      <td class="py-3 px-4 text-sm truncate">{{ room.name }}</td>
+                      <td class="py-3 px-4 text-sm truncate">{{ room.capacity }}</td>
                       <td class="py-3 px-4 text-sm text-center">
                         <Checkbox
-                          :checked="selectedRoom === room.id"
-                          @update:checked="selectRoom(room.id)"
+                          :checked="selectedRoom === room.name"
+                          @update:checked="selectRoom(room.name)"
                           class="border-emerald-800 bg-white data-[state=checked]:bg-emerald-800 data-[state=checked]:border-emerald-800 data-[state=checked]:text-emerald-800"
                         />
                       </td>
@@ -260,11 +260,11 @@
             @click="addToSelection(student)" class="p-2 hover:bg-gray-100 cursor-pointer">
             <div class="flex items-center">
           <div>
-            <div class="text-sm font-medium">{{ student.numero }} - {{ student.nome }}</div>
+            <div class="text-sm font-medium">{{ student.id }} - {{ student.name }}</div>
             <div class="flex items-center text-xs text-gray-500">
-              <BriefcaseIcon v-if="student.estatuto === 'Trabalhador-Estudante'" class="h-3 w-3 mr-1" />
-              <DumbbellIcon v-else-if="student.estatuto === 'Atleta'" class="h-3 w-3 mr-1" />
-              <span>{{ student.estatuto }}</span>
+              <BriefcaseIcon v-if="student.status === 'Trabalhador-Estudante'" class="h-3 w-3 mr-1" />
+              <DumbbellIcon v-else-if="student.status === 'Atleta'" class="h-3 w-3 mr-1" />
+              <span>{{ student.status }}</span>
             </div>
           </div>
             </div>
@@ -282,7 +282,7 @@
           <colgroup>
             <col class="w-[20%]" /> <!-- Number -->
             <col class="w-[50%]" /> <!-- Name -->
-            <col class="w-[20%]" /> <!-- Estatuto -->
+            <col class="w-[20%]" /> <!-- Status -->
             <col class="w-[10%]" /> <!-- Remove -->
           </colgroup>
           <thead>
@@ -306,12 +306,12 @@
           <tbody>
             <tr v-for="student in selectedStudents" :key="student.id"
           class="border-b border-emerald-100 hover:bg-gray-50">
-          <td class="py-3 px-4 text-sm truncate">{{ student.numero }}</td>
-          <td class="py-3 px-4 text-sm truncate">{{ student.nome }}</td>
+          <td class="py-3 px-4 text-sm truncate">{{ student.id }}</td>
+          <td class="py-3 px-4 text-sm truncate">{{ student.name }}</td>
           <td class="py-3 px-4 text-sm text-center">
             <div class="flex justify-center">
-              <BriefcaseIcon v-if="student.estatuto === 'Trabalhador-Estudante'" class="h-5 w-5" />
-              <DumbbellIcon v-else-if="student.estatuto === 'Atleta'" class="h-5 w-5" />
+              <BriefcaseIcon v-if="student.status === 'Trabalhador-Estudante'" class="h-5 w-5" />
+              <DumbbellIcon v-else-if="student.status === 'Atleta'" class="h-5 w-5" />
             </div>
           </td>
           <td class="py-3 px-4 text-sm text-center">
@@ -371,7 +371,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { nextTick as vueNextTick } from 'vue';
 import {ChevronLeftIcon, ChevronRightIcon, ChevronsLeftIcon, ChevronsRightIcon, ChevronsUpDownIcon,
 Trash2, BriefcaseIcon, DumbbellIcon, InfoIcon} from 'lucide-vue-next'
@@ -384,30 +384,51 @@ import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, Di
 import SuccessAlert from '@/components/popup/SuccessAlert.vue'
 import ConfirmModal from '@/components/popup/ConfirmModal.vue'
 import ErrorAlert from '@/components/popup/ErrorAlert.vue'
+import { getAllAllocations, getStudentById, getAvailableRooms, getStudents, getAllUCs,
+  getShiftsByCourse, getRoomByShiftId, updateShiftRoom, deleteAllocation, createAllocation,
+  updateShiftTotalStudents } from '@/api/api';
+import { useRoute } from 'vue-router';
 
 interface Student {
-    id: number
-    numero: string
-    nome: string
-    estatuto: string
+    id: string
+    name: string
+    status: string
 }
 
 interface Room {
-    id: number
-    sala: string
-    capacidade: number
+    id: string
+    name: string
+    capacity: number
 }
 
 interface Shift {
-    id: number
-    codigo: string
+    id: string
+    courseId: string
+    name: string
     horario: string
-    sala: string
-    capacidade: number
+    classroomId: string
+    totalStudentsRegistered: number
+    capacity: number
+    type: string
 }
 
 const showModalSucess = ref(false)
 const modalMessageSuccess = ref<string | null>(null)
+
+const students = ref<Student[]>([])
+const availableStudents = ref<Student[]>([])
+const rooms = ref<Room[]>([])
+
+const shift = ref<Shift>({
+    id: '',
+    courseId: '',
+    name: '',
+    horario: '',
+    classroomId: '',
+    totalStudentsRegistered: 0,
+    capacity: 0,
+    type: ' '
+})
 
 const showModal = ref(false)
 const modalMessage = ref('')
@@ -424,70 +445,116 @@ const showMessageError = ref(false)
 const errorMessageDialog = ref<string | null>(null)
 const showMessageErrorDialog = ref(false)
 
-const ucName = ref('IPM')
-const shiftCode = ref('PL4')
-
-// TODO - change when we have JSON server
-const shift = ref<Shift>({
-    id: 1,
-    codigo: 'PL4',
-    horario: '9h - 11h',
-    sala: 'CP1 - 1.18',
-    capacidade: 10
-})
-
-// TODO - change when we have JSON server
-const students = ref<Student[]>([
-    { id: 1, numero: 'a104262', nome: 'Afonso Gregório de Sousa', estatuto: 'Trabalhador-Estudante' },
-    { id: 2, numero: 'a95147', nome: 'Diogo Alexandre Pereira da Costa', estatuto: 'Nenhum' },
-    { id: 3, numero: 'a97941', nome: 'Diogo Filipe Oliveira da Silva', estatuto: 'Nenhum' },
-    { id: 4, numero: 'a104353', nome: 'Eduardo de Oliveira Sousa Faria', estatuto: 'Nenhum' },
-    { id: 5, numero: 'a77399', nome: 'Fernando Jorge da Silva Pires', estatuto: 'Nenhum' },
-    { id: 6, numero: 'a104100', nome: 'Hélder Ricardo Ribeiro Gomes', estatuto: 'Nenhum' },
-    { id: 7, numero: 'a103993', nome: 'Julia Bughi Correa da Costa', estatuto: 'Nenhum' },
-    { id: 8, numero: 'a90817', nome: 'Mariana Rocha Cristino', estatuto: 'Atleta' },
-    { id: 9, numero: 'a104089', nome: 'Nuno Miguel Ribeiro da Silva', estatuto: 'Nenhum' },
-    { id: 10, numero: 'a104082', nome: 'Pedro Figueiredo Pereira', estatuto: 'Nenhum' }
-])
-
-// TODO - change when we have JSON server
-const availableStudents = ref<Student[]>([
-    { id: 11, numero: 'a104345', nome: 'Renata Gregório de Sousa', estatuto: 'Trabalhador-Estudante' },
-    { id: 12, numero: 'a98941', nome: 'Tiago Filipe Oliveira da Silva', estatuto: 'Atleta' },
-    { id: 13, numero: 'a104593', nome: 'Zelda Correa da Costa', estatuto: 'Trabalhador-Estudante' },
-])
-
-// TODO - change when we have JSON server
-const rooms = ref<Room[]>([
-    { id: 1, sala: 'CP1 - 1.18', capacidade: 10 },
-    { id: 2, sala: 'CP1 - 1.13', capacidade: 5 },
-    { id: 3, sala: 'CP1 - 1.17', capacidade: 30 },
-    { id: 4, sala: 'CP1 - 2.01', capacidade: 35 },
-    { id: 5, sala: 'CP2 - 0.01', capacidade: 35 },
-    { id: 6, sala: 'CP2 - 0.14', capacidade: 35 },
-    { id: 7, sala: 'CP3 - 1.12', capacidade: 35 },
-    { id: 8, sala: 'CP3 - 3.14', capacidade: 38 },
-    { id: 9, sala: 'CP4 - 1.04', capacidade: 38 },
-    { id: 10, sala: 'CP4 - 0.05', capacidade: 45 }
-])
+const shiftCode = ref('')
+const ucName = ref('')
 
 const studentsPerPage = ref('10')
 const roomsPerPage = ref('10')
 const currentStudentPage = ref(1)
 const currentRoomPage = ref(1)
-const studentSortColumn = ref<'numero' | 'nome' | null>(null)
+const studentSortColumn = ref<'id' | 'name' | null>(null)
 const studentSortDirection = ref<'asc' | 'desc'>('asc')
-const roomSortColumn = ref<'sala' | 'capacidade' | null>(null)
+const roomSortColumn = ref<'id' | 'capacity' | null>(null)
 const roomSortDirection = ref<'asc' | 'desc'>('asc')
-const selectedRoom = ref(1)
+const selectedRoom = ref('')
 const showAddStudentsDialog = ref(false)
 const searchQuery = ref('')
 const selectedStudents = ref<Student[]>([])
 const showInfoTooltip = ref(false)
 const selectedStudentToRemove = ref<Student | null>(null);
 
+const route = useRoute();
+shiftCode.value = route.params.idShift as string || '';
+ucName.value = route.params.idUC as string || '';
+
+async function loadData() {
+    try {
+        console.log('shiftCode:', shiftCode.value);
+
+        // Get all courses
+        const allCourses = await getAllUCs();
+        console.log('Cursos disponíveis:', allCourses);
+
+        const course = allCourses.find((c: { abbreviation: string }) => c.abbreviation === ucName.value);
+        if (!course) {
+            throw new Error(`UC não encontrada: ${ucName}`);
+        }
+
+        // Get all shifts for the course
+        const shifts = await getShiftsByCourse(course.id);
+        console.log('Turnos disponíveis para a UC:', shifts);
+
+        // Find the current shift
+        const currentShiftData = shifts.find((t: { name: string }) => t.name === shiftCode.value);
+        if (!currentShiftData) {
+            throw new Error(`Turno não encontrado: ${shiftCode}`);
+        }
+
+        // Get room data
+        const roomData = await getRoomByShiftId(currentShiftData.id);
+        if (!roomData) {
+            throw new Error(`Sala não encontrada para o turno: ${currentShiftData.id}`);
+        }
+
+        // Update currentShift
+        shift.value = {
+            id: currentShiftData.id,
+            courseId: course.id,
+            name: currentShiftData.name,
+            horario: `${currentShiftData.startHour}-${currentShiftData.endHour}`,
+            classroomId: currentShiftData.room,
+            totalStudentsRegistered: currentShiftData.totalStudentsRegistered,
+            capacity: roomData.capacity,
+            type: currentShiftData.type,
+        };
+
+        console.log('Turno atual:', shift.value);
+
+        // Get all allocations
+        const allAllocations = await getAllAllocations();
+        const shiftAllocations = allAllocations.filter((a: { shiftId: number }) => a.shiftId === Number(shift.value.id));
+        students.value = await Promise.all(
+            shiftAllocations.map(async (a: { studentId: string }) => {
+                const student = await getStudentById(a.studentId);
+                return {
+                    id: student.id,
+                    name: student.name,
+                    status: student.specialStatus || '',
+                };
+            })
+        );
+
+        const allStudents = await getStudents();
+        availableStudents.value = allStudents.filter(
+            (student: any) =>
+                student.enrolled.includes(shift.value.courseId) &&
+                !students.value.some((s) => s.id === student.id)
+        );
+
+        rooms.value = await getAvailableRooms(
+            shift.value.id,
+            currentShiftData.day,
+            currentShiftData.startHour,
+            currentShiftData.endHour
+        );
+
+        selectedRoom.value = shift.value.classroomId;
+
+        console.log('Dados carregados com sucesso:', {
+            shift: shift.value,
+            students: students.value,
+            availableStudents: availableStudents.value,
+            rooms: rooms.value,
+        });
+    } catch (error) {
+        console.error('Erro ao carregar dados:', error);
+        errorMessage.value = (error as any).message || 'Erro ao carregar os dados do turno.';
+        showMessageError.value = true;
+    }
+}
+
 const isOverCapacity = computed(() => {
-    return students.value.length > shift.value.capacidade
+    return students.value.length > shift.value.capacity
 })
 
 const sortedStudents = computed(() => {
@@ -548,14 +615,14 @@ const filteredAvailableStudents = computed(() => {
     // Filter out students that are already in the shift
     const notInShift = availableStudents.value.filter(
         availableStudent => !students.value.some(
-        shiftStudent => shiftStudent.numero === availableStudent.numero
+        shiftStudent => shiftStudent.id === availableStudent.id
         )
     )
 
     // Also filter out students that are already selected
     const notSelected = notInShift.filter(
         availableStudent => !selectedStudents.value.some(
-        selectedStudent => selectedStudent.numero === availableStudent.numero
+        selectedStudent => selectedStudent.id === availableStudent.id
         )
     )
 
@@ -564,8 +631,8 @@ const filteredAvailableStudents = computed(() => {
 
     const query = searchQuery.value.toLowerCase()
     return notSelected.filter(student =>
-        student.nome.toLowerCase().includes(query) ||
-        student.numero.toLowerCase().includes(query)
+        student.name.toLowerCase().includes(query) ||
+        student.id.toLowerCase().includes(query)
     )
 })
 
@@ -578,7 +645,7 @@ function goToStudentPage(page: number) {
     currentStudentPage.value = page
 }
 
-function sortStudents(column: 'numero' | 'nome') {
+function sortStudents(column: 'id' | 'name') {
     if (studentSortColumn.value === column) {
         // Reverse direction if the column is already selected
         studentSortDirection.value = studentSortDirection.value === 'asc' ? 'desc' : 'asc'
@@ -589,12 +656,11 @@ function sortStudents(column: 'numero' | 'nome') {
     }
 }
 
-// Methods for room pagination and sorting
 function goToRoomPage(page: number) {
     currentRoomPage.value = page
 }
 
-function sortRooms(column: 'sala' | 'capacidade') {
+function sortRooms(column: 'id' | 'capacity') {
     if (roomSortColumn.value === column) {
         // Reverse direction if the column is already selected
         roomSortDirection.value = roomSortDirection.value === 'asc' ? 'desc' : 'asc'
@@ -605,64 +671,97 @@ function sortRooms(column: 'sala' | 'capacidade') {
     }
 }
 
-// Room selection and update
-function selectRoom(roomId: number) {
-    selectedRoom.value = roomId
+function selectRoom(roomId: string) {
+    selectedRoom.value = roomId;
 }
 
 function checkRoomCapacityAndUpdate() {
-  const selectedRoomData = rooms.value.find(room => room.id === selectedRoom.value);
-  if (selectedRoomData) {
-    if (selectedRoomData.capacidade < students.value.length) {
-      modalMessage.value = 'A sala não tem capacidade para todos os alunos. Tem a certeza que quer alterar?';
-      showModal.value = true;
-    } else {
-      updateRoom(selectedRoomData);
+    const selectedRoomData = rooms.value.find(room => room.name === selectedRoom.value);
+    if (selectedRoomData) {
+        if (selectedRoomData.capacity < students.value.length) {
+            modalMessage.value = 'A sala não tem capacidade para todos os alunos. Tem a certeza que quer alterar?';
+            showModal.value = true;
+        } else {
+            updateRoom(selectedRoomData);
+        }
     }
-  }
 }
 
 function confirmRoomChange() {
-    const selectedRoomData = rooms.value.find(room => room.id === selectedRoom.value)
+    const selectedRoomData = rooms.value.find(room => room.name === selectedRoom.value)
     if (selectedRoomData) {
         updateRoom(selectedRoomData)
         showModal.value = false
     }
 }
 
-function updateRoom(roomData: Room) {
-    shift.value.sala = roomData.sala
-    shift.value.capacidade = roomData.capacidade
+async function updateRoom(roomData: Room) {
+    try {
+        await updateShiftRoom(shift.value.id, roomData.id);
 
-    showModalSucess.value = false;
-    nextTick(() => {
-      modalMessageSuccess.value = 'A sala deste turno foi alterada com sucesso!';
-      showModalSucess.value = true;
-    });
+        shift.value.classroomId = roomData.name;
+        shift.value.capacity = roomData.capacity;
 
+        // Reload data to reflect changes
+        await loadData();
+
+        showModalSucess.value = false;
+        nextTick(() => {
+            modalMessageSuccess.value = 'A sala deste turno foi alterada com sucesso!';
+            showModalSucess.value = true;
+        });
+    } catch (error) {
+        console.error('Erro ao atualizar a sala na API:', error);
+        errorMessage.value = 'Erro ao atualizar a sala. Por favor, tente novamente.';
+        showMessageError.value = true;
+    }
 }
 
 // Remove student
 function removeStudent(student: Student) {
-    modalMessageRemoveStudent.value = `Tem a certeza que deseja remover o aluno ${student.nome}?`;
+    modalMessageRemoveStudent.value = `Tem a certeza que deseja remover o aluno ${student.name}?`;
     showModalRemoveStudent.value = true;
     selectedStudentToRemove.value = student;
 }
 
-function confirmRemoveStudent() {
+async function confirmRemoveStudent() {
     if (selectedStudentToRemove.value) {
-        const index = selectedStudentToRemove.value
-            ? students.value.findIndex(s => s.id === selectedStudentToRemove.value?.id)
-            : -1;
-        if (index !== -1) {
-            students.value.splice(index, 1);
+        try {
+            const allAllocationsResponse = await getAllAllocations();
+
+            const allocationToRemove = allAllocationsResponse.find(
+                (allocation: any) =>
+                    allocation.studentId === selectedStudentToRemove.value?.id &&
+                    allocation.shiftId === Number(shift.value.id)
+            );
+
+            if (allocationToRemove) {
+                await deleteAllocation(allocationToRemove.id);
+                await updateShiftTotalStudents(shift.value.id, shift.value.totalStudentsRegistered - 1);
+            } else {
+                throw new Error('Allocation não encontrada para o aluno e turno fornecidos.');
+            }
+
+            const index = students.value.findIndex(s => s.id === selectedStudentToRemove.value?.id);
+            if (index !== -1) {
+                students.value.splice(index, 1);
+            }
+
+            showModalSucess.value = false;
+            nextTick(() => {
+                modalMessageSuccess.value = 'O aluno foi removido com sucesso!';
+                showModalSucess.value = true;
+            });
+        } catch (error) {
+            console.error('Erro ao remover a Allocation na API:', error);
+            errorMessage.value = 'Erro ao remover o aluno. Por favor, tente novamente.';
+            showMessageError.value = true;
         }
-        showModalSucess.value = false;
-        nextTick(() => {
-            modalMessageSuccess.value = 'O aluno foi removido com sucesso!';
-            showModalSucess.value = true;
-        });
     }
+
+    // Reload data to reflect changes
+    await loadData();
+
     selectedStudentToRemove.value = null;
     showModalRemoveStudent.value = false;
     modalMessageRemoveStudent.value = '';
@@ -673,7 +772,7 @@ function addToSelection(student: Student) {
     // Check if student is not already in selection
     if (!selectedStudents.value.some(s => s.id === student.id)) {
         selectedStudents.value.push(student)
-        searchQuery.value = '' // Clear search after selection
+        searchQuery.value = ''
     }
 }
 
@@ -684,7 +783,7 @@ function removeFromSelection(student: Student) {
     }
 }
 
-function checkCapacityAndAddStudents() {
+async function checkCapacityAndAddStudents() {
     if (selectedStudents.value.length === 0) {
         showMessageErrorDialog.value = true;
         errorMessageDialog.value = 'Nenhum aluno selecionado!';
@@ -695,12 +794,48 @@ function checkCapacityAndAddStudents() {
         return;
     }
 
-    // Verifica se a capacidade será ultrapassada
-    if (students.value.length + selectedStudents.value.length > shift.value.capacidade) {
-        modalMessageStudents.value = 'A capacidade da sala será ultrapassada. Deseja continuar?';
-        showModalStudents.value = true;
-    } else {
-        addSelectedStudents();
+    try {
+        const allAllocations = await getAllAllocations();
+        const shifts = await getShiftsByCourse(shift.value.courseId);
+
+        const errorMessages = ref<string[]>([]);
+        for (const student of selectedStudents.value) {
+            const allocationInAnotherShift = allAllocations.find((allocation: any) => {
+                const isSameStudent = allocation.studentId === student.id;
+                const isInAnotherShiftOfSameType = shifts.some(
+                    (s: any) =>
+                        s.id === String(allocation.shiftId) &&
+                        s.type === shift.value.type &&
+                        s.id !== String(shift.value.id)
+                );
+                return isSameStudent && isInAnotherShiftOfSameType;
+            });
+
+            if (allocationInAnotherShift) {
+                const conflictingShift = shifts.find((s: any) => s.id === String(allocationInAnotherShift.shiftId));
+                errorMessages.value.push(`O aluno ${student.name} já está alocado no turno ${conflictingShift.name}.`);
+            }
+        }
+
+        if (students.value.length + selectedStudents.value.length > shift.value.capacity) {
+            errorMessages.value.push('A capacidade da sala será ultrapassada. Deseja continuar?');
+        }
+
+        if (errorMessages.value.length > 0) {
+            modalMessageStudents.value = errorMessages.value.join(' ');
+            showModalStudents.value = true;
+        }
+        else {
+            addSelectedStudents();
+        }
+    } catch (error) {
+        console.error('Erro ao verificar alunos ou capacidade:', error);
+        errorMessageDialog.value = 'Erro ao verificar alunos ou capacidade. Por favor, tente novamente.';
+        showMessageErrorDialog.value = true;
+        setTimeout(() => {
+            errorMessageDialog.value = null;
+            showMessageErrorDialog.value = false;
+        }, 3000);
     }
 }
 
@@ -710,32 +845,83 @@ function confirmAddStudents() {
     modalMessageStudents.value = '';
 }
 
-function addSelectedStudents() {
-    // Add selected students to the shift
-    selectedStudents.value.forEach(student => {
-        // Check if student is not already in the shift
-        if (!students.value.some(s => s.id === student.id)) {
-        students.value.push(student)
-        }
-    })
+async function addSelectedStudents() {
+    try {
+        const allAllocations = await getAllAllocations();
+        const shifts = await getShiftsByCourse(shift.value.courseId);
+        const lastId = allAllocations.reduce((maxId: number, allocation: any) => Math.max(maxId, Number(allocation.id)), 0);
 
-    // Clear selection and close dialog
-    selectedStudents.value = []
-    showAddStudentsDialog.value = false
-    searchQuery.value = ''
-    showInfoTooltip.value = false
+        await Promise.all(
+            selectedStudents.value.map(async (student, index) => {
+                const allocationInAnotherShift = allAllocations.find((allocation: any) => {
+                    const isSameStudent = allocation.studentId === student.id;
+                    const isInAnotherShiftOfSameType = shifts.some(
+                        (s: any) =>
+                            s.id === String(allocation.shiftId) &&
+                            s.type === shift.value.type &&
+                            s.id !== String(shift.value.id)
+                    );
+                    return isSameStudent && isInAnotherShiftOfSameType;
+                });
 
-    showModalSucess.value = false;
-    nextTick(() => {
-      modalMessageSuccess.value = 'Alunos adicionados com sucesso!';
-      showModalSucess.value = true;
-    });
+                if (allocationInAnotherShift) {
+                    console.log(`Removendo aluno ${student.name} do turno antigo.`);
+
+                    // Removing the allocation
+                    await deleteAllocation(allocationInAnotherShift.id);
+
+                    // Update the total students in the old shift
+                    const oldShift = shifts.find((s: any) => String(s.id) === String(allocationInAnotherShift.shiftId));
+                    if (oldShift) {
+                        await updateShiftTotalStudents(oldShift.id, oldShift.totalStudentsRegistered - 1);
+                    }
+                }
+
+                // Adding the student to the current shift
+                if (!students.value.some(s => s.id === student.id)) {
+                    await createAllocation({
+                        id: String(lastId + index + 1),
+                        studentId: student.id,
+                        shiftId: Number(shift.value.id),
+                    });
+
+                    students.value.push(student);
+
+                    // Update student total in the shift
+                    await updateShiftTotalStudents(shift.value.id, shift.value.totalStudentsRegistered + 1);
+                }
+            })
+        );
+
+        // Clear selection and close the dialog
+        selectedStudents.value = [];
+        showAddStudentsDialog.value = false;
+        searchQuery.value = '';
+        showInfoTooltip.value = false;
+
+        // Reload data to reflect changes
+        await loadData();
+
+        // Show success message
+        showModalSucess.value = false;
+        nextTick(() => {
+            modalMessageSuccess.value = 'Alunos adicionados com sucesso!';
+            showModalSucess.value = true;
+        });
+    } catch (error) {
+        console.error('Erro ao adicionar alunos:', error);
+        errorMessage.value = 'Erro ao adicionar os alunos. Por favor, tente novamente.';
+        showMessageError.value = true;
+    }
 }
 
 function nextTick(callback: () => void) {
-  vueNextTick(callback);
+    vueNextTick(callback);
 }
 
+onMounted(() => {
+    loadData();
+});
 </script>
 
 <style scoped>

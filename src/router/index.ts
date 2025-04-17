@@ -56,7 +56,7 @@ const router = createRouter({
       component: AssignScheduleView,
     },
     {
-      path: "/shifts/:idShift",
+      path: "/shifts/:idUC/:idShift",
       name: "shift",
       component: ShiftEditView,
     },

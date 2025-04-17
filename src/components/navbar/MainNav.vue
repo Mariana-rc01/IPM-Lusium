@@ -39,7 +39,7 @@ const toggleRole = () => {
   const newRole = userRole.value === 'student' ? 'diretor' : 'student'
   userRole.value = newRole
   localStorage.setItem('userRole', newRole)
-  
+
   if (newRole === 'student') {
     router.push('/aluno')
   } else {
@@ -59,7 +59,7 @@ const toggleRole = () => {
       >
         {{ link.label }}
       </a>
-      
+
       <DropdownMenu v-if="userRole === 'diretor'">
         <DropdownMenuTrigger class="text-sm font-medium text-black transition-colors hover:text-primary">
           Alunos
@@ -74,7 +74,7 @@ const toggleRole = () => {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      
+
       <a
         v-for="link in links.slice(3)"
         :key="link.href"
