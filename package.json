@@ -19,6 +19,7 @@
     "clsx": "^2.1.1",
     "json-server": "^1.0.0-beta.3",
     "lucide-vue-next": "^0.475.0",
+    "pinia": "^3.0.2",
     "radix-vue": "^1.9.15",
     "reka-ui": "^2.2.0",
     "shadcn": "^2.4.0-canary.17",

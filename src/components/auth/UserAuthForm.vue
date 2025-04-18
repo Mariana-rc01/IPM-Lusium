@@ -1,35 +1,46 @@
 <script setup lang="ts">
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { ref } from 'vue'
-import ErrorAlert from '@/components/popup/ErrorAlert.vue'
-import { useRouter } from 'vue-router'
+import { useRouter } from 'vue-router';
+import { useUserStore } from '../../stores/user';
+import { ref } from 'vue';
+import { authenticateUser } from '@/api/api';
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import ErrorAlert from '@/components/popup/ErrorAlert.vue';
 
-const router = useRouter()
-const isLoading = ref(false)
-const errorMessage = ref<string | null>(null)
-const username = ref('')
-const password = ref('')
+const router = useRouter();
+const isLoading = ref(false);
+const errorMessage = ref<string | null>(null);
+const userId = ref('');
+const password = ref('');
 
 async function onSubmit(event: Event) {
-    event.preventDefault()
-    isLoading.value = true
-    errorMessage.value = null
+  event.preventDefault();
+  isLoading.value = true;
+  errorMessage.value = null;
 
-    // TODO
-    if (!username.value || !password.value) {
-        errorMessage.value = 'Credenciais inválidas! Por favor, introduza um nome de utilizador e uma palavra-passe válidos.'
-        isLoading.value = false
-        return
-    }
+  if (!userId.value || !password.value) {
+    errorMessage.value = 'Credenciais inválidas! Por favor, introduza um ID e uma palavra-passe válidos.';
+    isLoading.value = false;
+    return;
+  }
 
-    // TODO
-    setTimeout(() => {
-        isLoading.value = false
-        router.push('/aluno')
-    }, 500)
+  try {
+    // Authenticate user using the API
+    const user = await authenticateUser(userId.value, password.value);
+
+    // Store the user state globally
+    const userStore = useUserStore();
+    userStore.setUser(user);
+
+    // Redirect based on the user type
+    router.push('/home');
+  } catch (error: any) {
+    console.error('Erro na autenticação:', error);
+    errorMessage.value = error.message || 'Erro ao iniciar sessão. Por favor, tente novamente mais tarde.';
+  } finally {
+    isLoading.value = false;
+  }
 }
 </script>
 
@@ -38,7 +49,7 @@ async function onSubmit(event: Event) {
         <form @submit="onSubmit">
             <div class="grid gap-4">
                 <div class="grid gap-2">
-                    <Input id="username" v-model="username" placeholder="Introduza o seu nome de utilizador"
+                    <Input id="userId" v-model="userId" placeholder="Introduza o seu nome de utilizador"
                         type="text" :disabled="isLoading"
                         class="bg-zinc-50 border-zinc-300 text-zinc-500 placeholder:text-zinc-400 focus-visible:ring-[#059669]"/>
                 </div>

@@ -17,15 +17,15 @@ const router = useRouter()
 
 const links = computed(() => {
   const commonLinks = [
-    { href: '/homepage', label: 'Home Page' },
-    { href: '/unidadescurriculares', label: 'Unidades Curriculares' },
-    { href: '/pedidos', label: 'Pedidos' }
+    { href: '/home', label: 'Home Page' },
+    { href: '/courses', label: 'Unidades Curriculares' },
+    { href: '/tickets', label: 'Pedidos' }
   ]
 
   if (userRole.value === 'diretor') {
     return [
       ...commonLinks,
-      { href: '/salas', label: 'Salas' }
+      { href: '/classrooms', label: 'Salas' }
     ]
   } else {
     return [
@@ -39,7 +39,7 @@ const toggleRole = () => {
   const newRole = userRole.value === 'student' ? 'diretor' : 'student'
   userRole.value = newRole
   localStorage.setItem('userRole', newRole)
-  
+
   if (newRole === 'student') {
     router.push('/aluno')
   } else {
@@ -59,22 +59,22 @@ const toggleRole = () => {
       >
         {{ link.label }}
       </a>
-      
+
       <DropdownMenu v-if="userRole === 'diretor'">
         <DropdownMenuTrigger class="text-sm font-medium text-black transition-colors hover:text-primary">
           Alunos
         </DropdownMenuTrigger>
         <DropdownMenuContent class="w-56" align="end">
           <DropdownMenuItem as-child>
-            <a href="/alunos" class="w-full text-black">Todos os alunos</a>
+            <a href="/students" class="w-full text-black">Todos os alunos</a>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem as-child>
-            <a href="/alunos/nao-alocados" class="w-full text-black">Alunos não alocados</a>
+            <a href="/students/non-allocated" class="w-full text-black">Alunos não alocados</a>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      
+
       <a
         v-for="link in links.slice(3)"
         :key="link.href"

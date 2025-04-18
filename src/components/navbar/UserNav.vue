@@ -11,6 +11,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { useUserStore } from '@/stores/user'
+import { useRouter } from 'vue-router'
+
+const userStore = useUserStore()
+const router = useRouter()
+
+function logout() {
+  userStore.clearUser()
+  router.push('/login')
+}
 </script>
 
 <template>
@@ -28,7 +38,7 @@ import {
         <a href="/profile">Perfil</a>
       </DropdownMenuItem>
       <DropdownMenuSeparator />
-      <DropdownMenuItem>
+      <DropdownMenuItem @click="logout">
         Terminar Sessão
       </DropdownMenuItem>
     </DropdownMenuContent>

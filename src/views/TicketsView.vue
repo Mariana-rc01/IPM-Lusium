@@ -179,6 +179,7 @@ import {
 } from '@/components/ui/select'
 
 import * as api from '../api/api'
+import { useUserStore } from '@/stores/user'
 
 interface Pedido {
   codigo: string
@@ -275,8 +276,16 @@ export default {
     }
   },
   async mounted() {
-    const userType = 'student'  // [MARIANA-TODO] Deve vir do estado da sessão
-    const id = 1                // [MARIANA-TODO] Deve vir do estado da sessão
+    const userStore = useUserStore()
+    const user = userStore.user
+
+    if (!user) {
+      console.warn('Unexpected error: User not found in store')
+      return
+    }
+
+    const userType = user.type // 'student', 'teacher', or 'director'
+    const id = user.id
 
     let result: Pedido[] = []
     switch (userType) {

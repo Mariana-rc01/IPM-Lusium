@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+import { useUserStore } from "@/stores/user";
 import LoginView from "@/views/LoginView.vue";
 import StudentView from "@/views/StudentView.vue";
 import TeacherView from "@/views/TeacherView.vue";
@@ -50,12 +51,12 @@ const router = createRouter({
       component: StudentsView,
     },
     {
-      path: "/alocar-horario",
+      path: "/allocate/:idStudent",
       name: "allocate-schedule",
       component: AssignScheduleView,
     },
     {
-      path: "/turnos",
+      path: "/shifts/:idUC/:idShift",
       name: "shift",
       component: ShiftEditView,
     },
@@ -80,6 +81,15 @@ const router = createRouter({
       component: NonAllocatedStudentsView,
     },
   ],
+});
+
+router.beforeEach((to, from, next) => {
+    const userStore = useUserStore();
+    if (!userStore.user && to.name !== "login") {
+        next({ name: "login" });
+    } else {
+        next();
+    }
 });
 
 export default router;
