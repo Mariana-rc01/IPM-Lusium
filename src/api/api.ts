@@ -15,7 +15,16 @@ const API = axios.create({
 // -----------------------
 
 export async function authenticateUser(userId: string, password: string) {
-  const response = await axios.get('/db/db.json');
+  const response = await Promise.all([API.get('/students'),
+                                      API.get('/teachers'),
+                                      API.get('/directors'),
+  ]).then(([studentsResponse, teachersResponse, directorsResponse]) => ({
+    data: {
+      students: studentsResponse.data,
+      teachers: teachersResponse.data,
+      directors: directorsResponse.data,
+    },
+  }));
   const data = response.data;
 
   let user = null;
