@@ -54,7 +54,7 @@ const toggleRole = () => {
 </script>
 
 <template>
-  <nav :class="cn('flex items-center justify-between w-full px-4 py-2', $attrs.class ?? '')">
+  <nav :class="cn('flex items-center justify-between w-full border-none', $attrs.class ?? '')">
     <div class="flex items-center space-x-4 lg:space-x-6">
       <button 
         @click="sidebar.toggle" 
