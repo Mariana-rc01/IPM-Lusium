@@ -1,58 +1,71 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { cn } from '@/lib/utils'
-import UserNav from './UserNav.vue'
-import { useRouter } from 'vue-router'
+import { ref, computed, inject } from 'vue';
+import UserNav from './UserNav.vue';
+import { Menu } from 'lucide-vue-next';
+import { useRouter } from 'vue-router';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuSeparator
-} from '@/components/ui/dropdown-menu'
+} from '@/components/ui/dropdown-menu';
 
-const initialRole = localStorage.getItem('userRole') || 'student';
-const userRole = ref(initialRole)
-const router = useRouter()
+const storedRole = localStorage.getItem('userRole') || 'student';
+const userRole = ref(storedRole);
+const router = useRouter();
+
+const sidebar = inject('sidebar', {
+  isOpen: ref(false),
+  toggle: () => {}
+});
 
 const links = computed(() => {
   const commonLinks = [
     { href: '/homepage', label: 'Home Page' },
     { href: '/unidadescurriculares', label: 'Unidades Curriculares' },
     { href: '/pedidos', label: 'Pedidos' }
-  ]
+  ];
 
   if (userRole.value === 'diretor') {
     return [
       ...commonLinks,
       { href: '/salas', label: 'Salas' }
-    ]
+    ];
   } else {
     return [
       ...commonLinks,
       { href: '/horario', label: 'Horário' }
-    ]
+    ];
   }
-})
+});
 
 const toggleRole = () => {
-  const newRole = userRole.value === 'student' ? 'diretor' : 'student'
-  userRole.value = newRole
-  localStorage.setItem('userRole', newRole)
+  const newRole = userRole.value === 'student' ? 'diretor' : 'student';
+  userRole.value = newRole;
+  localStorage.setItem('userRole', newRole);
   
   if (newRole === 'student') {
-    router.push('/aluno')
+    router.push('/aluno');
   } else {
-    router.push('/docente')
+    router.push('/docente');
   }
-}
+};
 </script>
 
 <template>
-  <nav :class="cn('flex items-center justify-between w-full border-none', $attrs.class ?? '')">
-    <div class="flex items-center space-x-4 lg:space-x-6">
+  <nav class="bg-white flex items-center justify-between px-4 h-full">
+    <div class="flex items-center space-x-6">
+      <button 
+        @click="sidebar.toggle" 
+        class="p-1 rounded-md hover:bg-gray-100 transition-colors focus:outline-none"
+        aria-label="Abrir menu de pedidos"
+      >
+        <Menu class="h-6 w-6" />
+      </button>
+      
       <a
-        v-for="(link, index) in links.slice(0, 3)"
+        v-for="link in links"
         :key="link.href"
         :href="link.href"
         class="text-sm font-medium text-black transition-colors hover:text-primary"
@@ -74,16 +87,8 @@ const toggleRole = () => {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      
-      <a
-        v-for="link in links.slice(3)"
-        :key="link.href"
-        :href="link.href"
-        class="text-sm font-medium text-black transition-colors hover:text-primary"
-      >
-        {{ link.label }}
-      </a>
     </div>
+    
     <div class="flex items-center space-x-4">
       <button
         @click="toggleRole"
