@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, provide } from 'vue';
-import Navbar from './components/navbar/MainNav.vue';
+import Navbar from './components/navbar/Navbar.vue';
 import SideBar from './components/sidebar/SideBar.vue';
 
 const sidebarOpen = ref(false);
@@ -12,7 +12,7 @@ provide('sidebar', {
 </script>
 
 <template>
-  <div class="min-h-screen bg-white flex">
+  <div class="min-h-screen bg-white">
     <SideBar :isOpen="sidebarOpen" @update:isOpen="sidebarOpen = $event" />
     
     <div 
@@ -22,9 +22,15 @@ provide('sidebar', {
         width: sidebarOpen ? 'calc(100% - 320px)' : '100%'
       }"
     >
-      <Navbar class="h-14 border-b border-gray-200 sticky top-0 z-10 bg-white" />
+      <div class="fixed top-0 left-0 right-0 z-10 bg-white border-b border-gray-200 transition-all duration-300 ease-in-out"
+           :style="{ 
+             marginLeft: sidebarOpen ? '320px' : '0', 
+             width: sidebarOpen ? 'calc(100% - 320px)' : '100%'
+           }">
+        <Navbar />
+      </div>
       
-      <main class="flex-1 overflow-y-auto">
+      <main class="flex-1 overflow-y-auto pt-16">
         <router-view />
       </main>
     </div>

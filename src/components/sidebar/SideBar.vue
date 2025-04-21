@@ -32,11 +32,11 @@ const closeSidebar = () => {
   <div>
     <aside 
       :class="cn(
-        'fixed top-0 left-0 z-30 h-full w-80 bg-white transition-transform duration-300 ease-in-out',
+        'fixed top-0 left-0 z-20 h-full w-80 bg-white transition-transform duration-300 ease-in-out',
         isOpen ? 'translate-x-0 border-r border-gray-200' : '-translate-x-full'
       )"
     >
-      <div class="flex items-center justify-between p-4 border-b h-14">
+      <div class="flex items-center justify-between p-4 border-b mt-16">
         <h2 class="font-semibold text-green-600">Criar um pedido</h2>
         <button 
           @click="closeSidebar"
@@ -47,7 +47,7 @@ const closeSidebar = () => {
         </button>
       </div>
       
-      <div class="p-4 bg-green-50/50 h-[calc(100%-3.5rem)] overflow-y-auto">
+      <div class="p-4 bg-green-50/50 h-[calc(100%-4rem-4rem)] overflow-y-auto">
         <p class="text-sm text-green-600 mb-4">Este pedido será comunicado ao diretor de curso</p>
         
         <div class="space-y-4">
