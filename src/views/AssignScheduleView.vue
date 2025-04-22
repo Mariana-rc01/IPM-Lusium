@@ -264,6 +264,28 @@ const validateSchedule = (): { valid: boolean; issues: string[] } => {
     }
   }
 
+  // Check for overlapping schedules
+  const allSelectedShifts = availableCourses.value.flatMap(course =>
+    course.turnos.filter(t => selectedShifts.value.includes(t.id))
+  );
+
+  for (let i = 0; i < allSelectedShifts.length; i++) {
+    for (let j = i + 1; j < allSelectedShifts.length; j++) {
+      const shiftA = allSelectedShifts[i];
+      const shiftB = allSelectedShifts[j];
+
+      if (
+        shiftA.day === shiftB.day &&
+        shiftA.startHour < shiftB.endHour &&
+        shiftA.endHour > shiftB.startHour
+      ) {
+        issues.push(
+          `Conflito de horário entre ${shiftA.name} e ${shiftB.name}`
+        );
+      }
+    }
+  }
+
   return {
     valid: issues.length === 0,
     issues,

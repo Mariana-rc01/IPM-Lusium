@@ -1842,7 +1842,7 @@
       "from": "11:00",
       "to": "13:00",
       "teacherId": 2,
-      "totalStudentsRegistered": 26
+      "totalStudentsRegistered": 27
     },
     {
       "id": "23",
@@ -7813,56 +7813,6 @@
       "studentId": "a89"
     },
     {
-      "id": "1069",
-      "studentId": "a1",
-      "shiftId": 5
-    },
-    {
-      "id": "1071",
-      "studentId": "a1",
-      "shiftId": 27
-    },
-    {
-      "id": "1076",
-      "studentId": "a1",
-      "shiftId": 11
-    },
-    {
-      "id": "1070",
-      "studentId": "a1",
-      "shiftId": 17
-    },
-    {
-      "id": "1077",
-      "studentId": "a1",
-      "shiftId": 39
-    },
-    {
-      "id": "1078",
-      "studentId": "a1",
-      "shiftId": 1
-    },
-    {
-      "id": "1075",
-      "studentId": "a1",
-      "shiftId": 34
-    },
-    {
-      "id": "1072",
-      "studentId": "a1",
-      "shiftId": 41
-    },
-    {
-      "id": "1073",
-      "studentId": "a1",
-      "shiftId": 31
-    },
-    {
-      "id": "1074",
-      "studentId": "a1",
-      "shiftId": 48
-    },
-    {
       "id": "1081",
       "studentId": "a37",
       "shiftId": 62
@@ -7941,6 +7891,61 @@
       "id": "1094",
       "studentId": "a37",
       "shiftId": 156
+    },
+    {
+      "id": "1096",
+      "studentId": "a1",
+      "shiftId": 41
+    },
+    {
+      "id": "1097",
+      "studentId": "a1",
+      "shiftId": 34
+    },
+    {
+      "id": "1102",
+      "studentId": "a1",
+      "shiftId": 31
+    },
+    {
+      "id": "1104",
+      "studentId": "a1",
+      "shiftId": 5
+    },
+    {
+      "id": "1101",
+      "studentId": "a1",
+      "shiftId": 1
+    },
+    {
+      "id": "1103",
+      "studentId": "a1",
+      "shiftId": 22
+    },
+    {
+      "id": "1105",
+      "studentId": "a1",
+      "shiftId": 17
+    },
+    {
+      "id": "1100",
+      "studentId": "a1",
+      "shiftId": 39
+    },
+    {
+      "id": "1098",
+      "studentId": "a1",
+      "shiftId": 48
+    },
+    {
+      "id": "1099",
+      "studentId": "a1",
+      "shiftId": 27
+    },
+    {
+      "id": "1095",
+      "studentId": "a1",
+      "shiftId": 11
     }
   ],
   "noAllocations": [
