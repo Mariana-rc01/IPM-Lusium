@@ -7888,11 +7888,6 @@
       "shiftId": 61
     },
     {
-      "id": "1094",
-      "studentId": "a37",
-      "shiftId": 156
-    },
-    {
       "id": "1095",
       "studentId": "a1",
       "shiftId": 41
@@ -7946,6 +7941,11 @@
       "id": "1101",
       "studentId": "a1",
       "shiftId": 17
+    },
+    {
+      "id": "1106",
+      "studentId": "a37",
+      "shiftId": 156
     }
   ],
   "noAllocations": [
