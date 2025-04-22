@@ -7893,59 +7893,59 @@
       "shiftId": 156
     },
     {
-      "id": "1096",
+      "id": "1095",
       "studentId": "a1",
       "shiftId": 41
     },
     {
       "id": "1097",
       "studentId": "a1",
+      "shiftId": 31
+    },
+    {
+      "id": "1098",
+      "studentId": "a1",
+      "shiftId": 5
+    },
+    {
+      "id": "1099",
+      "studentId": "a1",
+      "shiftId": 1
+    },
+    {
+      "id": "1100",
+      "studentId": "a1",
+      "shiftId": 22
+    },
+    {
+      "id": "1096",
+      "studentId": "a1",
       "shiftId": 34
     },
     {
       "id": "1102",
       "studentId": "a1",
-      "shiftId": 31
-    },
-    {
-      "id": "1104",
-      "studentId": "a1",
-      "shiftId": 5
-    },
-    {
-      "id": "1101",
-      "studentId": "a1",
-      "shiftId": 1
+      "shiftId": 39
     },
     {
       "id": "1103",
       "studentId": "a1",
-      "shiftId": 22
-    },
-    {
-      "id": "1105",
-      "studentId": "a1",
-      "shiftId": 17
-    },
-    {
-      "id": "1100",
-      "studentId": "a1",
-      "shiftId": 39
-    },
-    {
-      "id": "1098",
-      "studentId": "a1",
       "shiftId": 48
     },
     {
-      "id": "1099",
+      "id": "1104",
       "studentId": "a1",
       "shiftId": 27
     },
     {
-      "id": "1095",
+      "id": "1105",
       "studentId": "a1",
       "shiftId": 11
+    },
+    {
+      "id": "1101",
+      "studentId": "a1",
+      "shiftId": 17
     }
   ],
   "noAllocations": [
