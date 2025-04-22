@@ -68,19 +68,27 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+<script lang="ts">
+import { defineComponent } from 'vue';
 import { useRoute } from 'vue-router';
-import { nextTick as vueNextTick } from 'vue';
 import Timetable from '../components/Timetable.vue';
 import { ScrollArea } from '../components/ui/scroll-area';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import ConfirmModal from '@/components/popup/ConfirmModal.vue';
 import SuccessAlert from '@/components/popup/SuccessAlert.vue';
-import { getAllocationsByStudentId, deleteAllocation, createAllocation, getShiftById,
-  updateShiftTotalStudents, getAllAllocations, getStudentById, getStudentAllocations,
-  getAvailableCourses, addStudentToNoAllocations } from '@/api/api';
+import {
+  getAllocationsByStudentId,
+  deleteAllocation,
+  createAllocation,
+  getShiftById,
+  updateShiftTotalStudents,
+  getAllAllocations,
+  getStudentById,
+  getStudentAllocations,
+  getAvailableCourses,
+  addStudentToNoAllocations
+} from '@/api/api';
 
 interface ClassBlock {
   id: string;
@@ -102,179 +110,194 @@ interface Course {
   turnos: ClassBlock[];
 }
 
-const route = useRoute();
-const studentId = ref<string>(route.params.idStudent as string);
-const enrolledCourses = ref<string[]>([]);
-const allocations = ref<string[]>([]);
-
-const showModal = ref(false);
-const modalMessage = ref('');
-
-const showModalSucess = ref(false);
-const modalMessageSuccess = ref<string | null>(null);
-
-const availableCourses = ref<Course[]>([]);
-const selectedShifts = ref<string[]>([]);
-const expandedUCs = ref<string[]>([]);
-
-const selectedBlocks = computed<ClassBlock[]>(() =>
-  availableCourses.value.flatMap(course =>
-    course.turnos
-      .filter(turno => selectedShifts.value.includes(turno.id))
-      .map(turno => ({ ...turno, name: `${course.uc} - ${turno.name}` }))
-  )
-);
-
-const toggleUC = (uc: string) => {
-  const index = expandedUCs.value.indexOf(uc);
-  if (index > -1) {
-    expandedUCs.value.splice(index, 1);
-  } else {
-    expandedUCs.value.push(uc);
-  }
-};
-
-const updateSelection = (checked: boolean, shiftId: string) => {
-  if (checked) {
-    selectedShifts.value.push(shiftId);
-  } else {
-    selectedShifts.value = selectedShifts.value.filter(id => id !== shiftId);
-  }
-};
-
-const loadStudentData = async () => {
-  try {
-    const student = await getStudentById(studentId.value);
-    enrolledCourses.value = student.enrolled;
-
-    allocations.value = await getStudentAllocations(studentId.value);
-    availableCourses.value = await getAvailableCourses(enrolledCourses.value);
-
-    // Pre-select the already allocated shifts
-    selectedShifts.value = allocations.value;
-
-    console.log('Available Courses:', availableCourses.value);
-    console.log('Allocations:', allocations.value);
-  } catch (error) {
-    console.error('Erro ao carregar dados:', (error as any).message);
-  }
-};
-
-// Update the database after saving the schedule
-const saveSchedule = async () => {
-  try {
-    const oldAllocations = await getAllocationsByStudentId(studentId.value);
-
-    await Promise.all(
-      oldAllocations.map(async (allocation: any) => {
-        const shift = await getShiftById(allocation.shiftId);
-        await updateShiftTotalStudents(allocation.shiftId, Math.max(0, shift.totalStudentsRegistered - 1));
-
-        await deleteAllocation(allocation.id);
-      })
-    );
-
-    if (selectedShifts.value.length === 0) {
-      await addStudentToNoAllocations(studentId.value);
-
-      showModalSucess.value = false;
-      nextTick(() => {
-        modalMessageSuccess.value = 'Nenhum turno selecionado. O aluno foi adicionado à lista de não alocados.';
-        showModalSucess.value = true;
-        loadStudentData();
-      });
-      return;
+export default defineComponent({
+  components: {
+    Timetable,
+    ScrollArea,
+    Checkbox,
+    Button,
+    ConfirmModal,
+    SuccessAlert
+  },
+  data() {
+    return {
+      studentId: '' as string,
+      enrolledCourses: [] as string[],
+      allocations: [] as string[],
+      showModal: false,
+      modalMessage: '',
+      showModalSucess: false,
+      modalMessageSuccess: null as string | null,
+      availableCourses: [] as Course[],
+      selectedShifts: [] as string[],
+      expandedUCs: [] as string[],
     }
+  },
+  computed: {
+    selectedBlocks(): ClassBlock[] {
+      return this.availableCourses.flatMap(course =>
+        course.turnos
+          .filter(turno => this.selectedShifts.includes(turno.id))
+          .map(turno => ({ ...turno, name: `${course.uc} - ${turno.name }`}))
+      );
+    }
+  },
+  methods: {
+    toggleUC(uc: string) {
+      const index = this.expandedUCs.indexOf(uc);
+      if (index > -1) {
+        this.expandedUCs.splice(index, 1);
+      } else {
+        this.expandedUCs.push(uc);
+      }
+    },
+    updateSelection(checked: boolean, shiftId: string) {
+      if (checked) {
+        this.selectedShifts.push(shiftId);
+      } else {
+        this.selectedShifts = this.selectedShifts.filter(id => id !== shiftId);
+      }
+    },
+    async loadStudentData() {
+      try {
+        const route = useRoute();
+        this.studentId = route.params.idStudent as string;
 
-    const allAllocations = await getAllAllocations();
-    const lastId = allAllocations.reduce((maxId: number, allocation: any) => Math.max(maxId, Number(allocation.id)), 0);
+        const student = await getStudentById(this.studentId);
+        this.enrolledCourses = student.enrolled;
 
-    await Promise.all(
-      selectedShifts.value.map(async (shiftId, index) => {
-        const shift = await getShiftById(shiftId);
-        await updateShiftTotalStudents(shiftId, shift.totalStudentsRegistered + 1);
+        this.allocations = await getStudentAllocations(this.studentId);
+        this.availableCourses = await getAvailableCourses(this.enrolledCourses);
 
-        await createAllocation({
-          id: String(lastId + index + 1),
-          studentId: studentId.value,
-          shiftId: Number(shiftId),
+        this.selectedShifts = this.allocations;
+      } catch (error) {
+        console.error('Erro ao carregar dados:', (error as any).message);
+      }
+    },
+    async saveSchedule() {
+      try {
+        const oldAllocations = await getAllocationsByStudentId(this.studentId);
+
+        await Promise.all(
+          oldAllocations.map(async (allocation: any) => {
+            const shift = await getShiftById(allocation.shiftId);
+            await updateShiftTotalStudents(allocation.shiftId, Math.max(0, shift.totalStudentsRegistered - 1));
+            await deleteAllocation(allocation.id);
+          })
+        );
+
+        if (this.selectedShifts.length === 0) {
+          await addStudentToNoAllocations(this.studentId);
+
+          this.showModalSucess = false;
+          this.nextTick(() => {
+            this.modalMessageSuccess = 'Nenhum turno selecionado. O aluno foi adicionado à lista de não alocados.';
+            this.showModalSucess = true;
+            this.loadStudentData();
+          });
+          return;
+        }
+
+        const allAllocations = await getAllAllocations();
+        const lastId = allAllocations.reduce((maxId: number, allocation: any) => Math.max(maxId, Number(allocation.id)), 0);
+
+        await Promise.all(
+          this.selectedShifts.map(async (shiftId, index) => {
+            const shift = await getShiftById(shiftId);
+            await updateShiftTotalStudents(shiftId, shift.totalStudentsRegistered + 1);
+
+            await createAllocation({
+              id: String(lastId + index + 1),
+              studentId: this.studentId,
+              shiftId: Number(shiftId),
+            });
+          })
+        );
+
+        this.showModalSucess = false;
+        this.nextTick(() => {
+          this.modalMessageSuccess = 'Horário atualizado com sucesso!';
+          this.showModalSucess = true;
+          this.loadStudentData();
         });
-      })
-    );
+      } catch (error) {
+        console.error('Erro ao salvar horário:', error);
+        this.modalMessage = 'Erro ao atualizar o horário';
+        this.showModal = true;
+      }
+    },
+    handleCancel() {
+      console.log('Action canceled!');
+      this.showModal = false;
+      this.modalMessage = '';
+    },
+    handleConfirm() {
+      console.log('Action confirmed!');
+      console.log('Assign schedule:', this.selectedBlocks);
+      this.showModal = false;
+      this.modalMessage = '';
+    },
+    AssignSchedule() {
+      const validation = this.validateSchedule();
 
-    showModalSucess.value = false;
-    nextTick(() => {
-      modalMessageSuccess.value = 'Horário atualizado com sucesso!';
-      showModalSucess.value = true;
-      loadStudentData();
-    });
-  } catch (error) {
-    console.error('Erro ao salvar horário:', error);
-    modalMessage.value = 'Erro ao atualizar o horário';
-    showModal.value = true;
-  }
-};
+      if (!validation.valid) {
+        this.modalMessage = `Erros:\n${validation.issues.join('. ')}`;
+        this.showModal = true;
+        return;
+      }
 
-function handleCancel() {
-  console.log('Action canceled!');
-  showModal.value = false;
-  // Resets the modal message
-  modalMessage.value = '';
-}
+      this.saveSchedule();
+    },
+    validateSchedule(): { valid: boolean; issues: string[] } {
+      const issues: string[] = [];
 
-const handleConfirm = () => {
-  console.log('Action confirmed!');
-  // Logs the allocated blocks
-  console.log('Assign schedule:', selectedBlocks.value);
-  showModal.value = false;
-  // Resets the modal message
-  modalMessage.value = '';
-};
+      for (const course of this.availableCourses) {
+        const selected = course.turnos.filter(t =>
+          this.selectedShifts.includes(t.id)
+        );
+        const theoreticals = selected.filter(t => t.type === 'T');
+        const praticals = selected.filter(t => t.type === 'PL');
 
-const AssignSchedule = () => {
-  const validation = validateSchedule();
+        if (theoreticals.length > 1) {
+          issues.push(`Mais de um turno teórico selecionado para ${course.uc}`);
+        }
+        if (praticals.length > 1) {
+          issues.push(`Mais de um turno prático selecionado para ${course.uc}`);
+        }
+        if (theoreticals.length + praticals.length < 2 && course.uc !== 'LI2') {
+          issues.push(`Faltam turnos para ${course.uc}`);
+        }
+      }
 
-  if (!validation.valid) {
-    modalMessage.value = `Erros:\n${validation.issues.join('. ')}`;
-    showModal.value = true;
-    return;
-  }
+      const allSelectedShifts = this.availableCourses.flatMap(course =>
+        course.turnos.filter(t => this.selectedShifts.includes(t.id))
+      );
 
-  saveSchedule();
-};
+      for (let i = 0; i < allSelectedShifts.length; i++) {
+        for (let j = i + 1; j < allSelectedShifts.length; j++) {
+          const shiftA = allSelectedShifts[i];
+          const shiftB = allSelectedShifts[j];
 
-const validateSchedule = (): { valid: boolean; issues: string[] } => {
-  const issues: string[] = [];
+          if (
+            shiftA.day === shiftB.day &&
+            shiftA.startHour < shiftB.endHour &&
+            shiftA.endHour > shiftB.startHour
+          ) {
+            issues.push(
+              `Conflito de horário entre ${shiftA.name} e ${shiftB.name}`
+            );
+          }
+        }
+      }
 
-  for (const course of availableCourses.value) {
-    const selected = course.turnos.filter(t =>
-      selectedShifts.value.includes(t.id)
-    );
-    const theoreticals = selected.filter(t => t.type === 'T');
-    const praticals = selected.filter(t => t.type === 'PL');
-    console.log('Practical:', praticals);
-    if (theoreticals.length > 1) {
-      issues.push(`Mais de um turno teórico selecionado para ${course.uc}`);
+      return { valid: issues.length === 0, issues };
+    },
+    nextTick(callback: () => void) {
+      (this as any).$nextTick(callback);
     }
-    if (praticals.length > 1) {
-      issues.push(`Mais de um turno prático selecionado para ${course.uc}`);
-    }
-    if (theoreticals.length + praticals.length < 2 && course.uc !== 'LI2') {
-      issues.push(`Faltam turnos para ${course.uc}`);
-    }
+  },
+  mounted() {
+    this.loadStudentData();
   }
-
-  return {
-    valid: issues.length === 0,
-    issues,
-  };
-};
-
-onMounted(() => {
-  loadStudentData();
 });
-
-function nextTick(callback: () => void) {
-  vueNextTick(callback);
-}
 </script>
