@@ -370,557 +370,497 @@
     </div>
 </template>
 
-<script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { nextTick as vueNextTick } from 'vue';
-import {ChevronLeftIcon, ChevronRightIcon, ChevronsLeftIcon, ChevronsRightIcon, ChevronsUpDownIcon,
-Trash2, BriefcaseIcon, DumbbellIcon, InfoIcon} from 'lucide-vue-next'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Checkbox } from '@/components/ui/checkbox'
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select'
-import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs'
-import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle} from '@/components/ui/dialog'
-import SuccessAlert from '@/components/popup/SuccessAlert.vue'
-import ConfirmModal from '@/components/popup/ConfirmModal.vue'
-import ErrorAlert from '@/components/popup/ErrorAlert.vue'
-import { getAllAllocations, getStudentById, getAvailableRooms, getStudents, getAllUCs,
-  getShiftsByCourse, getRoomByShiftId, updateShiftRoom, deleteAllocation, createAllocation,
-  updateShiftTotalStudents } from '@/api/api';
-import { useRoute } from 'vue-router';
+<script lang="ts">
+import { defineComponent } from 'vue';
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronsLeftIcon,
+  ChevronsRightIcon,
+  ChevronsUpDownIcon,
+  Trash2,
+  BriefcaseIcon,
+  DumbbellIcon,
+  InfoIcon
+} from 'lucide-vue-next';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import SuccessAlert from '@/components/popup/SuccessAlert.vue';
+import ConfirmModal from '@/components/popup/ConfirmModal.vue';
+import ErrorAlert from '@/components/popup/ErrorAlert.vue';
+import {
+  getAllAllocations,
+  getStudentById,
+  getAvailableRooms,
+  getStudents,
+  getAllUCs,
+  getShiftsByCourse,
+  getRoomByShiftId,
+  updateShiftRoom,
+  deleteAllocation,
+  createAllocation,
+  updateShiftTotalStudents
+} from '@/api/api';
 
 interface Student {
-    id: string
-    name: string
-    status: string
+  id: string;
+  name: string;
+  status: string;
 }
 
 interface Room {
-    id: string
-    name: string
-    capacity: number
+  id: string;
+  name: string;
+  capacity: number;
 }
 
 interface Shift {
-    id: string
-    courseId: string
-    name: string
-    horario: string
-    classroomId: string
-    totalStudentsRegistered: number
-    capacity: number
-    type: string
+  id: string;
+  courseId: string;
+  name: string;
+  horario: string;
+  classroomId: string;
+  totalStudentsRegistered: number;
+  capacity: number;
+  type: string;
 }
 
-const showModalSucess = ref(false)
-const modalMessageSuccess = ref<string | null>(null)
+export default defineComponent({
+  components: {
+    ChevronLeftIcon,
+    ChevronRightIcon,
+    ChevronsLeftIcon,
+    ChevronsRightIcon,
+    ChevronsUpDownIcon,
+    Trash2,
+    BriefcaseIcon,
+    DumbbellIcon,
+    InfoIcon,
+    Button,
+    Input,
+    Checkbox,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+    Tabs,
+    TabsContent,
+    TabsList,
+    TabsTrigger,
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    SuccessAlert,
+    ConfirmModal,
+    ErrorAlert
+  },
+  data() {
+    return {
+      showModalSucess: false,
+      modalMessageSuccess: null as string | null,
+      students: [] as Student[],
+      availableStudents: [] as Student[],
+      rooms: [] as Room[],
+      shift: {
+        id: '',
+        courseId: '',
+        name: '',
+        horario: '',
+        classroomId: '',
+        totalStudentsRegistered: 0,
+        capacity: 0,
+        type: ' '
+      } as Shift,
+      showModal: false,
+      modalMessage: '',
+      showModalRemoveStudent: false,
+      modalMessageRemoveStudent: '',
+      showModalStudents: false,
+      modalMessageStudents: '',
+      errorMessage: null as string | null,
+      showMessageError: false,
+      errorMessageDialog: null as string | null,
+      showMessageErrorDialog: false,
+      shiftCode: '',
+      ucName: '',
+      studentsPerPage: '10',
+      roomsPerPage: '10',
+      currentStudentPage: 1,
+      currentRoomPage: 1,
+      studentSortColumn: null as 'id' | 'name' | null,
+      studentSortDirection: 'asc' as 'asc' | 'desc',
+      roomSortColumn: null as 'id' | 'capacity' | null,
+      roomSortDirection: 'asc' as 'asc' | 'desc',
+      selectedRoom: '',
+      showAddStudentsDialog: false,
+      searchQuery: '',
+      selectedStudents: [] as Student[],
+      showInfoTooltip: false,
+      selectedStudentToRemove: null as Student | null
+    };
+  },
+  computed: {
+    isOverCapacity(): boolean {
+      return this.students.length > this.shift.capacity;
+    },
+    sortedStudents(): Student[] {
+      let result = [...this.students];
+      if (this.studentSortColumn) {
+        result.sort((a, b) => {
+          const valueA = a[this.studentSortColumn!];
+          const valueB = b[this.studentSortColumn!];
+          if (valueA < valueB) return this.studentSortDirection === 'asc' ? -1 : 1;
+          if (valueA > valueB) return this.studentSortDirection === 'asc' ? 1 : -1;
+          return 0;
+        });
+      }
+      return result;
+    },
+    totalStudentPages(): number {
+      return Math.max(1, Math.ceil(this.sortedStudents.length / parseInt(this.studentsPerPage)));
+    },
+    paginatedStudents(): Student[] {
+      const startIndex = (this.currentStudentPage - 1) * parseInt(this.studentsPerPage);
+      const endIndex = startIndex + parseInt(this.studentsPerPage);
+      return this.sortedStudents.slice(startIndex, endIndex);
+    },
+    sortedRooms(): Room[] {
+      let result = [...this.rooms];
+      if (this.roomSortColumn) {
+        result.sort((a, b) => {
+          const valueA = a[this.roomSortColumn!];
+          const valueB = b[this.roomSortColumn!];
+          if (valueA < valueB) return this.roomSortDirection === 'asc' ? -1 : 1;
+          if (valueA > valueB) return this.roomSortDirection === 'asc' ? 1 : -1;
+          return 0;
+        });
+      }
+      return result;
+    },
+    totalRoomPages(): number {
+      return Math.max(1, Math.ceil(this.sortedRooms.length / parseInt(this.roomsPerPage)));
+    },
+    paginatedRooms(): Room[] {
+      const startIndex = (this.currentRoomPage - 1) * parseInt(this.roomsPerPage);
+      const endIndex = startIndex + parseInt(this.roomsPerPage);
+      return this.sortedRooms.slice(startIndex, endIndex);
+    },
+    filteredAvailableStudents(): Student[] {
+      const notInShift = this.availableStudents.filter(
+        availableStudent => !this.students.some(
+          shiftStudent => shiftStudent.id === availableStudent.id
+        )
+      );
+      const notSelected = notInShift.filter(
+        availableStudent => !this.selectedStudents.some(
+          selectedStudent => selectedStudent.id === availableStudent.id
+        )
+      );
+      if (!this.searchQuery) return [];
+      const query = this.searchQuery.toLowerCase();
+      return notSelected.filter(student =>
+        student.name.toLowerCase().includes(query) ||
+        student.id.toLowerCase().includes(query)
+      );
+    }
+  },
+  methods: {
+    async loadData() {
+      try {
+        this.shiftCode = this.$route.params.idShift as string || '';
+        this.ucName = this.$route.params.idUC as string || '';
 
-const students = ref<Student[]>([])
-const availableStudents = ref<Student[]>([])
-const rooms = ref<Room[]>([])
-
-const shift = ref<Shift>({
-    id: '',
-    courseId: '',
-    name: '',
-    horario: '',
-    classroomId: '',
-    totalStudentsRegistered: 0,
-    capacity: 0,
-    type: ' '
-})
-
-const showModal = ref(false)
-const modalMessage = ref('')
-
-const showModalRemoveStudent = ref(false)
-const modalMessageRemoveStudent = ref('')
-
-const showModalStudents = ref(false)
-const modalMessageStudents = ref('')
-
-const errorMessage = ref<string | null>(null)
-const showMessageError = ref(false)
-
-const errorMessageDialog = ref<string | null>(null)
-const showMessageErrorDialog = ref(false)
-
-const shiftCode = ref('')
-const ucName = ref('')
-
-const studentsPerPage = ref('10')
-const roomsPerPage = ref('10')
-const currentStudentPage = ref(1)
-const currentRoomPage = ref(1)
-const studentSortColumn = ref<'id' | 'name' | null>(null)
-const studentSortDirection = ref<'asc' | 'desc'>('asc')
-const roomSortColumn = ref<'id' | 'capacity' | null>(null)
-const roomSortDirection = ref<'asc' | 'desc'>('asc')
-const selectedRoom = ref('')
-const showAddStudentsDialog = ref(false)
-const searchQuery = ref('')
-const selectedStudents = ref<Student[]>([])
-const showInfoTooltip = ref(false)
-const selectedStudentToRemove = ref<Student | null>(null);
-
-const route = useRoute();
-shiftCode.value = route.params.idShift as string || '';
-ucName.value = route.params.idUC as string || '';
-
-async function loadData() {
-    try {
-        console.log('shiftCode:', shiftCode.value);
-
-        // Get all courses
         const allCourses = await getAllUCs();
-        console.log('Cursos disponíveis:', allCourses);
+        const course = allCourses.find((c: { abbreviation: string }) => c.abbreviation === this.ucName);
+        if (!course) throw new Error(`UC não encontrada: ${this.ucName}`);
 
-        const course = allCourses.find((c: { abbreviation: string }) => c.abbreviation === ucName.value);
-        if (!course) {
-            throw new Error(`UC não encontrada: ${ucName}`);
-        }
-
-        // Get all shifts for the course
         const shifts = await getShiftsByCourse(course.id);
-        console.log('Turnos disponíveis para a UC:', shifts);
+        const currentShiftData = shifts.find((t: { name: string }) => t.name === this.shiftCode);
+        if (!currentShiftData) throw new Error(`Turno não encontrado: ${this.shiftCode}`);
 
-        // Find the current shift
-        const currentShiftData = shifts.find((t: { name: string }) => t.name === shiftCode.value);
-        if (!currentShiftData) {
-            throw new Error(`Turno não encontrado: ${shiftCode}`);
-        }
-
-        // Get room data
         const roomData = await getRoomByShiftId(currentShiftData.id);
-        if (!roomData) {
-            throw new Error(`Sala não encontrada para o turno: ${currentShiftData.id}`);
-        }
+        if (!roomData) throw new Error(`Sala não encontrada para o turno: ${currentShiftData.id}`);
 
-        // Update currentShift
-        shift.value = {
-            id: currentShiftData.id,
-            courseId: course.id,
-            name: currentShiftData.name,
-            horario: `${currentShiftData.startHour}-${currentShiftData.endHour}`,
-            classroomId: currentShiftData.room,
-            totalStudentsRegistered: currentShiftData.totalStudentsRegistered,
-            capacity: roomData.capacity,
-            type: currentShiftData.type,
+        this.shift = {
+          id: currentShiftData.id,
+          courseId: course.id,
+          name: currentShiftData.name,
+          horario: `${currentShiftData.startHour}-${currentShiftData.endHour}`,
+          classroomId: currentShiftData.room,
+          totalStudentsRegistered: currentShiftData.totalStudentsRegistered,
+          capacity: roomData.capacity,
+          type: currentShiftData.type,
         };
 
-        console.log('Turno atual:', shift.value);
-
-        // Get all allocations
         const allAllocations = await getAllAllocations();
-        const shiftAllocations = allAllocations.filter((a: { shiftId: number }) => a.shiftId === Number(shift.value.id));
-        students.value = await Promise.all(
-            shiftAllocations.map(async (a: { studentId: string }) => {
-                const student = await getStudentById(a.studentId);
-                return {
-                    id: student.id,
-                    name: student.name,
-                    status: student.specialStatus || '',
-                };
-            })
+        const shiftAllocations = allAllocations.filter((a: { shiftId: number }) => a.shiftId === Number(this.shift.id));
+        this.students = await Promise.all(
+          shiftAllocations.map(async (a: { studentId: string }) => {
+            const student = await getStudentById(a.studentId);
+            return {
+              id: student.id,
+              name: student.name,
+              status: student.specialStatus || '',
+            };
+          })
         );
 
         const allStudents = await getStudents();
-        availableStudents.value = allStudents.filter(
-            (student: any) =>
-                student.enrolled.includes(shift.value.courseId) &&
-                !students.value.some((s) => s.id === student.id)
+        this.availableStudents = allStudents.filter(
+          (student: any) =>
+            student.enrolled.includes(this.shift.courseId) &&
+            !this.students.some((s) => s.id === student.id)
         );
 
-        rooms.value = await getAvailableRooms(
-            shift.value.id,
-            currentShiftData.day,
-            currentShiftData.startHour,
-            currentShiftData.endHour
+        this.rooms = await getAvailableRooms(
+          this.shift.id,
+          currentShiftData.day,
+          currentShiftData.startHour,
+          currentShiftData.endHour
         );
 
-        selectedRoom.value = shift.value.classroomId;
-
-        console.log('Dados carregados com sucesso:', {
-            shift: shift.value,
-            students: students.value,
-            availableStudents: availableStudents.value,
-            rooms: rooms.value,
-        });
-    } catch (error) {
+        this.selectedRoom = this.shift.classroomId;
+      } catch (error) {
         console.error('Erro ao carregar dados:', error);
-        errorMessage.value = (error as any).message || 'Erro ao carregar os dados do turno.';
-        showMessageError.value = true;
-    }
-}
-
-const isOverCapacity = computed(() => {
-    return students.value.length > shift.value.capacity
-})
-
-const sortedStudents = computed(() => {
-    let result = [...students.value]
-
-    if (studentSortColumn.value) {
-        result.sort((a, b) => {
-        const valueA = a[studentSortColumn.value!]
-        const valueB = b[studentSortColumn.value!]
-
-        if (valueA < valueB) return studentSortDirection.value === 'asc' ? -1 : 1
-        if (valueA > valueB) return studentSortDirection.value === 'asc' ? 1 : -1
-        return 0
-        })
-    }
-
-    return result
-})
-
-const totalStudentPages = computed(() => {
-    return Math.max(1, Math.ceil(sortedStudents.value.length / parseInt(studentsPerPage.value)))
-})
-
-const paginatedStudents = computed(() => {
-    const startIndex = (currentStudentPage.value - 1) * parseInt(studentsPerPage.value)
-    const endIndex = startIndex + parseInt(studentsPerPage.value)
-    return sortedStudents.value.slice(startIndex, endIndex)
-})
-
-const sortedRooms = computed(() => {
-    let result = [...rooms.value]
-
-    if (roomSortColumn.value) {
-        result.sort((a, b) => {
-        const valueA = a[roomSortColumn.value!]
-        const valueB = b[roomSortColumn.value!]
-
-        if (valueA < valueB) return roomSortDirection.value === 'asc' ? -1 : 1
-        if (valueA > valueB) return roomSortDirection.value === 'asc' ? 1 : -1
-        return 0
-        })
-    }
-
-    return result
-    })
-
-    const totalRoomPages = computed(() => {
-    return Math.max(1, Math.ceil(sortedRooms.value.length / parseInt(roomsPerPage.value)))
-    })
-
-    const paginatedRooms = computed(() => {
-    const startIndex = (currentRoomPage.value - 1) * parseInt(roomsPerPage.value)
-    const endIndex = startIndex + parseInt(roomsPerPage.value)
-    return sortedRooms.value.slice(startIndex, endIndex)
-})
-
-const filteredAvailableStudents = computed(() => {
-    // Filter out students that are already in the shift
-    const notInShift = availableStudents.value.filter(
-        availableStudent => !students.value.some(
-        shiftStudent => shiftStudent.id === availableStudent.id
-        )
-    )
-
-    // Also filter out students that are already selected
-    const notSelected = notInShift.filter(
-        availableStudent => !selectedStudents.value.some(
-        selectedStudent => selectedStudent.id === availableStudent.id
-        )
-    )
-
-    // Filter by search query
-    if (!searchQuery.value) return []
-
-    const query = searchQuery.value.toLowerCase()
-    return notSelected.filter(student =>
-        student.name.toLowerCase().includes(query) ||
-        student.id.toLowerCase().includes(query)
-    )
-})
-
-function toggleInfoTooltip() {
-    showInfoTooltip.value = !showInfoTooltip.value
-}
-
-// Methods for student pagination and sorting
-function goToStudentPage(page: number) {
-    currentStudentPage.value = page
-}
-
-function sortStudents(column: 'id' | 'name') {
-    if (studentSortColumn.value === column) {
-        // Reverse direction if the column is already selected
-        studentSortDirection.value = studentSortDirection.value === 'asc' ? 'desc' : 'asc'
-    } else {
-        // New column selected
-        studentSortColumn.value = column
-        studentSortDirection.value = 'asc'
-    }
-}
-
-function goToRoomPage(page: number) {
-    currentRoomPage.value = page
-}
-
-function sortRooms(column: 'id' | 'capacity') {
-    if (roomSortColumn.value === column) {
-        // Reverse direction if the column is already selected
-        roomSortDirection.value = roomSortDirection.value === 'asc' ? 'desc' : 'asc'
-    } else {
-        // New column selected
-        roomSortColumn.value = column
-        roomSortDirection.value = 'asc'
-    }
-}
-
-function selectRoom(roomId: string) {
-    selectedRoom.value = roomId;
-}
-
-function checkRoomCapacityAndUpdate() {
-    const selectedRoomData = rooms.value.find(room => room.name === selectedRoom.value);
-    if (selectedRoomData) {
-        if (selectedRoomData.capacity < students.value.length) {
-            modalMessage.value = 'A sala não tem capacidade para todos os alunos. Tem a certeza que quer alterar?';
-            showModal.value = true;
+        this.errorMessage = (error as any).message || 'Erro ao carregar os dados do turno.';
+        this.showMessageError = true;
+      }
+    },
+    toggleInfoTooltip() {
+      this.showInfoTooltip = !this.showInfoTooltip;
+    },
+    goToStudentPage(page: number) {
+      this.currentStudentPage = page;
+    },
+    sortStudents(column: 'id' | 'name') {
+      if (this.studentSortColumn === column) {
+        this.studentSortDirection = this.studentSortDirection === 'asc' ? 'desc' : 'asc';
+      } else {
+        this.studentSortColumn = column;
+        this.studentSortDirection = 'asc';
+      }
+    },
+    goToRoomPage(page: number) {
+      this.currentRoomPage = page;
+    },
+    sortRooms(column: 'id' | 'capacity') {
+      if (this.roomSortColumn === column) {
+        this.roomSortDirection = this.roomSortDirection === 'asc' ? 'desc' : 'asc';
+      } else {
+        this.roomSortColumn = column;
+        this.roomSortDirection = 'asc';
+      }
+    },
+    selectRoom(roomId: string) {
+      this.selectedRoom = roomId;
+    },
+    checkRoomCapacityAndUpdate() {
+      const selectedRoomData = this.rooms.find(room => room.name === this.selectedRoom);
+      if (selectedRoomData) {
+        if (selectedRoomData.capacity < this.students.length) {
+          this.modalMessage = 'A sala não tem capacidade para todos os alunos. Tem a certeza que quer alterar?';
+          this.showModal = true;
         } else {
-            updateRoom(selectedRoomData);
+          this.updateRoom(selectedRoomData);
         }
-    }
-}
+      }
+    },
+    async confirmRoomChange() {
+      const selectedRoomData = this.rooms.find(room => room.name === this.selectedRoom);
+      if (selectedRoomData) {
+        await this.updateRoom(selectedRoomData);
+        this.showModal = false;
+      }
+    },
+    async updateRoom(roomData: Room) {
+      try {
+        await updateShiftRoom(this.shift.id, roomData.id);
+        this.shift.classroomId = roomData.name;
+        this.shift.capacity = roomData.capacity;
+        await this.loadData();
 
-function confirmRoomChange() {
-    const selectedRoomData = rooms.value.find(room => room.name === selectedRoom.value)
-    if (selectedRoomData) {
-        updateRoom(selectedRoomData)
-        showModal.value = false
-    }
-}
-
-async function updateRoom(roomData: Room) {
-    try {
-        await updateShiftRoom(shift.value.id, roomData.id);
-
-        shift.value.classroomId = roomData.name;
-        shift.value.capacity = roomData.capacity;
-
-        // Reload data to reflect changes
-        await loadData();
-
-        showModalSucess.value = false;
-        nextTick(() => {
-            modalMessageSuccess.value = 'A sala deste turno foi alterada com sucesso!';
-            showModalSucess.value = true;
+        this.showModalSucess = false;
+        this.nextTick(() => {
+          this.modalMessageSuccess = 'A sala deste turno foi alterada com sucesso!';
+          this.showModalSucess = true;
         });
-    } catch (error) {
+      } catch (error) {
         console.error('Erro ao atualizar a sala na API:', error);
-        errorMessage.value = 'Erro ao atualizar a sala. Por favor, tente novamente.';
-        showMessageError.value = true;
-    }
-}
-
-// Remove student
-function removeStudent(student: Student) {
-    modalMessageRemoveStudent.value = `Tem a certeza que deseja remover o aluno ${student.name}?`;
-    showModalRemoveStudent.value = true;
-    selectedStudentToRemove.value = student;
-}
-
-async function confirmRemoveStudent() {
-    if (selectedStudentToRemove.value) {
+        this.errorMessage = 'Erro ao atualizar a sala. Por favor, tente novamente.';
+        this.showMessageError = true;
+      }
+    },
+    removeStudent(student: Student) {
+      this.modalMessageRemoveStudent = `Tem a certeza que deseja remover o aluno ${student.name}?`;
+      this.showModalRemoveStudent = true;
+      this.selectedStudentToRemove = student;
+    },
+    async confirmRemoveStudent() {
+      if (this.selectedStudentToRemove) {
         try {
-            const allAllocationsResponse = await getAllAllocations();
+          const allAllocationsResponse = await getAllAllocations();
+          const allocationToRemove = allAllocationsResponse.find(
+            (allocation: any) =>
+              allocation.studentId === this.selectedStudentToRemove?.id &&
+              allocation.shiftId === Number(this.shift.id)
+          );
 
-            const allocationToRemove = allAllocationsResponse.find(
-                (allocation: any) =>
-                    allocation.studentId === selectedStudentToRemove.value?.id &&
-                    allocation.shiftId === Number(shift.value.id)
-            );
+          if (allocationToRemove) {
+            await deleteAllocation(allocationToRemove.id);
+            await updateShiftTotalStudents(this.shift.id, this.shift.totalStudentsRegistered - 1);
+          }
 
-            if (allocationToRemove) {
-                await deleteAllocation(allocationToRemove.id);
-                await updateShiftTotalStudents(shift.value.id, shift.value.totalStudentsRegistered - 1);
-            } else {
-                throw new Error('Allocation não encontrada para o aluno e turno fornecidos.');
-            }
+          const index = this.students.findIndex(s => s.id === this.selectedStudentToRemove?.id);
+          if (index !== -1) this.students.splice(index, 1);
 
-            const index = students.value.findIndex(s => s.id === selectedStudentToRemove.value?.id);
-            if (index !== -1) {
-                students.value.splice(index, 1);
-            }
-
-            showModalSucess.value = false;
-            nextTick(() => {
-                modalMessageSuccess.value = 'O aluno foi removido com sucesso!';
-                showModalSucess.value = true;
-            });
+          this.showModalSucess = false;
+          this.nextTick(() => {
+            this.modalMessageSuccess = 'O aluno foi removido com sucesso!';
+            this.showModalSucess = true;
+          });
         } catch (error) {
-            console.error('Erro ao remover a Allocation na API:', error);
-            errorMessage.value = 'Erro ao remover o aluno. Por favor, tente novamente.';
-            showMessageError.value = true;
+          console.error('Erro ao remover a Allocation na API:', error);
+          this.errorMessage = 'Erro ao remover o aluno. Por favor, tente novamente.';
+          this.showMessageError = true;
         }
-    }
-
-    // Reload data to reflect changes
-    await loadData();
-
-    selectedStudentToRemove.value = null;
-    showModalRemoveStudent.value = false;
-    modalMessageRemoveStudent.value = '';
-}
-
-// Add students dialog management
-function addToSelection(student: Student) {
-    // Check if student is not already in selection
-    if (!selectedStudents.value.some(s => s.id === student.id)) {
-        selectedStudents.value.push(student)
-        searchQuery.value = ''
-    }
-}
-
-function removeFromSelection(student: Student) {
-    const index = selectedStudents.value.findIndex(s => s.id === student.id)
-    if (index !== -1) {
-        selectedStudents.value.splice(index, 1)
-    }
-}
-
-async function checkCapacityAndAddStudents() {
-    if (selectedStudents.value.length === 0) {
-        showMessageErrorDialog.value = true;
-        errorMessageDialog.value = 'Nenhum aluno selecionado!';
+        await this.loadData();
+        this.selectedStudentToRemove = null;
+        this.showModalRemoveStudent = false;
+        this.modalMessageRemoveStudent = '';
+      }
+    },
+    addToSelection(student: Student) {
+      if (!this.selectedStudents.some(s => s.id === student.id)) {
+        this.selectedStudents.push(student);
+        this.searchQuery = '';
+      }
+    },
+    removeFromSelection(student: Student) {
+      const index = this.selectedStudents.findIndex(s => s.id === student.id);
+      if (index !== -1) this.selectedStudents.splice(index, 1);
+    },
+    async checkCapacityAndAddStudents() {
+      if (this.selectedStudents.length === 0) {
+        this.showMessageErrorDialog = true;
+        this.errorMessageDialog = 'Nenhum aluno selecionado!';
         setTimeout(() => {
-            errorMessageDialog.value = null;
-            showMessageErrorDialog.value = false;
+          this.errorMessageDialog = null;
+          this.showMessageErrorDialog = false;
         }, 1000);
         return;
-    }
+      }
 
-    try {
+      try {
         const allAllocations = await getAllAllocations();
-        const shifts = await getShiftsByCourse(shift.value.courseId);
+        const shifts = await getShiftsByCourse(this.shift.courseId);
+        const errorMessages = [];
 
-        const errorMessages = ref<string[]>([]);
-        for (const student of selectedStudents.value) {
-            const allocationInAnotherShift = allAllocations.find((allocation: any) => {
-                const isSameStudent = allocation.studentId === student.id;
-                const isInAnotherShiftOfSameType = shifts.some(
-                    (s: any) =>
-                        s.id === String(allocation.shiftId) &&
-                        s.type === shift.value.type &&
-                        s.id !== String(shift.value.id)
-                );
-                return isSameStudent && isInAnotherShiftOfSameType;
-            });
+        for (const student of this.selectedStudents) {
+          const allocationInAnotherShift = allAllocations.find((allocation: any) => {
+            const isSameStudent = allocation.studentId === student.id;
+            const isInAnotherShiftOfSameType = shifts.some(
+              (s: any) => s.id === String(allocation.shiftId) && s.type === this.shift.type && s.id !== String(this.shift.id)
+            );
+            return isSameStudent && isInAnotherShiftOfSameType;
+          });
 
-            if (allocationInAnotherShift) {
-                const conflictingShift = shifts.find((s: any) => s.id === String(allocationInAnotherShift.shiftId));
-                errorMessages.value.push(`O aluno ${student.name} já está alocado no turno ${conflictingShift.name}.`);
-            }
+          if (allocationInAnotherShift) {
+            const conflictingShift = shifts.find((s: any) => s.id === String(allocationInAnotherShift.shiftId));
+            errorMessages.push(`O aluno ${student.name} já está alocado no turno ${conflictingShift.name}.`);
+          }
         }
 
-        if (students.value.length + selectedStudents.value.length > shift.value.capacity) {
-            errorMessages.value.push('A capacidade da sala será ultrapassada. Deseja continuar?');
+        if (this.students.length + this.selectedStudents.length > this.shift.capacity) {
+          errorMessages.push('A capacidade da sala será ultrapassada. Deseja continuar?');
         }
 
-        if (errorMessages.value.length > 0) {
-            modalMessageStudents.value = errorMessages.value.join(' ');
-            showModalStudents.value = true;
+        if (errorMessages.length > 0) {
+          this.modalMessageStudents = errorMessages.join(' ');
+          this.showModalStudents = true;
+        } else {
+          this.addSelectedStudents();
         }
-        else {
-            addSelectedStudents();
-        }
-    } catch (error) {
+      } catch (error) {
         console.error('Erro ao verificar alunos ou capacidade:', error);
-        errorMessageDialog.value = 'Erro ao verificar alunos ou capacidade. Por favor, tente novamente.';
-        showMessageErrorDialog.value = true;
+        this.errorMessageDialog = 'Erro ao verificar alunos ou capacidade. Por favor, tente novamente.';
+        this.showMessageErrorDialog = true;
         setTimeout(() => {
-            errorMessageDialog.value = null;
-            showMessageErrorDialog.value = false;
+          this.errorMessageDialog = null;
+          this.showMessageErrorDialog = false;
         }, 3000);
-    }
-}
-
-function confirmAddStudents() {
-    addSelectedStudents()
-    showModalStudents.value = false;
-    modalMessageStudents.value = '';
-}
-
-async function addSelectedStudents() {
-    try {
+      }
+    },
+    confirmAddStudents() {
+      this.addSelectedStudents();
+      this.showModalStudents = false;
+      this.modalMessageStudents = '';
+    },
+    async addSelectedStudents() {
+      try {
         const allAllocations = await getAllAllocations();
-        const shifts = await getShiftsByCourse(shift.value.courseId);
+        const shifts = await getShiftsByCourse(this.shift.courseId);
         const lastId = allAllocations.reduce((maxId: number, allocation: any) => Math.max(maxId, Number(allocation.id)), 0);
 
         await Promise.all(
-            selectedStudents.value.map(async (student, index) => {
-                const allocationInAnotherShift = allAllocations.find((allocation: any) => {
-                    const isSameStudent = allocation.studentId === student.id;
-                    const isInAnotherShiftOfSameType = shifts.some(
-                        (s: any) =>
-                            s.id === String(allocation.shiftId) &&
-                            s.type === shift.value.type &&
-                            s.id !== String(shift.value.id)
-                    );
-                    return isSameStudent && isInAnotherShiftOfSameType;
-                });
+          this.selectedStudents.map(async (student, index) => {
+            const allocationInAnotherShift = allAllocations.find((allocation: any) => {
+              const isSameStudent = allocation.studentId === student.id;
+              const isInAnotherShiftOfSameType = shifts.some(
+                (s: any) => s.id === String(allocation.shiftId) && s.type === this.shift.type && s.id !== String(this.shift.id)
+              );
+              return isSameStudent && isInAnotherShiftOfSameType;
+            });
 
-                if (allocationInAnotherShift) {
-                    console.log(`Removendo aluno ${student.name} do turno antigo.`);
+            if (allocationInAnotherShift) {
+              await deleteAllocation(allocationInAnotherShift.id);
+              const oldShift = shifts.find((s: any) => String(s.id) === String(allocationInAnotherShift.shiftId));
+              if (oldShift) await updateShiftTotalStudents(oldShift.id, oldShift.totalStudentsRegistered - 1);
+            }
 
-                    // Removing the allocation
-                    await deleteAllocation(allocationInAnotherShift.id);
-
-                    // Update the total students in the old shift
-                    const oldShift = shifts.find((s: any) => String(s.id) === String(allocationInAnotherShift.shiftId));
-                    if (oldShift) {
-                        await updateShiftTotalStudents(oldShift.id, oldShift.totalStudentsRegistered - 1);
-                    }
-                }
-
-                // Adding the student to the current shift
-                if (!students.value.some(s => s.id === student.id)) {
-                    await createAllocation({
-                        id: String(lastId + index + 1),
-                        studentId: student.id,
-                        shiftId: Number(shift.value.id),
-                    });
-
-                    students.value.push(student);
-
-                    // Update student total in the shift
-                    await updateShiftTotalStudents(shift.value.id, shift.value.totalStudentsRegistered + 1);
-                }
-            })
+            if (!this.students.some(s => s.id === student.id)) {
+              await createAllocation({
+                id: String(lastId + index + 1),
+                studentId: student.id,
+                shiftId: Number(this.shift.id),
+              });
+              this.students.push(student);
+              await updateShiftTotalStudents(this.shift.id, this.shift.totalStudentsRegistered + 1);
+            }
+          })
         );
 
-        // Clear selection and close the dialog
-        selectedStudents.value = [];
-        showAddStudentsDialog.value = false;
-        searchQuery.value = '';
-        showInfoTooltip.value = false;
+        this.selectedStudents = [];
+        this.showAddStudentsDialog = false;
+        this.searchQuery = '';
+        this.showInfoTooltip = false;
+        await this.loadData();
 
-        // Reload data to reflect changes
-        await loadData();
-
-        // Show success message
-        showModalSucess.value = false;
-        nextTick(() => {
-            modalMessageSuccess.value = 'Alunos adicionados com sucesso!';
-            showModalSucess.value = true;
+        this.showModalSucess = false;
+        this.nextTick(() => {
+          this.modalMessageSuccess = 'Alunos adicionados com sucesso!';
+          this.showModalSucess = true;
         });
-    } catch (error) {
+      } catch (error) {
         console.error('Erro ao adicionar alunos:', error);
-        errorMessage.value = 'Erro ao adicionar os alunos. Por favor, tente novamente.';
-        showMessageError.value = true;
+        this.errorMessage = 'Erro ao adicionar os alunos. Por favor, tente novamente.';
+        this.showMessageError = true;
+      }
+    },
+    nextTick(callback: () => void) {
+      (this as any).$nextTick(callback);
     }
-}
-
-function nextTick(callback: () => void) {
-    vueNextTick(callback);
-}
-
-onMounted(() => {
-    loadData();
+  },
+  mounted() {
+    this.loadData();
+  }
 });
 </script>
 

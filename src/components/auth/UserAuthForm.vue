@@ -1,51 +1,61 @@
-<script setup lang="ts">
+<script lang="ts">
+import { defineComponent } from 'vue';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '../../stores/user';
-import { ref } from 'vue';
 import { authenticateUser } from '@/api/api';
-import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import ErrorAlert from '@/components/popup/ErrorAlert.vue';
 
-const router = useRouter();
-const isLoading = ref(false);
-const errorMessage = ref<string | null>(null);
-const userId = ref('');
-const password = ref('');
+export default defineComponent({
+  components: {
+    Button,
+    Input,
+    ErrorAlert
+  },
+  data() {
+    return {
+      isLoading: false,
+      errorMessage: null as string | null,
+      userId: '',
+      password: ''
+    }
+  },
+  setup() {
+    const router = useRouter();
+    return { router };
+  },
+  methods: {
+    async onSubmit(event: Event) {
+      event.preventDefault();
+      this.isLoading = true;
+      this.errorMessage = null;
 
-async function onSubmit(event: Event) {
-  event.preventDefault();
-  isLoading.value = true;
-  errorMessage.value = null;
+      if (!this.userId || !this.password) {
+        this.errorMessage = 'Credenciais inválidas! Por favor, introduza um ID e uma palavra-passe válidos.';
+        this.isLoading = false;
+        return;
+      }
 
-  if (!userId.value || !password.value) {
-    errorMessage.value = 'Credenciais inválidas! Por favor, introduza um ID e uma palavra-passe válidos.';
-    isLoading.value = false;
-    return;
+      try {
+        const user = await authenticateUser(this.userId, this.password);
+        const userStore = useUserStore();
+        userStore.setUser(user);
+
+        this.router.push('/home');
+      } catch (error: any) {
+        console.error('Erro na autenticação:', error);
+        this.errorMessage = error.message || 'Erro ao iniciar sessão. Por favor, tente novamente mais tarde.';
+      } finally {
+        this.isLoading = false;
+      }
+    }
   }
-
-  try {
-    // Authenticate user using the API
-    const user = await authenticateUser(userId.value, password.value);
-
-    // Store the user state globally
-    const userStore = useUserStore();
-    userStore.setUser(user);
-
-    // Redirect based on the user type
-    router.push('/home');
-  } catch (error: any) {
-    console.error('Erro na autenticação:', error);
-    errorMessage.value = error.message || 'Erro ao iniciar sessão. Por favor, tente novamente mais tarde.';
-  } finally {
-    isLoading.value = false;
-  }
-}
+});
 </script>
 
 <template>
-    <div :class="cn('grid gap-6', $attrs.class ?? '')">
+    <div :class="['grid gap-6', $attrs.class ?? ''].filter(Boolean).join(' ')">
         <form @submit="onSubmit">
             <div class="grid gap-4">
                 <div class="grid gap-2">
