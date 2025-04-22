@@ -49,11 +49,9 @@ export default defineComponent({
       const course = courses[0];
       computedTitle.value = `Horário da UC ${course.uc}`;
       teacherBlocks.value = course.turnos.map((t: any) => ({
-        // estas duas para a navegação
         uc: course.uc,
         shiftName: t.name,
 
-        // resto das props que já tinhas
         id: t.id,
         name: t.name,
         room: t.room,
