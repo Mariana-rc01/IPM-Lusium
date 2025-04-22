@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useUserStore } from "@/stores/user";
 import LoginView from "@/views/LoginView.vue";
-import SheduleView from "@/views/SheduleView.vue";
-import UCSheduleView from "@/views/UCSheduleView.vue";
+import ScheduleView from "@/views/ScheduleView.vue";
+import UCScheduleView from "@/views/UCScheduleView.vue";
 import TicketsView from "@/views/TicketsView.vue";
 import ClassroomsView from "@/views/ClassroomsView.vue";
 import StudentsView from "@/views/StudentsView.vue";
@@ -26,14 +26,14 @@ const router = createRouter({
       component: LoginView,
     },
     {
-      path: "/shedule/:idStudent",
-      name: "shedule",
-      component: SheduleView,
+      path: "/schedule/:idStudent",
+      name: "schedule",
+      component: ScheduleView,
     },
     {
-      path: "/uc-shedule", // Tenho de passar o id da uc (course)
-      name: "uc-shedule",
-      component: UCSheduleView,
+      path: "/uc-schedule/:idCourse",
+      name: "uc-schedule",
+      component: UCScheduleView,
     },
     {
       path: "/tickets",
