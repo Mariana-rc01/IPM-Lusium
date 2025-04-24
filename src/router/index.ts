@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useUserStore } from "@/stores/user";
 import LoginView from "@/views/LoginView.vue";
-import StudentView from "@/views/StudentView.vue";
-import TeacherView from "@/views/TeacherView.vue";
+import ScheduleView from "@/views/ScheduleView.vue";
+import UCScheduleView from "@/views/UCScheduleView.vue";
 import TicketsView from "@/views/TicketsView.vue";
 import ClassroomsView from "@/views/ClassroomsView.vue";
 import StudentsView from "@/views/StudentsView.vue";
@@ -26,14 +26,14 @@ const router = createRouter({
       component: LoginView,
     },
     {
-      path: "/aluno",
-      name: "student",
-      component: StudentView,
+      path: "/schedule/:idStudent",
+      name: "schedule",
+      component: ScheduleView,
     },
     {
-      path: "/docente",
-      name: "teacher",
-      component: TeacherView,
+      path: "/uc-schedule/:idCourse",
+      name: "uc-schedule",
+      component: UCScheduleView,
     },
     {
       path: "/tickets",
