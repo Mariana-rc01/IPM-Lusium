@@ -12,6 +12,7 @@ import ShiftEditView from "@/views/ShiftEditView.vue";
 import ProfileView from "@/views/ProfileView.vue";
 import CourseListView from "@/views/CourseListView.vue";
 import NonAllocatedStudentsView from "@/views/NonAllocatedStudentsView.vue";
+import NotFoundView from "@/views/NotFoundView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -80,6 +81,11 @@ const router = createRouter({
       name: "nonAllocatedStudentsList",
       component: NonAllocatedStudentsView,
     },
+    {
+      path: "/:pathMatch(.*)*",
+      name: "not-found",
+      component: NotFoundView,
+    }
   ],
 });
 

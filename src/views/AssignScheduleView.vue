@@ -1,6 +1,6 @@
 <template>
   <div class="p-6 flex justify-start items-start min-h-screen">
-    <div class="w-full max-w-6xl mx-32">
+    <div class="w-full max-w-6xl mx-6">
       <!-- Title -->
       <h1 class="text-2xl font-bold mb-1 text-left">Alocação manual de turnos</h1>
       <p class="text-[#10B981] mb-6 text-left">Aqui pode alocar um aluno aos turnos de cada Unidade Curricular!</p>
