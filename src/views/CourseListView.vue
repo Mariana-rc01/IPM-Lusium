@@ -156,7 +156,9 @@
 </template>
 
 <script setup lang="ts">
-    import { ref, computed } from 'vue'
+    import { ref, computed, onMounted } from 'vue'
+import { useUserStore } from '@/stores/user'
+import { getStudentById, getAllCoursesWithOccupation } from '@/api/api'
 
   const role = ref('diretor') // *****TEMP***** Pode ser 'aluno', 'diretor' ou 'docente'
 
@@ -207,80 +209,53 @@
   const rowsPerPage = ref('10')
   const sortColumn = ref<'codUc' | 'nome' | 'anoCurricular' | 'ocupacao' | null>(null)
   const sortDirection = ref<'asc' | 'desc'>('asc')
+  const courses = ref<Course[]>([])
+const isLoading = ref(false)
+const error = ref('')
 
-  // Example data
-  const courses = ref<Course[]>([
-    {
-      codUc: 'UC-8762',
-      nome: 'Sistemas Distribuídos',
-      anoCurricular: 3,
-      ocupacao: 'Média',
-    },
-    {
-      codUc: 'UC-7878',
-      nome: 'Computação Gráfica',
-      anoCurricular: 3,
-      ocupacao: 'Média',
-    },
-    {
-      codUc: 'UC-7839',
-      nome: 'Álgebra Linear para Engenharia',
-      anoCurricular: 1,
-      ocupacao: 'Alta',
-    },
-    {
-      codUc: 'UC-5562',
-      nome: 'Laboratórios de Informática III',
-      anoCurricular: 2,
-      ocupacao: 'Média',
-    },
-    {
-      codUc: 'UC-8686',
-      nome: 'Programação Orientada aos Objetos',
-      anoCurricular: 2,
-      ocupacao: 'Média',
-    },
-    {
-      codUc: 'UC-1280',
-      nome: 'Sistemas de Computação',
-      anoCurricular: 1,
-      ocupacao: 'Alta',
-    },
-    {
-      codUc: 'UC-7262',
-      nome: 'Algoritmos e Complexidade',
-      anoCurricular: 2,
-      ocupacao: 'Alta',
-    },
-    {
-      codUc: 'UC-1138',
-      nome: 'Ivestigação Operacional',
-      anoCurricular: 2,
-      ocupacao: 'Média',
-    },
-    {
-      codUc: 'UC-7184',
-      nome: 'Redes de Computadores',
-      anoCurricular: 2,
-      ocupacao: 'Baixa',
-    },
-    {
-      codUc: 'UC-5160',
-      nome: 'Interface Pessoa-Máquina',
-      anoCurricular: 3,
-      ocupacao: 'Alta',
-    },
-  ])
+// Fetch courses dynamically based on the student's enrolled courses
+const fetchCourses = async () => {
+  isLoading.value = true
+  try {
+    const userStore = useUserStore()
+    const user = userStore.user
+
+    if (!user || user.type !== 'student') {
+      throw new Error('Utilizador não autenticado ou não é um estudante.')
+    }
+
+    // Retrieve the student's enrolled courses
+    const student = await getStudentById(user.id)
+    const enrolledCourses = student.enrolled
+    
+    // Fetch courses with occupation data
+    const apiResponse = await getAllCoursesWithOccupation(enrolledCourses)
+    
+    // Map API response to the Course interface
+    courses.value = apiResponse.map((course: any) => ({
+      codUc: course.id || "-",
+      nome: course.name || "-", // Replace with actual name if available
+      anoCurricular: course.year || "-", // Replace with actual year if available
+      ocupacao: course.occupancyLevel,
+    }))
+
+  } catch (err: any) {
+    console.error('Erro ao carregar cursos:', err)
+    error.value = 'Não foi possível carregar os cursos.'
+  } finally {
+    isLoading.value = false
+  }
+}
 
   // Computed properties
   const filteredCourses = computed(() => {
+let result = courses.value
 
     // Apply search filter
-    let result = courses.value
-    if (searchQuery.value) {
+        if (searchQuery.value) {
       const query = searchQuery.value.toLowerCase()
       result = result.filter((course) =>
-        course.nome.toLowerCase().includes(query)
+        course.nome.toLowerCase().includes(query),
       )
     }
 
@@ -333,8 +308,7 @@
 
   function sortBy(column: 'nome' | 'anoCurricular' | 'ocupacao') {
     if (sortColumn.value === column) {
-      // Reverse direction if the column is already selected
-      sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc'
+            sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc'
     } else {
       // New column selected
       sortColumn.value = column
@@ -351,6 +325,11 @@
     selectedFilter.value = ''
     currentPage.value = 1
   }
+
+// Fetch courses on component mount
+onMounted(() => {
+  fetchCourses()
+})
 </script>
 
 <style scoped>

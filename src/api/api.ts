@@ -105,6 +105,50 @@ export async function getStudents() {
   return response.data;
 }
 
+
+
+export async function getUserInfoById(userId: string) {
+  const response = await Promise.all([
+    API.get("/students"),
+    API.get("/teachers"),
+    API.get("/directors"),
+  ]).then(([studentsResponse, teachersResponse, directorsResponse]) => ({
+    data: {
+      students: studentsResponse.data,
+      teachers: teachersResponse.data,
+      directors: directorsResponse.data,
+    },
+  }));
+  const data = response.data;
+
+  let user = null;
+  if (userId.startsWith("d")) {
+    user = data.directors.find((u: any) => u.id === userId);
+  } else if (userId.startsWith("t")) {
+    user = data.teachers.find((u: any) => u.id === userId);
+  } else if (userId.startsWith("a")) {
+    user = data.students.find((u: any) => u.id === userId);
+  }
+
+  if (!user) {
+    throw new Error("Utilizador não existe! Verifique o seu ID.");
+  }
+
+  return {
+    name: user.name,
+    email: user.email,
+    age: user.age,
+    location: user.location,
+    profession: user.profession,
+    objectives: user.objectives,
+    challenges: user.challenges,
+    solutions: user.solutions,
+    quote: user.citation,
+    specialStatus: user.specialStatus,
+  };
+}
+
+
 // -----------------------
 // Functions for Shifts
 // -----------------------
@@ -397,43 +441,51 @@ export async function getAllUCs() {
   }));
 }
 
-export async function getUserInfoById(userId: string) {
-  const response = await Promise.all([
-    API.get("/students"),
-    API.get("/teachers"),
-    API.get("/directors"),
-  ]).then(([studentsResponse, teachersResponse, directorsResponse]) => ({
-    data: {
-      students: studentsResponse.data,
-      teachers: teachersResponse.data,
-      directors: directorsResponse.data,
-    },
-  }));
-  const data = response.data;
+// Get all UCs (Unidades Curriculares) with ocupation percentage
+export async function getAllCoursesWithOccupation(enrolledCourses: string[]) {
+  const coursesResponse = await API.get("/courses");
+  const shiftsResponse = await API.get("/shifts");
+  const classroomsResponse = await API.get("/classrooms");
 
-  let user = null;
-  if (userId.startsWith("d")) {
-    user = data.directors.find((u: any) => u.id === userId);
-  } else if (userId.startsWith("t")) {
-    user = data.teachers.find((u: any) => u.id === userId);
-  } else if (userId.startsWith("a")) {
-    user = data.students.find((u: any) => u.id === userId);
-  }
+  const courses = coursesResponse.data;
+  const shifts = shiftsResponse.data;
+  const classrooms = classroomsResponse.data;
 
-  if (!user) {
-    throw new Error("Utilizador não existe! Verifique o seu ID.");
-  }
+  return courses
+    .filter((course: any) => enrolledCourses.includes(String(course.id)))
+    .map((course: any) => {
+      const courseShifts = shifts.filter(
+        (shift: any) => String(shift.courseId) === String(course.id),
+      );
 
-  return {
-    name: user.name,
-    email: user.email,
-    age: user.age,
-    location: user.location,
-    profession: user.profession,
-    objectives: user.objectives,
-    challenges: user.challenges,
-    solutions: user.solutions,
-    quote: user.citation,
-    specialStatus: user.specialStatus,
-  };
+      let totalStudents = 0;
+      let totalCapacity = 0;
+
+      courseShifts.forEach((shift: any) => {
+        const classroom = classrooms.find(
+          (c: any) => String(c.id) === String(shift.classroomId),
+        );
+        if (classroom) {
+          totalStudents += shift.totalStudentsRegistered;
+          totalCapacity += classroom.capacity;
+        }
+      });
+
+      const occupancyPercentage =
+        totalCapacity > 0 ? (totalStudents / totalCapacity) * 100 : 0;
+
+      let occupancyLevel = "Baixa";
+      if (occupancyPercentage > 70) {
+        occupancyLevel = "Alta";
+      } else if (occupancyPercentage > 30) {
+        occupancyLevel = "Média";
+      }
+
+      return {
+        id: course.id,
+        name: course.name,
+        year: course.year,
+        occupancyLevel,
+      };
+    });
 }
