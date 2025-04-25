@@ -283,6 +283,24 @@ export async function getAvailableRooms(
 // Functions for Classrooms
 // --------------------------
 
+// Get info from all classrooms
+export async function getAllClassrooms() {
+  const classroomsResponse = await API.get("/classrooms");
+  const buildingsResponse = await API.get("/buildings");
+
+  const classrooms = classroomsResponse.data.map((room: any) => {
+    const building = buildingsResponse.data.find(
+      (b: any) => String(b.id) === String(room.buildingId),
+    );
+    return {
+      name: room.name,
+      capacity: room.capacity,
+      building: building ? building.abbreviation : "-",
+    };
+  });
+  return classrooms;
+}
+
 // Get a specific room by ID
 export async function getRoomById(roomId: string) {
   const response = await API.get("/classrooms");

@@ -23,13 +23,13 @@
           </DropdownMenuTrigger>
 
           <DropdownMenuContent class="w-auto">
-            <DropdownMenuItem @click="applyFilter('CP1')">CP 1</DropdownMenuItem>
-            <DropdownMenuItem @click="applyFilter('CP2')">CP 2</DropdownMenuItem>
-            <DropdownMenuItem @click="applyFilter('CP3')">CP 3</DropdownMenuItem>
-            <DropdownMenuItem @click="applyFilter('CP4')">CP 4</DropdownMenuItem>
-            <DropdownMenuItem @click="applyFilter('CP5')">CP 5</DropdownMenuItem>
-            <DropdownMenuItem @click="applyFilter('CP6')">CP 6</DropdownMenuItem>
-            <DropdownMenuItem @click="applyFilter('CP7')">CP 7</DropdownMenuItem>
+            <DropdownMenuItem 
+              v-for="cp in uniqueCPs" 
+              :key="cp" 
+              @click="applyFilter(`CP${cp}`)"
+            >
+              CP {{ cp }}
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
 
             <DropdownMenuItem @click="clearFilters">
@@ -138,7 +138,8 @@
   </template>
   
   <script setup lang="ts">
-  import { ref, computed } from 'vue'
+  import { ref, computed, onMounted } from 'vue'
+  import { getAllClassrooms } from '@/api/api'
 
   import {
     ChevronLeftIcon,
@@ -182,99 +183,27 @@
   const sortColumn = ref<'cp' | 'numero' | 'capacidade' | null>(null)
   const sortDirection = ref<'asc' | 'desc'>('asc')
   
-  // Example data
-  const salas = ref<Sala[]>([
-    {
-      cp: 1,
-      numero: '0.04',
-      capacidade: 100
-    },
-    {
-      cp: 1,
-      numero: '0.08',
-      capacidade: 100
-    },
-    {
-      cp: 1,
-      numero: '1.17',
-      capacidade: 30
-    },
-    {
-      cp: 1,
-      numero: '1.18',
-      capacidade: 29
-    },
-    {
-      cp: 1,
-      numero: '2.12',
-      capacidade: 35
-    },
-    {
-      cp: 2,
-      numero: '0.04',
-      capacidade: 100
-    },
-    {
-      cp: 2,
-      numero: '0.14',
-      capacidade: 20
-    },
-    {
-      cp: 2,
-      numero: '2.20',
-      capacidade: 30
-    },
-    {
-      cp: 3,
-      numero: '0.07',
-      capacidade: 100
-    },
-    {
-      cp: 3,
-      numero: '1.13',
-      capacidade: 40
-    },
-    {
-      cp: 4,
-      numero: '1.01',
-      capacidade: 40
-    },
-    {
-      cp: 5,
-      numero: '0.01',
-      capacidade: 100
-    },
-    {
-      cp: 5,
-      numero: '0.02',
-      capacidade: 70
-    },
-    {
-      cp: 5,
-      numero: '0.03',
-      capacidade: 120
-    },
-    {
-      cp: 6,
-      numero: '0.01',
-      capacidade: 50
-    },
-    {
-      cp: 6,
-      numero: '0.02',
-      capacidade: 60
-    },
-    {
-      cp: 7,
-      numero: '0.01',
-      capacidade: 110
-    },
-    {
-      cp: 7,
-      numero: '0.02',
-      capacidade: 80
+  // Dynamic data
+  const salas = ref<Sala[]>([])
+  
+  // Fetch data from the API
+  async function fetchClassrooms() {
+    try {
+      const classrooms = await getAllClassrooms()
+      salas.value = classrooms.map((classroom: any) => ({
+        cp: parseInt(classroom.building.replace('CP', '')), // Extract CP number
+        numero: classroom.name,
+        capacidade: classroom.capacity
+      }))
+    } catch (error) {
+      console.error('Erro ao buscar as salas:', error)
     }
-  ])
+  }
+  
+  // Fetch data on component mount
+  onMounted(() => {
+    fetchClassrooms()
+  })
   
   // Computed properties
   const filteredSalas = computed(() => {
@@ -283,37 +212,13 @@
     let result = salas.value
     if (searchQuery.value) {
       const query = searchQuery.value.toLowerCase()
-      result = result.filter((sala) => sala.numero.includes(query)
-      )
+      result = result.filter((sala) => sala.numero.includes(query))
     }
   
     // Dropdown filter
     if (selectedFilter.value) {
-      switch (selectedFilter.value) {
-        case 'CP1':
-          result = result.filter((sala) => sala.cp === 1)
-          break
-        case 'CP2':
-          result = result.filter((sala) => sala.cp === 2)
-          break
-        case 'CP3':
-          result = result.filter((sala) => sala.cp === 3)
-          break
-        case 'CP4':
-          result = result.filter((sala) => sala.cp === 4)
-          break
-        case 'CP5':
-          result = result.filter((sala) => sala.cp === 5)
-          break
-        case 'CP6':
-          result = result.filter((sala) => sala.cp === 6)
-          break
-        case 'CP7':
-          result = result.filter((sala) => sala.cp === 7)
-          break
-        default:
-          break
-      }
+      const cpNumber = parseInt(selectedFilter.value.replace('CP', ''))
+      result = result.filter((sala) => sala.cp === cpNumber)
     }
     
     // Apply sorting
@@ -329,6 +234,10 @@
     }
     
     return result
+  })
+  
+  const uniqueCPs = computed(() => {
+    return [...new Set(salas.value.map((sala) => sala.cp))].sort((a, b) => a - b)
   })
   
   const totalPages = computed(() => {
