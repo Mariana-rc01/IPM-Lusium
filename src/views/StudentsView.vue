@@ -98,7 +98,7 @@
                 <button>
                   <CalendarIcon class="h-5 w-5" />
                 </button>
-                <button v-if="role === 'diretor'">
+                <button v-if="role === 'diretor'" @click="deleteStudent(aluno.numero)">
                   <Trash2 class="h-5 w-5" />
                 </button>
               </td>
@@ -177,7 +177,7 @@
   
   <script setup lang="ts">
   import { ref, computed, onMounted } from 'vue'
-  import { getStudents } from '@/api/api'
+  import { getStudents, deleteStudentById } from '@/api/api'
 
   const role = ref('diretor') // *****TEMP***** Pode ser 'aluno', 'diretor' ou 'docente'
 
@@ -324,6 +324,15 @@
   })
   
   // Methods
+  async function deleteStudent(studentId: string) {
+    try {
+      await deleteStudentById(studentId);
+      alunos.value = alunos.value.filter((aluno) => aluno.numero !== studentId);
+    } catch (error) {
+      console.error('Erro ao eliminar o aluno:', error);
+    }
+  }
+
   function goToPage(page: number) {
     currentPage.value = page
   }
