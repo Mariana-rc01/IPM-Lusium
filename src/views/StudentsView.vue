@@ -92,12 +92,12 @@
                 </div>
               </td>
               <td class="py-3 px-4 text-sm text-center flex gap-4 justify-end">
-                <button>
+                <router-link :to="`/profile/${aluno.numero}`">
                   <UserCircleIcon class="h-5 w-5" />
-                </button>
-                <button>
+                </router-link>
+                <router-link :to="`/schedule/${aluno.numero}`">
                   <CalendarIcon class="h-5 w-5" />
-                </button>
+                </router-link>
                 <button v-if="role === 'diretor'" @click="deleteStudent(aluno.numero)">
                   <Trash2 class="h-5 w-5" />
                 </button>
