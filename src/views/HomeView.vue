@@ -14,7 +14,8 @@ import {
 import Overview from '@/components/Overview.vue'
 import RecentTickets from '@/components/RecentTickets.vue'
 import Timetable from '../components/Timetable.vue';
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { list_Requests_from_s_and_t } from '@/api/api'
 
 const role = ref('diretor') // *****TEMP***** Pode ser 'aluno', 'diretor' ou 'docente'
 
@@ -26,44 +27,30 @@ interface Ticket {
   subject: string
 }
 
-// Example data for recent tickets
-const recentTickets = ref<Ticket[]>([
-    {
-      iniciais: 'AS',
-      nome: 'Afonso Dionísio Santos',
-      email: 'a104276@alunos.uminho.pt',
-      dataTicket: '23/02/2025',
-      subject: 'Assunto A',
-    },
-    {
-      iniciais: 'AP',
-      nome: 'Ana Margarida Campos Pires',
-      email: 'a96060@alunos.uminho.pt',
-      dataTicket: '23/02/2025',
-      subject: 'Assunto relativo ao pedido enviado',
-    },
-    {
-      iniciais: 'JC',
-      nome: 'José Francisco Creissac Freitas Campos',
-      email: 'jfc@di.uminho.pt',
-      dataTicket: '22/02/2025',
-      subject: 'Assunto do pedido',
-    },
-    {
-      iniciais: 'PP',
-      nome: 'Pedro Figueiredo Pereira',
-      email: 'a104082@alunos.uminho.pt',
-      dataTicket: '22/02/2025',
-      subject: 'Assunto D',
-    },
-    {
-      iniciais: 'OB',
-      nome: 'Orlando Manuel Oliveira Belo',
-      email: 'obelo@di.uminho.pt',
-      dataTicket: '21/02/2025',
-      subject: 'Assunto do pedido enviado no dia 21',
-    }
-  ])
+const recentTickets = ref<Ticket[]>([]);
+
+async function fetchRecentTickets() {
+  try {
+    // bring name, email, subject and date already formatted as "18/02/2025", "02/10/2025", etc.
+    const tickets: Ticket[] = await list_Requests_from_s_and_t(5)
+
+    // only add initials and rename date → dataTicket
+    recentTickets.value = tickets.map(t => ({
+      iniciais:   t.name.charAt(0),
+      nome:       t.name,
+      email:      t.email,
+      subject:    t.subject,
+      dataTicket: t.date    // already "18/02/2025", "02/10/2025", etc.
+    }))
+  }
+  catch (error) {
+    console.error('Erro ao buscar os tickets recentes:', error)
+  }
+}
+
+onMounted(() => {
+  fetchRecentTickets();
+});
 
   // Example data for timetable
   const studentBlocks = [

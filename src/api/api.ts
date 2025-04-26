@@ -95,6 +95,47 @@ export async function list_RequestsDirector_by_id() {
   return dict;
 }
 
+// "DD-MM-YYYY" → Date
+function parseDDMMYYYY(str: string): Date {
+  const [day, month, year] = str.split('-').map(s => parseInt(s, 10));
+  return new Date(year, month - 1, day);
+}
+
+// Gets a limited number of requests (students and teachers) combined and sorted by date
+export async function list_Requests_from_s_and_t(limit: number) {
+  const [respS, respT, students, teachers] = await Promise.all([
+    API.get("/requestsStudents"),
+    API.get("/requestsTeachers"),
+    API.get("/students"),
+    API.get("/teachers"),
+  ]);
+
+  // 1) add parsedDate to each request
+  const withDates = [
+    ...respS.data.map((r: any) => ({ ...r, parsedDate: parseDDMMYYYY(r.date) })),
+    ...respT.data.map((r: any) => ({ ...r, parsedDate: parseDDMMYYYY(r.date) }))
+  ];
+
+  // 2) sort by parsedDate, from most recent to oldest
+  const sorted = withDates
+    .sort((a, b) => b.parsedDate.getTime() - a.parsedDate.getTime())
+    .slice(0, limit);
+
+  // 3) build the final payload, formatting the date in pt-PT
+  return sorted.map((req: any) => {
+    const user = req.studentId
+      ? students.data.find((s: any) => s.id === req.studentId)
+      : teachers.data.find((t: any) => t.id === req.teacherId);
+
+    return {
+      subject: req.subject,
+      date: req.parsedDate.toLocaleDateString('pt-PT'), // ex: "18/02/2025"
+      name:  user?.name  || "Unknown",
+      email: user?.email || "Unknown",
+    };
+  });
+}
+
 // -----------------------
 // Functions for Students
 // -----------------------
