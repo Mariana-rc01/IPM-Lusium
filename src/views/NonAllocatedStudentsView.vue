@@ -92,8 +92,7 @@
                 </div>
               </td>
               <td class="px-4 flex gap-4 justify-start">
-                  <router-link
-                      to="/aluno">
+                  <router-link :to="`/allocate/${aluno.numero}`">
                       <Button class="mt-2 text-sm rounded-md py-1 px-3 w-auto bg-[#10B981] text-white hover:bg-[#34D399]">
                           Alocar
                       </Button>
@@ -173,10 +172,9 @@
   </template>
   
   <script setup lang="ts">
-  import { ref, computed } from 'vue'
-
-  const role = ref('diretor') // *****TEMP***** Pode ser 'aluno', 'diretor' ou 'docente'
-
+  import { ref, computed, onMounted } from 'vue';
+  import { getNonAllocatedStudents } from '@/api/api';
+    
   import {
     ChevronLeftIcon,
     ChevronRightIcon,
@@ -187,11 +185,10 @@
     BriefcaseIcon,
     DumbbellIcon,
     SlidersHorizontalIcon,
-    UserCircleIcon,
-    CalendarIcon
   } from 'lucide-vue-next'
   
   // Imports from shadcn-vue
+  import { Button } from '@/components/ui/button';
   import { Input } from '@/components/ui/input'
   import {
     Select,
@@ -224,69 +221,39 @@
   const sortColumn = ref<'numero' | 'nome' | 'estatuto' | null>(null)
   const sortDirection = ref<'asc' | 'desc'>('asc')
   
-  // Example data
-  const alunos = ref<Aluno[]>([
-    {
-      numero: 'a104725',
-      nome: 'Afonso Dionisio Santos',
-      estatuto: 'Trabalhador-Estudante',
-      ano: 3
-    },
-    {
-      numero: 'a104732',
-      nome: 'Afonso Gonçalves Pedreira',
-      estatuto: 'Atleta',
-      ano: 3
-    },
-    {
-      numero: 'a104527',
-      nome: 'Afonso Gregório de Sousa',
-      estatuto: 'Trabalhador-Estudante',
-      ano: 2
-    },
-    {
-      numero: 'a104338',
-      nome: 'Alex Araujo da Silva',
-      estatuto: 'Nenhum',
-      ano: 3
-    },
-    {
-      numero: 'a104612',
-      nome: 'Alexandre Antes Dias',
-      estatuto: 'Trabalhador-Estudante',
-      ano: 2
-    },
-    {
-      numero: 'a104765',
-      nome: 'Alexandre de Oliveira Monsanto',
-      estatuto: 'Nenhum',
-      ano: 1
-    },
-    {
-      numero: 'a104920',
-      nome: 'Alexandre Marques Miranda',
-      estatuto: 'Atleta',
-      ano: 1
-    },
-    {
-      numero: 'a105011',
-      nome: 'Ana Carolina Penha Cerqueira',
-      estatuto: 'Nenhum',
-      ano: 3
-    },
-    {
-      numero: 'a105288',
-      nome: 'Júda Rodrigues Coelho',
-      estatuto: 'Atleta',
-      ano: 2
-    },
-    {
-      numero: 'a105469',
-      nome: 'Ana Margarida Campos Pires',
-      estatuto: 'Trabalhador-Estudante',
-      ano: 3
+  // Dynamic data
+  const alunos = ref<Aluno[]>([]);
+  
+  // Fetch data from the API
+  async function fetchAlunos() {
+    try {
+      const students = await getNonAllocatedStudents();
+      alunos.value = students.map((aluno: any) => ({
+        numero: aluno.id,
+        nome: aluno.name,
+        estatuto: mapSpecialStatus(aluno.specialStatus), // Map English to Portuguese
+        ano: aluno.year,
+      }));
+    } catch (error) {
+      console.error('Error fetching students:', error);
     }
-  ])
+  }
+  
+  // Helper function to map English specialStatus to Portuguese
+  function mapSpecialStatus(status: string): string {
+    switch (status) {
+      case 'athlete':
+        return 'Atleta';
+      case 'working student':
+        return 'Trabalhador-Estudante';
+      default:
+        return 'Sem Estatuto';
+    }
+  }
+  
+  onMounted(() => {
+    fetchAlunos();
+  });
   
   // Computed properties
   const filteredAlunos = computed(() => {
