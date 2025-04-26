@@ -105,6 +105,11 @@ export async function getStudents() {
   return response.data;
 }
 
+// Delete a student by ID
+export async function deleteStudentById(studentId: string) {
+  await API.delete(`/students/${studentId}`);
+}
+
 // -----------------------
 // Functions for Shifts
 // -----------------------
