@@ -92,13 +92,13 @@
                 </div>
               </td>
               <td class="py-3 px-4 text-sm text-center flex gap-4 justify-end">
-                <router-link :to="`/profile/${aluno.numero}`">
+                <button>
                   <UserCircleIcon class="h-5 w-5" />
-                </router-link>
-                <router-link :to="`/schedule/${aluno.numero}`">
+                </button>
+                <button>
                   <CalendarIcon class="h-5 w-5" />
-                </router-link>
-                <button v-if="role === 'diretor'" @click="deleteStudent(aluno.numero)">
+                </button>
+                <button v-if="role === 'diretor'">
                   <Trash2 class="h-5 w-5" />
                 </button>
               </td>
@@ -176,8 +176,7 @@
   </template>
   
   <script setup lang="ts">
-  import { ref, computed, onMounted } from 'vue'
-  import { getStudents, deleteStudentById } from '@/api/api'
+  import { ref, computed } from 'vue'
 
   const role = ref('diretor') // *****TEMP***** Pode ser 'aluno', 'diretor' ou 'docente'
 
@@ -228,40 +227,70 @@
   const sortColumn = ref<'numero' | 'nome' | 'estatuto' | null>(null)
   const sortDirection = ref<'asc' | 'desc'>('asc')
   
-  // Dynamic data
-  const alunos = ref<Aluno[]>([])
-
-  // Fetch data from the API
-  async function fetchAlunos() {
-    try {
-      const students = await getStudents();
-      alunos.value = students.map((aluno: any) => ({
-        numero: aluno.id,
-        nome: aluno.name,
-        estatuto: mapSpecialStatus(aluno.specialStatus), // Map English to Portuguese
-        ano: aluno.year,
-      }));
-    } catch (error) {
-      console.error("Error fetching students:", error);
+  // Example data
+  const alunos = ref<Aluno[]>([
+    {
+      numero: 'a104725',
+      nome: 'Afonso Dionisio Santos',
+      estatuto: 'Trabalhador-Estudante',
+      ano: 3
+    },
+    {
+      numero: 'a104732',
+      nome: 'Afonso Gonçalves Pedreira',
+      estatuto: 'Atleta',
+      ano: 3
+    },
+    {
+      numero: 'a104527',
+      nome: 'Afonso Gregório de Sousa',
+      estatuto: 'Trabalhador-Estudante',
+      ano: 2
+    },
+    {
+      numero: 'a104338',
+      nome: 'Alex Araujo da Silva',
+      estatuto: 'Nenhum',
+      ano: 3
+    },
+    {
+      numero: 'a104612',
+      nome: 'Alexandre Antes Dias',
+      estatuto: 'Trabalhador-Estudante',
+      ano: 2
+    },
+    {
+      numero: 'a104765',
+      nome: 'Alexandre de Oliveira Monsanto',
+      estatuto: 'Nenhum',
+      ano: 1
+    },
+    {
+      numero: 'a104920',
+      nome: 'Alexandre Marques Miranda',
+      estatuto: 'Atleta',
+      ano: 1
+    },
+    {
+      numero: 'a105011',
+      nome: 'Ana Carolina Penha Cerqueira',
+      estatuto: 'Nenhum',
+      ano: 3
+    },
+    {
+      numero: 'a105288',
+      nome: 'Júda Rodrigues Coelho',
+      estatuto: 'Atleta',
+      ano: 2
+    },
+    {
+      numero: 'a105469',
+      nome: 'Ana Margarida Campos Pires',
+      estatuto: 'Trabalhador-Estudante',
+      ano: 3
     }
-  }
-
-  // Helper function to map English specialStatus to Portuguese
-  function mapSpecialStatus(status: string): string {
-    switch (status) {
-      case "athlete":
-        return "Atleta";
-      case "working student":
-        return "Trabalhador-Estudante";
-      default:
-        return "Sem Estatuto";
-    }
-  }
+  ])
   
-  onMounted(() => {
-    fetchAlunos()
-  })
-
   // Computed properties
   const filteredAlunos = computed(() => {
 
@@ -324,15 +353,6 @@
   })
   
   // Methods
-  async function deleteStudent(studentId: string) {
-    try {
-      await deleteStudentById(studentId);
-      alunos.value = alunos.value.filter((aluno) => aluno.numero !== studentId);
-    } catch (error) {
-      console.error('Erro ao eliminar o aluno:', error);
-    }
-  }
-
   function goToPage(page: number) {
     currentPage.value = page
   }
