@@ -280,6 +280,16 @@ export async function getStudentsNotAllocated() {
   );
 }
 
+// Get all "Aceite" or "Recusado" requests
+export async function getSolvedRequests() {
+  const requestsResponse = await API.get("/requestsStudents");
+  const requests = requestsResponse.data;
+
+  return requests.filter(
+    (request: any) => request.status === "Aceite" || request.status === "Recusado",
+  );
+}
+
 // -----------------------
 // Functions for Shifts
 // -----------------------

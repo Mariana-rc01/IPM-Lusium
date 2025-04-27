@@ -21,6 +21,7 @@ import { getCoursesOccupancy } from '@/api/api';
 import { getGlobalOccupancy } from '@/api/api';
 import { getStudentsNotAllocated } from '@/api/api';
 import { getStudents } from '@/api/api';
+import { getSolvedRequests } from '@/api/api';
 
 const role = ref('diretor') // *****TEMP***** Pode ser 'aluno', 'diretor' ou 'docente'
 
@@ -41,7 +42,8 @@ const recentTickets = ref<Ticket[]>([]);
 const coursesOccupancy = ref<CourseOccupancy[]>([]);
 const globalOccupancy = ref<number | null>(null);
 const studentsNotAllocated = ref<number | null>(null);
-const totalStudents = ref<any[]>([]);
+const totalStudents = ref<number | null>(null);
+const solvedRequests = ref<number | null>(null);
 
 async function fetchTickets(role: string) {
   try {
@@ -101,12 +103,22 @@ async function fetchStudents() {
   }
 }
 
+async function fetchSolvedRequests() {
+  try {
+    const requestsData = await getSolvedRequests();
+    solvedRequests.value = requestsData.length;
+  } catch (error) {
+    console.error('Erro ao buscar o número de pedidos resolvidos:', error);
+  }
+}
+
 onMounted(() => {
   fetchTickets(role.value);
   fetchCoursesOccupancy();
   fetchGlobalOccupancy();
   fetchStudentsNotAllocated();
   fetchStudents();
+  fetchSolvedRequests();
 });
 
   // Example data for timetable
@@ -266,7 +278,7 @@ onMounted(() => {
               </CardHeader>
               <CardContent>
                 <div class="text-2xl font-bold">
-                  43
+                  {{ solvedRequests !== null ? solvedRequests : '-' }}
                 </div>
               </CardContent>
             </Card>
