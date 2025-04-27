@@ -234,6 +234,36 @@ export async function getCoursesOccupancy() {
 }
 
 // -----------------------
+// Functions for Statistics
+// -----------------------
+
+// Get global occupancy percentage (one unique value)
+export async function getGlobalOccupancy() {
+  const shiftsResponse = await API.get("/shifts");
+  const classroomsResponse = await API.get("/classrooms");
+
+  const shifts = shiftsResponse.data;
+  const classrooms = classroomsResponse.data;
+
+  const totalCapacity = classrooms.reduce(
+    (acc: number, classroom: any) => acc + classroom.capacity,
+    0,
+  );
+
+  const totalRegistered = shifts.reduce(
+    (acc: number, shift: any) => acc + shift.totalStudentsRegistered,
+    0,
+  );
+
+  return {
+    percentage:
+      totalCapacity > 0
+        ? parseFloat(((totalRegistered / totalCapacity) * 100).toFixed(2))
+        : 0,
+  };
+}
+
+// -----------------------
 // Functions for Shifts
 // -----------------------
 
