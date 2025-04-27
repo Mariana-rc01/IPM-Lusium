@@ -75,7 +75,17 @@
                 <tbody>
                     <tr v-for="course in paginatedCourses" :key="course.codUc" class="border-b border-emerald-100 hover:bg-gray-50">
                         <td class="py-3 px-4 text-sm truncate">{{ course.codUc }}</td>
-                        <td class="py-3 px-4 text-sm truncate">{{ course.nome }}</td>
+                        <td class="py-3 px-4 text-sm truncate">
+                          <router-link :to="`/uc-schedule/${course.codUc}`">
+                              <Button
+                                      type="button"
+                                      :disabled="isLoading"
+                                      class="underline"
+                                      >
+                                      {{ course.nome }}
+                              </Button>
+                          </router-link>
+                        </td>
                         <td class="py-3 px-4 text-sm truncate">
                             <div class="w-fit border py-1 px-2 rounded-lg border-emerald-200">
                                 {{ course.anoCurricular }}º ano
