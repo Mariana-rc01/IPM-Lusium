@@ -136,6 +136,41 @@ export async function list_Requests_from_s_and_t(limit: number) {
   });
 }
 
+// Gets a limited number of requests (director) sorted by date
+export async function list_Requests_from_d(limit: number) {
+  const response = await API.get("/requestsDirector");
+  const data: types.RequestsDirector[] = response.data;
+
+  const directorsResponse = await API.get("/directors");
+  const directorsData = directorsResponse.data;
+
+  // Ensure there is at least one director
+  if (!directorsData || directorsData.length === 0) {
+    throw new Error("No directors found!");
+  }
+
+  const director = directorsData[0];
+
+  // 1) add parsedDate to each request
+  const withDates = data.map((r) => ({
+    ...r,
+    parsedDate: parseDDMMYYYY(r.date),
+  }));
+
+  // 2) sort by parsedDate, from most recent to oldest
+  const sorted = withDates
+    .sort((a, b) => b.parsedDate.getTime() - a.parsedDate.getTime())
+    .slice(0, limit);
+
+  // 3) build the final payload, formatting the date in pt-PT
+  return sorted.map((req) => ({
+    subject: req.subject,
+    date: req.parsedDate.toLocaleDateString('pt-PT'), // ex: "18/02/2025"
+    name: director.name || "Unknown",
+    email: director.email || "Unknown",
+  }));
+}
+
 // -----------------------
 // Functions for Students
 // -----------------------

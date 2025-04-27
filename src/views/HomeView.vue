@@ -16,8 +16,9 @@ import RecentTickets from '@/components/RecentTickets.vue'
 import Timetable from '../components/Timetable.vue';
 import { ref, onMounted } from 'vue'
 import { list_Requests_from_s_and_t } from '@/api/api'
+import { list_Requests_from_d } from '@/api/api'
 
-const role = ref('diretor') // *****TEMP***** Pode ser 'aluno', 'diretor' ou 'docente'
+const role = ref('aluno') // *****TEMP***** Pode ser 'aluno', 'diretor' ou 'docente'
 
 interface Ticket {
   iniciais: string
@@ -29,27 +30,27 @@ interface Ticket {
 
 const recentTickets = ref<Ticket[]>([]);
 
-async function fetchRecentTickets() {
+async function fetchTickets(role: string) {
   try {
-    // bring name, email, subject and date already formatted as "18/02/2025", "02/10/2025", etc.
-    const tickets: Ticket[] = await list_Requests_from_s_and_t(5)
+    const tickets =
+      role !== 'diretor'
+        ? await list_Requests_from_d(5)
+        : await list_Requests_from_s_and_t(5);
 
-    // only add initials and rename date → dataTicket
-    recentTickets.value = tickets.map(t => ({
-      iniciais:   t.name.charAt(0),
-      nome:       t.name,
-      email:      t.email,
-      subject:    t.subject,
-      dataTicket: t.date    // already "18/02/2025", "02/10/2025", etc.
-    }))
-  }
-  catch (error) {
-    console.error('Erro ao buscar os tickets recentes:', error)
+    recentTickets.value = tickets.map((t) => ({
+      iniciais: t.name.charAt(0).toUpperCase(),
+      nome: t.name,
+      email: t.email,
+      subject: t.subject,
+      dataTicket: t.date, // already formatted
+    }));
+  } catch (error) {
+    console.error('Erro ao buscar os tickets:', error);
   }
 }
 
 onMounted(() => {
-  fetchRecentTickets();
+  fetchTickets(role.value);
 });
 
   // Example data for timetable
@@ -239,7 +240,7 @@ onMounted(() => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <RecentTickets :recentTickets="recentTickets" />
+                <RecentTickets :recentTickets=recentTickets />
               </CardContent>
             </Card>
           </div>
