@@ -17,8 +17,9 @@ import Timetable from '../components/Timetable.vue';
 import { ref, onMounted } from 'vue'
 import { list_Requests_from_s_and_t } from '@/api/api'
 import { list_Requests_from_d } from '@/api/api'
+import { getCoursesOccupancy } from '@/api/api';
 
-const role = ref('aluno') // *****TEMP***** Pode ser 'aluno', 'diretor' ou 'docente'
+const role = ref('diretor') // *****TEMP***** Pode ser 'aluno', 'diretor' ou 'docente'
 
 interface Ticket {
   iniciais: string
@@ -28,7 +29,13 @@ interface Ticket {
   subject: string
 }
 
+interface CourseOccupancy {
+  abreviatura: string
+  percentagem: number
+}
+
 const recentTickets = ref<Ticket[]>([]);
+const coursesOccupancy = ref<CourseOccupancy[]>([]);
 
 async function fetchTickets(role: string) {
   try {
@@ -49,8 +56,21 @@ async function fetchTickets(role: string) {
   }
 }
 
+async function fetchCoursesOccupancy() {
+  try {
+    const occupancyData = await getCoursesOccupancy();
+    coursesOccupancy.value = occupancyData.map((course: any) => ({
+      abreviatura: course.abbreviation,
+      percentagem: course.occupancy.percentage,
+    }));
+  } catch (error) {
+    console.error('Erro ao buscar a ocupação dos cursos:', error);
+  }
+}
+
 onMounted(() => {
   fetchTickets(role.value);
+  fetchCoursesOccupancy();
 });
 
   // Example data for timetable
@@ -221,7 +241,7 @@ onMounted(() => {
                 <CardTitle>Ocupação dos turnos</CardTitle>
               </CardHeader>
               <CardContent class="pl-2">
-                <Overview />
+                <Overview :CoursesOccupancy="coursesOccupancy" />
               </CardContent>
             </Card>
             <Card v-else class="col-span-4 border-2 border-emerald-200 text-emerald-900 h-[500px] overflow-y-auto">
@@ -240,7 +260,7 @@ onMounted(() => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <RecentTickets :recentTickets=recentTickets />
+                <RecentTickets :recentTickets="recentTickets" />
               </CardContent>
             </Card>
           </div>

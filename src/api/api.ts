@@ -187,6 +187,53 @@ export async function deleteStudentById(studentId: string) {
 }
 
 // -----------------------
+// Functions for Courses
+// -----------------------
+
+// Get each course shifts ocupation
+export async function getCoursesOccupancy() {
+  const response = await API.get("/courses");
+  const courses = response.data;
+
+  const shiftsResponse = await API.get("/shifts");
+  const shifts = shiftsResponse.data;
+
+  const classroomsResponse = await API.get("/classrooms");
+  const classrooms = classroomsResponse.data;
+
+  return courses.map((course: any) => {
+    const courseShifts = shifts.filter(
+      (shift: any) => String(shift.courseId) === String(course.id),
+    );
+
+    const totalCapacity = courseShifts.reduce((acc: number, shift: any) => {
+      const classroom = classrooms.find(
+        (c: any) => String(c.id) === String(shift.classroomId),
+      );
+      return acc + (classroom ? classroom.capacity : 0);
+    }, 0);
+
+    const totalRegistered = courseShifts.reduce(
+      (acc: number, shift: any) => acc + shift.totalStudentsRegistered,
+      0,
+    );
+
+    return {
+      id: course.id,
+      abbreviation: course.abbreviation,
+      occupancy: {
+        current: totalRegistered,
+        total: totalCapacity,
+        percentage:
+          totalCapacity > 0
+            ? parseFloat(((totalRegistered / totalCapacity) * 100).toFixed(2))
+            : 0,
+      },
+    };
+  });
+}
+
+// -----------------------
 // Functions for Shifts
 // -----------------------
 
