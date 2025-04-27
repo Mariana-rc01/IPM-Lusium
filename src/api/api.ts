@@ -263,6 +263,23 @@ export async function getGlobalOccupancy() {
   };
 }
 
+// Get students not allocated to any shift
+export async function getStudentsNotAllocated() {
+  const studentsResponse = await API.get("/students");
+  const allocationsResponse = await API.get("/allocations");
+
+  const students = studentsResponse.data;
+  const allocations = allocationsResponse.data;
+
+  const allocatedStudentIds = new Set(
+    allocations.map((allocation: any) => allocation.studentId),
+  );
+
+  return students.filter(
+    (student: any) => !allocatedStudentIds.has(student.id),
+  );
+}
+
 // -----------------------
 // Functions for Shifts
 // -----------------------

@@ -19,6 +19,7 @@ import { list_Requests_from_s_and_t } from '@/api/api'
 import { list_Requests_from_d } from '@/api/api'
 import { getCoursesOccupancy } from '@/api/api';
 import { getGlobalOccupancy } from '@/api/api';
+import { getStudentsNotAllocated } from '@/api/api';
 
 const role = ref('diretor') // *****TEMP***** Pode ser 'aluno', 'diretor' ou 'docente'
 
@@ -38,6 +39,7 @@ interface CourseOccupancy {
 const recentTickets = ref<Ticket[]>([]);
 const coursesOccupancy = ref<CourseOccupancy[]>([]);
 const globalOccupancy = ref<number | null>(null);
+const studentsNotAllocated = ref<number | null>(null);
 
 async function fetchTickets(role: string) {
   try {
@@ -79,10 +81,20 @@ async function fetchGlobalOccupancy() {
   }
 }
 
+async function fetchStudentsNotAllocated() {
+  try {
+    const studentsData = await getStudentsNotAllocated();
+    studentsNotAllocated.value = studentsData.length;
+  } catch (error) {
+    console.error('Erro ao buscar o número de alunos não alocados:', error);
+  }
+}
+
 onMounted(() => {
   fetchTickets(role.value);
   fetchCoursesOccupancy();
   fetchGlobalOccupancy();
+  fetchStudentsNotAllocated();
 });
 
   // Example data for timetable
@@ -214,7 +226,7 @@ onMounted(() => {
               </CardHeader>
               <CardContent>
                 <div class="text-2xl font-bold">
-                  16
+                  {{ studentsNotAllocated !== null ? studentsNotAllocated : '-' }}
                 </div>
               </CardContent>
             </Card>
