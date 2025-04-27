@@ -158,9 +158,8 @@
 <script setup lang="ts">
     import { ref, computed, onMounted } from 'vue'
 import { useUserStore } from '@/stores/user'
-import { getStudentById, getAllCoursesWithOccupation } from '@/api/api'
+import { getStudentById, getAllCoursesWithOccupation, getAllCoursesWithOccupationForAll } from '@/api/api'
 
-  const role = ref('diretor') // *****TEMP***** Pode ser 'aluno', 'diretor' ou 'docente'
 
   import {
     ChevronLeftIcon,
@@ -173,8 +172,6 @@ import { getStudentById, getAllCoursesWithOccupation } from '@/api/api'
     ArrowUp,
     ArrowRight,
     ArrowDown,
-    UserCircleIcon,
-    CalendarIcon
   } from 'lucide-vue-next'
 
   // Imports from shadcn-vue
@@ -213,32 +210,45 @@ import { getStudentById, getAllCoursesWithOccupation } from '@/api/api'
 const isLoading = ref(false)
 const error = ref('')
 
-// Fetch courses dynamically based on the student's enrolled courses
 const fetchCourses = async () => {
   isLoading.value = true
   try {
     const userStore = useUserStore()
     const user = userStore.user
 
-    if (!user || user.type !== 'student') {
-      throw new Error('Utilizador não autenticado ou não é um estudante.')
+    if (!user) {
+      throw new Error('Utilizador não autenticado.')
     }
 
-    // Retrieve the student's enrolled courses
-    const student = await getStudentById(user.id)
-    const enrolledCourses = student.enrolled
-    
-    // Fetch courses with occupation data
-    const apiResponse = await getAllCoursesWithOccupation(enrolledCourses)
-    
-    // Map API response to the Course interface
-    courses.value = apiResponse.map((course: any) => ({
-      codUc: course.id || "-",
-      nome: course.name || "-", // Replace with actual name if available
-      anoCurricular: course.year || "-", // Replace with actual year if available
-      ocupacao: course.occupancyLevel,
-    }))
+    if (user.type === 'student') {
+      // Retrieve the student's enrolled courses
+      const student = await getStudentById(user.id)
+      const enrolledCourses = student.enrolled
 
+      // Fetch courses with occupation data
+      const apiResponse = await getAllCoursesWithOccupation(enrolledCourses)
+
+      // Map API response to the Course interface
+      courses.value = apiResponse.map((course: any) => ({
+        codUc: course.id || "-",
+        nome: course.name || "-",
+        anoCurricular: course.year || "-",
+        ocupacao: course.occupancyLevel,
+      }))
+    } else if (user.type === 'director' || user.type === 'teacher') {
+      // Fetch all courses with occupation data
+      const apiResponse = await getAllCoursesWithOccupationForAll()
+
+      // Map API response to the Course interface
+      courses.value = apiResponse.map((course: any) => ({
+        codUc: course.id || "-",
+        nome: course.name || "-",
+        anoCurricular: course.year || "-",
+        ocupacao: course.occupancyLevel,
+      }))
+    } else {
+      throw new Error('Tipo de utilizador desconhecido.')
+    }
   } catch (err: any) {
     console.error('Erro ao carregar cursos:', err)
     error.value = 'Não foi possível carregar os cursos.'
@@ -306,7 +316,7 @@ let result = courses.value
     currentPage.value = page
   }
 
-  function sortBy(column: 'nome' | 'anoCurricular' | 'ocupacao') {
+  function sortBy(column: 'codUc' | 'nome' | 'anoCurricular' | 'ocupacao') {
     if (sortColumn.value === column) {
             sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc'
     } else {

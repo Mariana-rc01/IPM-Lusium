@@ -489,3 +489,50 @@ export async function getAllCoursesWithOccupation(enrolledCourses: string[]) {
       };
     });
 }
+
+// Get all UCs (Unidades Curriculares) with occupation percentage for all courses
+export async function getAllCoursesWithOccupationForAll() {
+  const coursesResponse = await API.get("/courses");
+  const shiftsResponse = await API.get("/shifts");
+  const classroomsResponse = await API.get("/classrooms");
+
+  const courses = coursesResponse.data;
+  const shifts = shiftsResponse.data;
+  const classrooms = classroomsResponse.data;
+
+  return courses.map((course: any) => {
+    const courseShifts = shifts.filter(
+      (shift: any) => String(shift.courseId) === String(course.id),
+    );
+
+    let totalStudents = 0;
+    let totalCapacity = 0;
+
+    courseShifts.forEach((shift: any) => {
+      const classroom = classrooms.find(
+        (c: any) => String(c.id) === String(shift.classroomId),
+      );
+      if (classroom) {
+        totalStudents += shift.totalStudentsRegistered;
+        totalCapacity += classroom.capacity;
+      }
+    });
+
+    const occupancyPercentage =
+      totalCapacity > 0 ? (totalStudents / totalCapacity) * 100 : 0;
+
+    let occupancyLevel = "Baixa";
+    if (occupancyPercentage > 70) {
+      occupancyLevel = "Alta";
+    } else if (occupancyPercentage > 30) {
+      occupancyLevel = "Média";
+    }
+
+    return {
+      id: course.id,
+      name: course.name,
+      year: course.year,
+      occupancyLevel,
+    };
+  });
+}
