@@ -49,16 +49,16 @@
                     </div>
                 </div>
             </div>
-            <div class="flex justify-center mt-24 lg:mt-0 lg:justify-end">
-                <router-link to="/schedule">
-                    <Button
-                            type="button"
-                            :disabled="isLoading"
-                            class="text-md bg-[#059669] hover:bg-[#047857] transition-colors"
-                            >
-                            Ver Horário
-                    </Button>
-                </router-link>
+            <div v-if="user?.type === 'student'" class="flex justify-center mt-24 lg:mt-0 lg:justify-end">
+              <router-link :to="`/schedule/${user.id}`">
+                <Button
+                    type="button"
+                    :disabled="isLoading"
+                    class="text-md bg-[#059669] hover:bg-[#047857] transition-colors"
+                    >
+                    Ver Horário
+                </Button>
+              </router-link>
             </div>
         </div>
         <div v-if="error" class="text-red-500 text-center mt-4">{{ error }}</div>
@@ -88,6 +88,7 @@ interface ProfileData {
   solutions: string
   quote: string
   avatarUrl: string
+  specialStatus: string
 }
 
 const userStore = useUserStore()
@@ -105,18 +106,10 @@ const profile = ref<ProfileData>({
   solutions: '',
   quote: '',
   avatarUrl: '',
+  specialStatus: '',
 })
 const isLoading = ref(false)
 const error = ref('')
-
-// Compute initials for fallback
-const initials = computed(() => {
-  return profile.value.name
-    .split(' ')
-    .map(n => n.charAt(0))
-    .join('')
-    .toUpperCase()
-})
 
 const loadProfile = async () => {
   if (!user) {
@@ -137,7 +130,7 @@ const loadProfile = async () => {
       challenges: data.challenges,
       solutions: data.solutions,
       quote: data.quote,
-      avatarUrl: '/avatars/01.png' || data.avatarUrl,
+      avatarUrl: '/avatars/01.png',
       specialStatus: data.specialStatus === "" || data.specialStatus == null ? null : data.specialStatus.charAt(0).toUpperCase() + data.specialStatus.slice(1).toLowerCase()
     }
   } catch (err: any) {
