@@ -1,44 +1,65 @@
-<script setup lang="ts">
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { ref } from 'vue'
-import ErrorAlert from '@/components/popup/ErrorAlert.vue'
-import { useRouter } from 'vue-router'
+<script lang="ts">
+import { defineComponent } from 'vue';
+import { useRouter } from 'vue-router';
+import { useUserStore } from '../../stores/user';
+import { authenticateUser } from '@/api/api';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import ErrorAlert from '@/components/popup/ErrorAlert.vue';
 
-const router = useRouter()
-const isLoading = ref(false)
-const errorMessage = ref<string | null>(null)
-const username = ref('')
-const password = ref('')
-
-async function onSubmit(event: Event) {
-    event.preventDefault()
-    isLoading.value = true
-    errorMessage.value = null
-
-    // TODO
-    if (!username.value || !password.value) {
-        errorMessage.value = 'Credenciais inválidas! Por favor, introduza um nome de utilizador e uma palavra-passe válidos.'
-        isLoading.value = false
-        return
+export default defineComponent({
+  components: {
+    Button,
+    Input,
+    ErrorAlert
+  },
+  data() {
+    return {
+      isLoading: false,
+      errorMessage: null as string | null,
+      userId: '',
+      password: ''
     }
+  },
+  setup() {
+    const router = useRouter();
+    return { router };
+  },
+  methods: {
+    async onSubmit(event: Event) {
+      event.preventDefault();
+      this.isLoading = true;
+      this.errorMessage = null;
 
-    // TODO
-    setTimeout(() => {
-        isLoading.value = false
-        router.push('/aluno')
-    }, 500)
-}
+      if (!this.userId || !this.password) {
+        this.errorMessage = 'Credenciais inválidas! Por favor, introduza um ID e uma palavra-passe válidos.';
+        this.isLoading = false;
+        return;
+      }
+
+      try {
+        const user = await authenticateUser(this.userId, this.password);
+        const userStore = useUserStore();
+        userStore.setUser(user);
+
+        this.router.push('/home');
+      } catch (error: any) {
+        console.error('Erro na autenticação:', error);
+        this.errorMessage = error.message || 'Erro ao iniciar sessão. Por favor, tente novamente mais tarde.';
+      } finally {
+        this.isLoading = false;
+      }
+    }
+  }
+});
 </script>
 
 <template>
-    <div :class="cn('grid gap-6', $attrs.class ?? '')">
+    <div :class="['grid gap-6', $attrs.class ?? ''].filter(Boolean).join(' ')">
         <form @submit="onSubmit">
             <div class="grid gap-4">
                 <div class="grid gap-2">
-                    <Input id="username" v-model="username" placeholder="Introduza o seu nome de utilizador"
+                    <Input id="userId" v-model="userId" placeholder="Introduza o seu nome de utilizador"
                         type="text" :disabled="isLoading"
                         class="bg-zinc-50 border-zinc-300 text-zinc-500 placeholder:text-zinc-400 focus-visible:ring-[#059669]"/>
                 </div>
