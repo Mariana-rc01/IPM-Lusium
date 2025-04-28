@@ -141,7 +141,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed, onMounted } from 'vue';
+import { defineComponent } from 'vue';
 import { useUserStore } from '@/stores/user';
 import { getStudentById, getAllCoursesWithOccupation, getAllCoursesWithOccupationForAll } from '@/api/api';
 import {
