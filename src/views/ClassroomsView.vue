@@ -140,6 +140,7 @@
   <script setup lang="ts">
   import { ref, computed, onMounted } from 'vue'
   import { getAllClassrooms } from '@/api/api'
+  import { useUserStore } from '@/stores/user'
 
   import {
     ChevronLeftIcon,
@@ -168,6 +169,8 @@
     DropdownMenuTrigger
   } from '@/components/ui/dropdown-menu'
   
+  const role = ref<string | null>(null); // Dynamically set role
+
   // Types
   interface Sala {
     cp: number
@@ -202,6 +205,19 @@
   
   // Fetch data on component mount
   onMounted(() => {
+    const userStore = useUserStore();
+    const user = userStore.user;
+    if (!user) {
+      console.warn('Unexpected error: User not found in store');
+      return;
+    }
+    role.value = user.type;
+    if (role.value === 'student') {
+      const notFound = '/not-found';
+      window.location.href = notFound;
+      return;
+    }
+
     fetchClassrooms()
   })
   
