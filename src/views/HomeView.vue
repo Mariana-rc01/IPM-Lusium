@@ -14,7 +14,7 @@ import {
 import Overview from '@/components/Overview.vue'
 import RecentTickets from '@/components/RecentTickets.vue'
 import Timetable from '../components/Timetable.vue';
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { list_Requests_from_s_and_t } from '@/api/api'
 import { list_Requests_from_d } from '@/api/api'
 import { getCoursesOccupancy } from '@/api/api';
@@ -22,8 +22,12 @@ import { getGlobalOccupancy } from '@/api/api';
 import { getStudentsNotAllocated } from '@/api/api';
 import { getStudents } from '@/api/api';
 import { getSolvedRequests } from '@/api/api';
+import { getStudentById } from '@/api/api';
+import { getStudentAllocations } from '@/api/api';
+import { getAvailableCourses } from '@/api/api';
+import { useUserStore } from '@/stores/user';
 
-const role = ref('diretor') // *****TEMP***** Pode ser 'aluno', 'diretor' ou 'docente'
+const role = ref<string | null>(null); // Dynamically set role
 
 interface Ticket {
   iniciais: string
@@ -38,6 +42,21 @@ interface CourseOccupancy {
   percentagem: number
 }
 
+interface ClassBlock {
+  id: string;
+  name: string;
+  room: string;
+  day: number;
+  startHour: string;
+  endHour: string;
+  type: string;
+  occupancy: {
+    current: number;
+    total: number;
+    percentage: number;
+  };
+}
+
 const recentTickets = ref<Ticket[]>([]);
 const coursesOccupancy = ref<CourseOccupancy[]>([]);
 const globalOccupancy = ref<number | null>(null);
@@ -45,10 +64,45 @@ const studentsNotAllocated = ref<number | null>(null);
 const totalStudents = ref<number | null>(null);
 const solvedRequests = ref<number | null>(null);
 
+const studentId = ref<string | null>(null);
+const enrolledCourses = ref<string[]>([]);
+const allocations = ref<string[]>([]);
+interface Course {
+  uc: string;
+  turnos: {
+    id: string;
+    name: string;
+    room: string;
+    day: number;
+    startHour: string;
+    endHour: string;
+    type: string;
+    occupancy: {
+      current: number;
+      total: number;
+      percentage: number;
+    };
+  }[];
+}
+
+const availableCourses = ref<Course[]>([]);
+const studentShifts = ref<string[]>([]);
+
+const studentBlocks = computed<ClassBlock[]>(() =>
+  availableCourses.value.flatMap(course =>
+    course.turnos
+      .filter(turno => studentShifts.value.includes(turno.id))
+      .map(turno => ({
+        ...turno,
+        name: `${course.uc} - ${turno.name}`
+      }))
+  )
+);
+
 async function fetchTickets(role: string) {
   try {
     const tickets =
-      role !== 'diretor'
+      role !== 'director'
         ? await list_Requests_from_d(5)
         : await list_Requests_from_s_and_t(5);
 
@@ -112,102 +166,43 @@ async function fetchSolvedRequests() {
   }
 }
 
+const loadStudentData = async () => {
+  try {
+    if (!studentId.value) return;
+
+    const student = await getStudentById(studentId.value);
+    enrolledCourses.value = student.enrolled;
+
+    allocations.value = await getStudentAllocations(studentId.value);
+    availableCourses.value = await getAvailableCourses(enrolledCourses.value);
+
+    // Gets the already assigned shifts
+    studentShifts.value = allocations.value;
+  } catch (error: any) {
+    console.error('Erro ao carregar dados:', error.message);
+  }
+};
+
 onMounted(() => {
-  fetchTickets(role.value);
+  const userStore = useUserStore();
+  const user = userStore.user;
+
+  if (!user) {
+    console.warn('Unexpected error: User not found in store');
+    return;
+  }
+
+  studentId.value = user.id;
+  role.value = user.type;
+
+  loadStudentData();
+  fetchTickets(role.value || '');
   fetchCoursesOccupancy();
   fetchGlobalOccupancy();
   fetchStudentsNotAllocated();
   fetchStudents();
   fetchSolvedRequests();
 });
-
-  // Example data for timetable
-  const studentBlocks = [
-    {
-      name: 'IPM - PL4',
-      room: 'CP1 - 1.17',
-      day: 0, // Monday
-      startHour: '9:00',
-      endHour: '11:00', // 2-hour class
-      occupancy: {
-        current: 31,
-        total: 35,
-        percentage: 88.57
-      }
-    },
-    {
-      name: 'CG - T1',
-      room: 'CP1 - 0.08',
-      day: 0, // Monday
-      startHour: '11:00',
-      endHour: '13:00', // 2-hour class
-      occupancy: {
-        current: 94,
-        total: 95,
-        percentage: 98.94
-      }
-    },
-    {
-      name: 'PL - PL6',
-      room: 'CP1 - 0.17',
-      day: 1, // Tuesday
-      startHour: '9:00',
-      endHour: '11:00', // 2-hour class
-      occupancy: {
-        current: 45,
-        total: 45,
-        percentage: 100.00
-      }
-    },
-    {
-      name: 'IPM - T1',
-      room: 'CP1 - 0.08',
-      day: 2, // Wednesday
-      startHour: '11:00',
-      endHour: '13:00', // 2-hour class
-      occupancy: {
-        current: 55,
-        total: 95,
-        percentage: 57.89
-      }
-    },
-    {
-      name: 'CG - PL3',
-      room: 'CP2 - 2.09',
-      day: 3, // Thursday
-      startHour: '8:00',
-      endHour: '10:00', // 2-hour class
-      occupancy: {
-        current: 30,
-        total: 35,
-        percentage: 85.71
-      }
-    },
-    {
-      name: 'SSI - PL1',
-      room: 'CP1 - 2.21',
-      day: 3, // Thursday
-      startHour: '10:00',
-      endHour: '12:00', // 2-hour class
-      occupancy: {
-        current: 84,
-        total: 95,
-        percentage: 88.42
-      }
-    },
-    {
-      name: 'PL - T1',
-      room: 'CP1 - 0.08',
-      day: 4, // Friday
-      startHour: '9:00',
-      endHour: '11:00', // 2-hour class
-      occupancy: {
-        current: 94,
-        total: 95,
-        percentage: 98.94
-      }
-    }
-  ];
 </script>
 
 <template>
@@ -216,17 +211,17 @@ onMounted(() => {
       <div class="flex items-center justify-between space-y-2">
         <h2
           class="text-3xl font-bold tracking-tight text-zinc-950"
-          :class="{ 'mb-12': role !== 'diretor' }"
+          :class="{ 'mb-12': role !== 'director' }"
         >
           Página Principal
         </h2>
-        <div v-if="role === 'diretor'" class="flex items-center space-x-2">
+        <div v-if="role === 'director'" class="flex items-center space-x-2">
           <Button class="bg-emerald-900 hover:bg-emerald-400">Publicar Horários</Button>
         </div>
       </div>
       <Tabs default-value="overview" class="space-y-4">
         <TabsContent value="overview" class="space-y-4">
-          <div v-if="role === 'diretor'" class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <div v-if="role === 'director'" class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <Card class="border-2 border-emerald-200 text-emerald-900">
               <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle class="text-sm font-medium">
@@ -284,7 +279,7 @@ onMounted(() => {
             </Card>
           </div>
           <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-            <Card v-if="role != 'aluno'" class="col-span-4 border-2 border-emerald-200 text-emerald-900">
+            <Card v-if="role != 'student'" class="col-span-4 border-2 border-emerald-200 text-emerald-900">
               <CardHeader>
                 <CardTitle>Ocupação dos turnos</CardTitle>
               </CardHeader>
