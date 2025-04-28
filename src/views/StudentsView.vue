@@ -98,7 +98,7 @@
                 <router-link :to="`/schedule/${aluno.numero}`">
                   <CalendarIcon class="h-5 w-5" />
                 </router-link>
-                <button v-if="role === 'diretor'" @click="deleteStudent(aluno.numero)">
+                <button v-if="role === 'director'" @click="deleteStudent(aluno.numero)">
                   <Trash2 class="h-5 w-5" />
                 </button>
               </td>
@@ -178,8 +178,9 @@
   <script setup lang="ts">
   import { ref, computed, onMounted } from 'vue'
   import { getStudents, deleteStudentById } from '@/api/api'
+  import { useUserStore } from '@/stores/user';
 
-  const role = ref('diretor') // *****TEMP***** Pode ser 'aluno', 'diretor' ou 'docente'
+  const role = ref<string | null>(null); // Dynamically set role
 
   import {
     ChevronLeftIcon,
@@ -259,6 +260,14 @@
   }
   
   onMounted(() => {
+    const userStore = useUserStore();
+    const user = userStore.user;
+    if (!user) {
+      console.warn('Unexpected error: User not found in store');
+      return;
+    }
+    role.value = user.type;
+
     fetchAlunos()
   })
 
