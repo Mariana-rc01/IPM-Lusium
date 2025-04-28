@@ -268,6 +268,12 @@
     }
     role.value = user.type;
 
+    if (role.value === 'student') {
+      const notFound = '/not-found';
+      window.location.href = notFound;
+      return;
+    }
+
     fetchAlunos()
   })
 
