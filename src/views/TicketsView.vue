@@ -62,7 +62,6 @@
             </th>
             <th class="py-3 px-4 text-left text-emerald-600 font-normal text-sm">Remetente</th>
             <th class="py-3 px-4 text-left text-emerald-600 font-normal text-sm">Destinatário</th>
-            <th class="py-3 px-4 text-left text-emerald-600 font-normal text-sm">Data</th>
             <th class="py-3 px-4 text-left text-emerald-600 font-normal text-sm">
               {{ activeFilter === 'enviados' ? 'Data de envio' : 'Data de recepção' }}
             </th>
@@ -129,8 +128,8 @@
           </SelectContent>
         </Select>
       </div>
-    </div>
-    <div class="flex items-center gap-4">
+
+      <div class="flex items-center gap-4">
         <span class="text-sm">Página {{ currentPage }} de {{ totalPages }}</span>
         <div class="flex gap-1">
           <button @click="goToPage(1)" :disabled="currentPage === 1"
@@ -151,6 +150,7 @@
           </button>
         </div>
       </div>
+    </div>
 
     <!-- Modal de Ticket -->
     <div v-if="showModal" class="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center">
