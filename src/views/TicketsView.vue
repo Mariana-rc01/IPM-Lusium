@@ -7,11 +7,13 @@
     <!-- Search bar, filters, and create button -->
     <div class="flex justify-between items-center mb-4">
       <div class="flex items-center gap-4">
+        <!-- Search bar -->
         <div class="flex-none w-72">
           <Input v-model="searchQuery" placeholder="Procurar por assunto..."
             class="w-full border-emerald-200 focus:border-emerald-500 focus:ring-emerald-500" />
         </div>
 
+        <!-- Filter buttons -->
         <div class="flex gap-2">
           <button @click="setFilter('enviados')" class="flex items-center gap-2 px-4 py-2 rounded-md text-sm" :class="activeFilter === 'enviados'
             ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
@@ -29,6 +31,7 @@
         </div>
       </div>
 
+      <!-- Create new request button -->
       <button
         class="flex items-center gap-2 px-4 py-2 rounded-md text-sm border border-emerald-500 text-emerald-700 bg-white hover:bg-emerald-50">
         <PlusCircleIcon class="h-4 w-4" />
@@ -39,14 +42,36 @@
     <!-- Requests table -->
     <div class="border border-emerald-200 rounded-lg overflow-hidden">
       <table class="w-full table-fixed">
+        <colgroup>
+          <col class="w-[12%]" /> <!-- Código do Pedido -->
+          <col class="w-[25%]" /> <!-- Assunto -->
+          <col class="w-[12%]" /> <!-- Remetente -->
+          <col class="w-[20%]" /> <!-- Destinatário -->
+          <col class="w-[12%]" /> <!-- Data -->
+          <col class="w-[14%]" /> <!-- Estado -->
+          <col class="w-[5%]" /> <!-- Ações -->
+        </colgroup>
         <thead>
           <tr class="border-b border-emerald-200">
             <th class="py-3 px-4 text-left text-emerald-600 font-medium text-sm">Código do Pedido</th>
-            <th class="py-3 px-4 text-left text-emerald-600 font-normal text-sm">Assunto</th>
+            <th class="py-3 px-4 text-left text-emerald-600 font-normal text-sm">
+              <button @click="sortBy('assunto')" class="flex items-center">
+                Assunto
+                <ChevronsUpDownIcon class="h-4 w-4 ml-1" />
+              </button>
+            </th>
             <th class="py-3 px-4 text-left text-emerald-600 font-normal text-sm">Remetente</th>
             <th class="py-3 px-4 text-left text-emerald-600 font-normal text-sm">Destinatário</th>
             <th class="py-3 px-4 text-left text-emerald-600 font-normal text-sm">Data</th>
-            <th class="py-3 px-4 text-left text-emerald-600 font-normal text-sm">Estado</th>
+            <th class="py-3 px-4 text-left text-emerald-600 font-normal text-sm">
+              {{ activeFilter === 'enviados' ? 'Data de envio' : 'Data de recepção' }}
+            </th>
+            <th class="py-3 px-4 text-left text-emerald-600 font-normal text-sm">
+              <button @click="sortBy('estado')" class="flex items-center">
+                Estado do pedido
+                <ChevronsUpDownIcon class="h-4 w-4 ml-1" />
+              </button>
+            </th>
             <th class="py-3 px-4 w-10"></th>
           </tr>
         </thead>
@@ -60,10 +85,24 @@
             <td class="py-3 px-4 text-sm truncate">{{ pedido.destinatario }}</td>
             <td class="py-3 px-4 text-sm truncate">{{ pedido.data }}</td>
             <td class="py-3 px-4 text-sm">
-              <span v-if="pedido.estado === 'Enviado'" class="text-gray-500">Enviado</span>
-              <span v-else-if="pedido.estado === 'Aceite'" class="text-emerald-500">Aceite</span>
-              <span v-else-if="pedido.estado === 'Recusado'" class="text-red-500">Recusado</span>
-              <span v-else-if="pedido.estado === 'Recebido'" class="text-gray-500">Recebido</span>
+              <div class="flex items-center">
+                <div v-if="pedido.estado === 'Enviado'" class="flex items-center">
+                  <CircleIcon class="h-4 w-4 mr-2 text-gray-500" />
+                  Enviado
+                </div>
+                <div v-else-if="pedido.estado === 'Aceite'" class="flex items-center">
+                  <CheckIcon class="h-4 w-4 mr-2 text-emerald-500" />
+                  Aceite
+                </div>
+                <div v-else-if="pedido.estado === 'Recusado'" class="flex items-center">
+                  <XIcon class="h-4 w-4 mr-2 text-red-500" />
+                  Recusado
+                </div>
+                <div v-else-if="pedido.estado === 'Recebido'" class="flex items-center">
+                  <CircleIcon class="h-4 w-4 mr-2 text-gray-500" />
+                  Recebido
+                </div>
+              </div>
             </td>
             <td class="py-3 px-4 text-sm text-center">
               <button class="text-gray-700 hover:text-gray-900">
@@ -77,8 +116,41 @@
 
     <!-- Pagination -->
     <div class="flex justify-end items-center mt-4 gap-8">
-      <!-- same pagination code as before -->
+      <div class="flex items-center gap-2">
+        <span class="text-sm">Linhas por página</span>
+        <Select v-model="rowsPerPage">
+          <SelectTrigger class="compact-select-trigger border-emerald-200">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="5">5</SelectItem>
+            <SelectItem value="10">10</SelectItem>
+            <SelectItem value="20">20</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
     </div>
+    <div class="flex items-center gap-4">
+        <span class="text-sm">Página {{ currentPage }} de {{ totalPages }}</span>
+        <div class="flex gap-1">
+          <button @click="goToPage(1)" :disabled="currentPage === 1"
+            class="border border-emerald-200 p-1.5 rounded-sm disabled:opacity-50 disabled:cursor-not-allowed h-8 w-8 flex items-center justify-center">
+            <ChevronsLeftIcon class="h-4 w-4" />
+          </button>
+          <button @click="goToPage(currentPage - 1)" :disabled="currentPage === 1"
+            class="border border-emerald-200 p-1.5 rounded-sm disabled:opacity-50 disabled:cursor-not-allowed h-8 w-8 flex items-center justify-center">
+            <ChevronLeftIcon class="h-4 w-4" />
+          </button>
+          <button @click="goToPage(currentPage + 1)" :disabled="currentPage === totalPages"
+            class="border border-emerald-200 p-1.5 rounded-sm disabled:opacity-50 disabled:cursor-not-allowed h-8 w-8 flex items-center justify-center">
+            <ChevronRightIcon class="h-4 w-4" />
+          </button>
+          <button @click="goToPage(totalPages)" :disabled="currentPage === totalPages"
+            class="border border-emerald-200 p-1.5 rounded-sm disabled:opacity-50 disabled:cursor-not-allowed h-8 w-8 flex items-center justify-center">
+            <ChevronsRightIcon class="h-4 w-4" />
+          </button>
+        </div>
+      </div>
 
     <!-- Modal de Ticket -->
     <div v-if="showModal" class="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center">
