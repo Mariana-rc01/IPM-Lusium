@@ -329,7 +329,12 @@ export default defineComponent({
                 <CardTitle>Horário</CardTitle>
               </CardHeader>
               <CardContent class="pl-2">
-                <Timetable mode="student" :blocks="studentBlocks" />
+                <div v-if="areSchedulesPublished">
+                  <Timetable mode="student" :blocks="studentBlocks" />
+                </div>
+                <div v-else class="text-center text-gray-500">
+                  O horário ainda não foi publicado.
+                </div>
               </CardContent>
             </Card>
             <Card class="col-span-3 border-2 border-emerald-200">
