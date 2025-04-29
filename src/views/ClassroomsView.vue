@@ -135,14 +135,57 @@
         </div>
       </div>
     </div>
-  </template>
+</template>
   
-  <script setup lang="ts">
-  import { ref, computed, onMounted } from 'vue'
-  import { getAllClassrooms } from '@/api/api'
-  import { useUserStore } from '@/stores/user'
+<script lang="ts">
+import { defineComponent } from 'vue';
+import { getAllClassrooms } from '@/api/api';
+import { useUserStore } from '@/stores/user';
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronsLeftIcon,
+  ChevronsRightIcon,
+  ChevronsUpDownIcon,
+  Trash2,
+  SlidersHorizontalIcon
+} from 'lucide-vue-next';
 
-  import {
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
+
+interface Sala {
+  cp: number;
+  numero: string;
+  capacidade: number;
+}
+
+export default defineComponent({
+  components: {
+    Input,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
     ChevronLeftIcon,
     ChevronRightIcon,
     ChevronsLeftIcon,
@@ -150,165 +193,116 @@
     ChevronsUpDownIcon,
     Trash2,
     SlidersHorizontalIcon
-  } from 'lucide-vue-next'
-  
-  // Imports from shadcn-vue
-  import { Input } from '@/components/ui/input'
-  import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue
-  } from '@/components/ui/select'
-  import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger
-  } from '@/components/ui/dropdown-menu'
-  
-  const role = ref<string | null>(null); // Dynamically set role
-
-  // Types
-  interface Sala {
-    cp: number
-    numero: string
-    capacidade: number
-  }
-  
-  // States
-  const searchQuery = ref('')
-  const selectedFilter = ref('')
-  const currentPage = ref(1)
-  const rowsPerPage = ref('5')
-  const sortColumn = ref<'cp' | 'numero' | 'capacidade' | null>(null)
-  const sortDirection = ref<'asc' | 'desc'>('asc')
-  
-  // Dynamic data
-  const salas = ref<Sala[]>([])
-  
-  // Fetch data from the API
-  async function fetchClassrooms() {
-    try {
-      const classrooms = await getAllClassrooms()
-      salas.value = classrooms.map((classroom: any) => ({
-        cp: parseInt(classroom.building.replace('CP', '')), // Extract CP number
-        numero: classroom.name,
-        capacidade: classroom.capacity
-      }))
-    } catch (error) {
-      console.error('Erro ao buscar as salas:', error)
+  },
+  data() {
+    return {
+      role: null as string | null,
+      searchQuery: '' as string,
+      selectedFilter: '' as string,
+      currentPage: 1 as number,
+      rowsPerPage: '5' as string,
+      sortColumn: null as 'cp' | 'numero' | 'capacidade' | null,
+      sortDirection: 'asc' as 'asc' | 'desc',
+      salas: [] as Sala[]
+    };
+  },
+  computed: {
+    filteredSalas(): Sala[] {
+      let result = this.salas;
+      if (this.searchQuery) {
+        const query = this.searchQuery.toLowerCase();
+        result = result.filter(sala => sala.numero.includes(query));
+      }
+      if (this.selectedFilter) {
+        const cpNumber = parseInt(this.selectedFilter.replace('CP', ''));
+        result = result.filter(sala => sala.cp === cpNumber);
+      }
+      if (this.sortColumn) {
+        result = [...result].sort((a, b) => {
+          const valueA = a[this.sortColumn!];
+          const valueB = b[this.sortColumn!];
+          if (valueA < valueB) return this.sortDirection === 'asc' ? -1 : 1;
+          if (valueA > valueB) return this.sortDirection === 'asc' ? 1 : -1;
+          return 0;
+        });
+      }
+      return result;
+    },
+    uniqueCPs(): number[] {
+      return [...new Set(this.salas.map(sala => sala.cp))].sort((a, b) => a - b);
+    },
+    totalPages(): number {
+      return Math.max(1, Math.ceil(this.filteredSalas.length / parseInt(this.rowsPerPage)));
+    },
+    paginatedSalas(): Sala[] {
+      const startIndex = (this.currentPage - 1) * parseInt(this.rowsPerPage);
+      const endIndex = startIndex + parseInt(this.rowsPerPage);
+      return this.filteredSalas.slice(startIndex, endIndex);
     }
-  }
-  
-  // Fetch data on component mount
-  onMounted(() => {
+  },
+  methods: {
+    goToPage(page: number) {
+      this.currentPage = page;
+    },
+    sortBy(column: 'cp' | 'numero' | 'capacidade') {
+      if (this.sortColumn === column) {
+        this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+      } else {
+        this.sortColumn = column;
+        this.sortDirection = 'asc';
+      }
+    },
+    applyFilter(filterKey: string) {
+      this.selectedFilter = filterKey;
+      this.currentPage = 1;
+    },
+    clearFilters() {
+      this.selectedFilter = '';
+      this.currentPage = 1;
+    },
+    async fetchClassrooms() {
+      try {
+        const classrooms = await getAllClassrooms();
+        this.salas = classrooms.map((classroom: any) => ({
+          cp: parseInt(classroom.building.replace('CP', '')),
+          numero: classroom.name,
+          capacidade: classroom.capacity
+        }));
+      } catch (error) {
+        console.error('Erro ao buscar as salas:', error);
+      }
+    }
+  },
+  mounted() {
     const userStore = useUserStore();
     const user = userStore.user;
     if (!user) {
       console.warn('Unexpected error: User not found in store');
       return;
     }
-    role.value = user.type;
-    if (role.value === 'student') {
-      const notFound = '/not-found';
-      window.location.href = notFound;
+    this.role = user.type;
+    if (this.role === 'student') {
+      window.location.href = '/not-found';
       return;
     }
+    this.fetchClassrooms();
+  }
+});
+</script>
 
-    fetchClassrooms()
-  })
-  
-  // Computed properties
-  const filteredSalas = computed(() => {
-
-    // Apply search filter
-    let result = salas.value
-    if (searchQuery.value) {
-      const query = searchQuery.value.toLowerCase()
-      result = result.filter((sala) => sala.numero.includes(query))
-    }
-  
-    // Dropdown filter
-    if (selectedFilter.value) {
-      const cpNumber = parseInt(selectedFilter.value.replace('CP', ''))
-      result = result.filter((sala) => sala.cp === cpNumber)
-    }
-    
-    // Apply sorting
-    if (sortColumn.value) {
-      result = [...result].sort((a, b) => {
-        const valueA = a[sortColumn.value!]
-        const valueB = b[sortColumn.value!]
-  
-        if (valueA < valueB) return sortDirection.value === 'asc' ? -1 : 1
-        if (valueA > valueB) return sortDirection.value === 'asc' ? 1 : -1
-        return 0
-      })
-    }
-    
-    return result
-  })
-  
-  const uniqueCPs = computed(() => {
-    return [...new Set(salas.value.map((sala) => sala.cp))].sort((a, b) => a - b)
-  })
-  
-  const totalPages = computed(() => {
-    return Math.max(1, Math.ceil(filteredSalas.value.length / parseInt(rowsPerPage.value)))
-  })
-  
-  const paginatedSalas = computed(() => {
-    const startIndex = (currentPage.value - 1) * parseInt(rowsPerPage.value)
-    const endIndex = startIndex + parseInt(rowsPerPage.value)
-    return filteredSalas.value.slice(startIndex, endIndex)
-  })
-  
-  // Methods
-  function goToPage(page: number) {
-    currentPage.value = page
-  }
-  
-  function sortBy(column: 'cp' | 'numero' | 'capacidade') {
-    if (sortColumn.value === column) {
-      // Reverse direction if the column is already selected
-      sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc'
-    } else {
-      // New column selected
-      sortColumn.value = column
-      sortDirection.value = 'asc'
-    }
-  }
-  
-  function applyFilter(filterKey: string) {
-    selectedFilter.value = filterKey
-    currentPage.value = 1
-  }
-  
-  function clearFilters() {
-    selectedFilter.value = ''
-    currentPage.value = 1
-  }
-  </script>
-  
-  <style scoped>
-  /* Custom style for compact select */
-  .compact-select-trigger {
-    height: 30px;
-    min-width: 0;
-    width: 45px;
-    padding: 0 8px;
-    font-size: 0.875rem;
-  }
-  
-  .compact-select-trigger :deep(.flex) {
-    gap: 0.25rem;
-  }
-  
-  .compact-select-trigger :deep(svg) {
-    height: 12px;
-    width: 12px;
-  }
-  </style>
+<style scoped>
+.compact-select-trigger {
+  height: 30px;
+  min-width: 0;
+  width: 45px;
+  padding: 0 8px;
+  font-size: 0.875rem;
+}
+.compact-select-trigger :deep(.flex) {
+  gap: 0.25rem;
+}
+.compact-select-trigger :deep(svg) {
+  height: 12px;
+  width: 12px;
+}
+</style>
