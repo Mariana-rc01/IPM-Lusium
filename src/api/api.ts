@@ -187,6 +187,32 @@ export async function deleteStudentById(studentId: string) {
 }
 
 // -----------------------
+// Functions for Course Director
+// -----------------------
+
+export async function schedulesPublished() {
+  const response = await API.get("/directors");
+  const directors = response.data;
+  if (directors.length === 0) {
+    throw new Error("No directors found!");
+  }
+  const director = directors[0];
+  return director.schedulePublished;
+}
+
+export async function publishSchedules() {
+  const response = await API.get("/directors");
+  const directors = response.data;
+  if (directors.length === 0) {
+    throw new Error("No directors found!");
+  }
+  const director = directors[0];
+  await API.patch(`/directors/${director.id}`, {
+    schedulePublished: true,
+  });
+}
+
+// -----------------------
 // Functions for Courses
 // -----------------------
 

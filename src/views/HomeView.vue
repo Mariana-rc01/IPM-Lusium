@@ -26,8 +26,34 @@ import { getStudentById } from '@/api/api';
 import { getStudentAllocations } from '@/api/api';
 import { getAvailableCourses } from '@/api/api';
 import { useUserStore } from '@/stores/user';
+import { schedulesPublished } from '@/api/api';
+import { publishSchedules } from '@/api/api';
+import SuccessAlert from '@/components/popup/SuccessAlert.vue'
 
 const role = ref<string | null>(null); // Dynamically set role
+
+const areSchedulesPublished = ref<boolean | null>(null);
+
+async function checkSchedulesPublished() {
+  try {
+    areSchedulesPublished.value = await schedulesPublished();
+  } catch (error) {
+    console.error('Erro ao verificar se os horários foram publicados:', error);
+  }
+}
+
+const showSuccessAlert = ref<boolean>(false);
+
+async function handlePublishSchedules() {
+  try {
+    await publishSchedules();
+    areSchedulesPublished.value = true;
+    showSuccessAlert.value = true;
+    console.log('Horários publicados com sucesso!');
+  } catch (error) {
+    console.error('Erro ao publicar os horários:', error);
+  }
+}
 
 interface Ticket {
   iniciais: string
@@ -202,6 +228,7 @@ onMounted(() => {
   fetchStudentsNotAllocated();
   fetchStudents();
   fetchSolvedRequests();
+  checkSchedulesPublished();
 });
 </script>
 
@@ -216,7 +243,10 @@ onMounted(() => {
           Página Principal
         </h2>
         <div v-if="role === 'director'" class="flex items-center space-x-2">
-          <Button class="bg-emerald-900 hover:bg-emerald-400">Publicar Horários</Button>
+          <Button class="bg-emerald-900 hover:bg-emerald-400" :disabled="areSchedulesPublished" @click="handlePublishSchedules">
+            {{ areSchedulesPublished ? 'Horários já publicados' : 'Publicar Horários' }}
+          </Button>
+          <SuccessAlert v-if="showSuccessAlert" :message="'Os Horários foram publicados com sucesso!'" @close="showSuccessAlert = false"/>
         </div>
       </div>
       <Tabs default-value="overview" class="space-y-4">
