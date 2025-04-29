@@ -1,71 +1,45 @@
-<script setup lang="ts">
-import { Button } from '@/components/ui/button'
+<script lang="ts">
+import { defineComponent } from 'vue';
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import {
-  Tabs,
-  TabsContent,
-} from '@/components/ui/tabs'
-import Overview from '@/components/Overview.vue'
-import RecentTickets from '@/components/RecentTickets.vue'
+} from '@/components/ui/card';
+import { Tabs, TabsContent } from '@/components/ui/tabs';
+import Overview from '@/components/Overview.vue';
+import RecentTickets from '@/components/RecentTickets.vue';
 import Timetable from '../components/Timetable.vue';
-import { ref, onMounted, computed } from 'vue'
-import { list_Requests_from_s_and_t } from '@/api/api'
-import { list_Requests_from_d } from '@/api/api'
-import { getCoursesOccupancy } from '@/api/api';
-import { getGlobalOccupancy } from '@/api/api';
-import { getStudentsNotAllocated } from '@/api/api';
-import { getStudents } from '@/api/api';
-import { getSolvedRequests } from '@/api/api';
-import { getStudentById } from '@/api/api';
-import { getStudentAllocations } from '@/api/api';
-import { getAvailableCourses } from '@/api/api';
+import SuccessAlert from '@/components/popup/SuccessAlert.vue';
+import {
+  list_Requests_from_s_and_t,
+  list_Requests_from_d,
+  getCoursesOccupancy,
+  getGlobalOccupancy,
+  getStudentsNotAllocated,
+  getStudents,
+  getSolvedRequests,
+  getStudentById,
+  getStudentAllocations,
+  getAvailableCourses,
+  schedulesPublished,
+  publishSchedules,
+} from '@/api/api';
 import { useUserStore } from '@/stores/user';
-import { schedulesPublished } from '@/api/api';
-import { publishSchedules } from '@/api/api';
-import SuccessAlert from '@/components/popup/SuccessAlert.vue'
-
-const role = ref<string | null>(null); // Dynamically set role
-
-const areSchedulesPublished = ref<boolean | null>(null);
-
-async function checkSchedulesPublished() {
-  try {
-    areSchedulesPublished.value = await schedulesPublished();
-  } catch (error) {
-    console.error('Erro ao verificar se os horários foram publicados:', error);
-  }
-}
-
-const showSuccessAlert = ref<boolean>(false);
-
-async function handlePublishSchedules() {
-  try {
-    await publishSchedules();
-    areSchedulesPublished.value = true;
-    showSuccessAlert.value = true;
-    console.log('Horários publicados com sucesso!');
-  } catch (error) {
-    console.error('Erro ao publicar os horários:', error);
-  }
-}
 
 interface Ticket {
-  iniciais: string
-  nome: string
-  email: string
-  dataTicket: string
-  subject: string
+  iniciais: string;
+  nome: string;
+  email: string;
+  dataTicket: string;
+  subject: string;
 }
 
 interface CourseOccupancy {
-  abreviatura: string
-  percentagem: number
+  abreviatura: string;
+  percentagem: number;
 }
 
 interface ClassBlock {
@@ -83,16 +57,6 @@ interface ClassBlock {
   };
 }
 
-const recentTickets = ref<Ticket[]>([]);
-const coursesOccupancy = ref<CourseOccupancy[]>([]);
-const globalOccupancy = ref<number | null>(null);
-const studentsNotAllocated = ref<number | null>(null);
-const totalStudents = ref<number | null>(null);
-const solvedRequests = ref<number | null>(null);
-
-const studentId = ref<string | null>(null);
-const enrolledCourses = ref<string[]>([]);
-const allocations = ref<string[]>([]);
 interface Course {
   uc: string;
   turnos: {
@@ -111,124 +75,167 @@ interface Course {
   }[];
 }
 
-const availableCourses = ref<Course[]>([]);
-const studentShifts = ref<string[]>([]);
+export default defineComponent({
+  components: {
+    Button,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+    Tabs,
+    TabsContent,
+    Overview,
+    RecentTickets,
+    Timetable,
+    SuccessAlert,
+  },
+  data() {
+    return {
+      role: null as string | null,
+      areSchedulesPublished: null as boolean | null,
+      showSuccessAlert: false,
+      recentTickets: [] as Ticket[],
+      coursesOccupancy: [] as CourseOccupancy[],
+      globalOccupancy: null as number | null,
+      studentsNotAllocated: null as number | null,
+      totalStudents: null as number | null,
+      solvedRequests: null as number | null,
+      studentId: null as string | null,
+      enrolledCourses: [] as string[],
+      allocations: [] as string[],
+      availableCourses: [] as Course[],
+      studentShifts: [] as string[],
+    };
+  },
+  computed: {
+    studentBlocks(): ClassBlock[] {
+      return this.availableCourses.flatMap((course) =>
+        course.turnos
+          .filter((turno) => this.studentShifts.includes(turno.id))
+          .map((turno) => ({
+            ...turno,
+            name: `${course.uc} - ${turno.name}`,
+          }))
+      );
+    },
+  },
+  methods: {
+    async checkSchedulesPublished() {
+      try {
+        this.areSchedulesPublished = await schedulesPublished();
+      } catch (error) {
+        console.error('Erro ao verificar se os horários foram publicados:', error);
+      }
+    },
+    async handlePublishSchedules() {
+      try {
+        await publishSchedules();
+        this.areSchedulesPublished = true;
+        this.showSuccessAlert = true;
+        console.log('Horários publicados com sucesso!');
+      } catch (error) {
+        console.error('Erro ao publicar os horários:', error);
+      }
+    },
+    async fetchTickets(role: string) {
+      try {
+        const tickets =
+          role !== 'director'
+            ? await list_Requests_from_d(5)
+            : await list_Requests_from_s_and_t(5);
 
-const studentBlocks = computed<ClassBlock[]>(() =>
-  availableCourses.value.flatMap(course =>
-    course.turnos
-      .filter(turno => studentShifts.value.includes(turno.id))
-      .map(turno => ({
-        ...turno,
-        name: `${course.uc} - ${turno.name}`
-      }))
-  )
-);
+        this.recentTickets = tickets.map((t) => ({
+          iniciais: t.name.charAt(0).toUpperCase(),
+          nome: t.name,
+          email: t.email,
+          subject: t.subject,
+          dataTicket: t.date,
+        }));
+      } catch (error) {
+        console.error('Erro ao buscar os tickets:', error);
+      }
+    },
+    async fetchCoursesOccupancy() {
+      try {
+        const occupancyData = await getCoursesOccupancy();
+        this.coursesOccupancy = occupancyData.map((course: any) => ({
+          abreviatura: course.abbreviation,
+          percentagem: course.occupancy.percentage,
+        }));
+      } catch (error) {
+        console.error('Erro ao buscar a ocupação dos cursos:', error);
+      }
+    },
+    async fetchGlobalOccupancy() {
+      try {
+        const occupancyData = await getGlobalOccupancy();
+        this.globalOccupancy = occupancyData.percentage;
+      } catch (error) {
+        console.error('Erro ao buscar o estado global de alocação:', error);
+      }
+    },
+    async fetchStudentsNotAllocated() {
+      try {
+        const studentsData = await getStudentsNotAllocated();
+        this.studentsNotAllocated = studentsData.length;
+      } catch (error) {
+        console.error('Erro ao buscar o número de alunos não alocados:', error);
+      }
+    },
+    async fetchStudents() {
+      try {
+        const studentsData = await getStudents();
+        this.totalStudents = studentsData.length;
+      } catch (error) {
+        console.error('Erro ao buscar o número total de alunos:', error);
+      }
+    },
+    async fetchSolvedRequests() {
+      try {
+        const requestsData = await getSolvedRequests();
+        this.solvedRequests = requestsData.length;
+      } catch (error) {
+        console.error('Erro ao buscar o número de pedidos resolvidos:', error);
+      }
+    },
+    async loadStudentData() {
+      try {
+        if (!this.studentId) return;
 
-async function fetchTickets(role: string) {
-  try {
-    const tickets =
-      role !== 'director'
-        ? await list_Requests_from_d(5)
-        : await list_Requests_from_s_and_t(5);
+        const student = await getStudentById(this.studentId);
+        this.enrolledCourses = student.enrolled;
 
-    recentTickets.value = tickets.map((t) => ({
-      iniciais: t.name.charAt(0).toUpperCase(),
-      nome: t.name,
-      email: t.email,
-      subject: t.subject,
-      dataTicket: t.date, // already formatted
-    }));
-  } catch (error) {
-    console.error('Erro ao buscar os tickets:', error);
-  }
-}
+        this.allocations = await getStudentAllocations(this.studentId);
+        this.availableCourses = await getAvailableCourses(this.enrolledCourses);
 
-async function fetchCoursesOccupancy() {
-  try {
-    const occupancyData = await getCoursesOccupancy();
-    coursesOccupancy.value = occupancyData.map((course: any) => ({
-      abreviatura: course.abbreviation,
-      percentagem: course.occupancy.percentage,
-    }));
-  } catch (error) {
-    console.error('Erro ao buscar a ocupação dos cursos:', error);
-  }
-}
+        this.studentShifts = this.allocations;
+      } catch (error: any) {
+        console.error('Erro ao carregar dados:', error.message);
+      }
+    },
+  },
+  mounted() {
+    const userStore = useUserStore();
+    const user = userStore.user;
 
-async function fetchGlobalOccupancy() {
-  try {
-    const occupancyData = await getGlobalOccupancy();
-    globalOccupancy.value = occupancyData.percentage;
-  } catch (error) {
-    console.error('Erro ao buscar o estado global de alocação:', error);
-  }
-}
+    if (!user) {
+      console.warn('Unexpected error: User not found in store');
+      return;
+    }
 
-async function fetchStudentsNotAllocated() {
-  try {
-    const studentsData = await getStudentsNotAllocated();
-    studentsNotAllocated.value = studentsData.length;
-  } catch (error) {
-    console.error('Erro ao buscar o número de alunos não alocados:', error);
-  }
-}
+    this.studentId = user.id;
+    this.role = user.type;
 
-async function fetchStudents() {
-  try {
-    const studentsData = await getStudents();
-    totalStudents.value = studentsData.length;
-  } catch (error) {
-    console.error('Erro ao buscar o número total de alunos:', error);
-  }
-}
-
-async function fetchSolvedRequests() {
-  try {
-    const requestsData = await getSolvedRequests();
-    solvedRequests.value = requestsData.length;
-  } catch (error) {
-    console.error('Erro ao buscar o número de pedidos resolvidos:', error);
-  }
-}
-
-const loadStudentData = async () => {
-  try {
-    if (!studentId.value) return;
-
-    const student = await getStudentById(studentId.value);
-    enrolledCourses.value = student.enrolled;
-
-    allocations.value = await getStudentAllocations(studentId.value);
-    availableCourses.value = await getAvailableCourses(enrolledCourses.value);
-
-    // Gets the already assigned shifts
-    studentShifts.value = allocations.value;
-  } catch (error: any) {
-    console.error('Erro ao carregar dados:', error.message);
-  }
-};
-
-onMounted(() => {
-  const userStore = useUserStore();
-  const user = userStore.user;
-
-  if (!user) {
-    console.warn('Unexpected error: User not found in store');
-    return;
-  }
-
-  studentId.value = user.id;
-  role.value = user.type;
-
-  loadStudentData();
-  fetchTickets(role.value || '');
-  fetchCoursesOccupancy();
-  fetchGlobalOccupancy();
-  fetchStudentsNotAllocated();
-  fetchStudents();
-  fetchSolvedRequests();
-  checkSchedulesPublished();
+    this.loadStudentData();
+    this.fetchTickets(this.role || '');
+    this.fetchCoursesOccupancy();
+    this.fetchGlobalOccupancy();
+    this.fetchStudentsNotAllocated();
+    this.fetchStudents();
+    this.fetchSolvedRequests();
+    this.checkSchedulesPublished();
+  },
 });
 </script>
 
