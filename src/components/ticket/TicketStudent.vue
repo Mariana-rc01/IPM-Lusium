@@ -3,7 +3,7 @@
       <div class="bg-green-50 rounded-lg shadow-sm border border-green-100 overflow-hidden">
         <div class="flex justify-between items-center p-4 pb-2">
           <h3 class="text-base font-semibold text-gray-900">
-            O teu pedido #{{ request.id }}
+            O teu pedido #{{ info.id }}
           </h3>
           <button 
             @click="closeRequest" 
@@ -23,13 +23,13 @@
             <span class="text-sm font-medium text-gray-900 mr-2">Estado:</span>
             <span 
               :class="{
-                'text-red-600': request.status === 'Recusado',
-                'text-green-600': request.status === 'Aceite',
-                'text-yellow-600': request.status === 'Pendente'
+                'text-red-600': info.status === 'Recusado',
+                'text-green-600': info.status === 'Aceite',
+                'text-yellow-600': info.status === 'Pendente'
               }"
               class="text-sm font-medium"
             >
-              {{ request.status }}
+              {{ info.status }}
             </span>
           </div>
         </div>
@@ -38,14 +38,14 @@
           <div>
             <label class="block text-gray-900 text-sm font-medium mb-1">Assunto</label>
             <div class="border border-gray-300 rounded-md p-2 bg-white text-sm">
-              {{ request.subject || '\u00A0' }}
+              {{ info.subject || '\u00A0' }}
             </div>
           </div>
           
           <div>
             <label class="block text-gray-900 text-sm font-medium mb-1">Descrição</label>
             <div class="border border-gray-300 rounded-md p-2 bg-white text-sm min-h-[80px]">
-              {{ request.description || '\u00A0' }}
+              {{ info.description || '\u00A0' }}
             </div>
           </div>
         </div>
@@ -54,23 +54,43 @@
   </template>
   
   <script setup lang="ts">
+  import { ref, onMounted } from 'vue';
   import { defineProps, defineEmits } from 'vue';
+  import { getRequestByTicketId } from '@/api/api';
   
   const emit = defineEmits(['close']);
   
-  const props = defineProps({
-    request: {
-      type: Object,
-      default: () => ({
-        id: 0,
-        status: 'Pendente',
-        subject: '',
-        description: ''
-      })
-    }
+  interface TicketStudentInfo {
+    id: string;
+    status: string;
+    subject: string;
+    description: string;
+  }
+
+  const info = ref<TicketStudentInfo>({
+    id: "0",
+    status: 'Pendente',
+    subject: '',
+    description: ''
   });
+
+  
+  const props = defineProps<{
+    ticketId: string;
+  }>();
   
   const closeRequest = () => {
     emit('close');
   };
+  
+  onMounted(async () => {
+    try {
+      const data = await getRequestByTicketId(props.ticketId, 'student');
+      info.value = data;
+      console.log('Pedido:', info.value);
+    } catch (error) {
+      console.error('Erro a buscar pedido:', error);
+    }
+  });
   </script>
+  

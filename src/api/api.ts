@@ -95,6 +95,25 @@ export async function list_RequestsDirector_by_id() {
   return dict;
 }
 
+export async function getRequestByTicketId(ticketId: string, userType: "student" | "teacher" | "director") {
+  if (userType === "student") {
+    const response = await API.get("/requestsStudents");
+    const request = response.data.find((item: any) => item.id == ticketId);
+    return request;
+  } else if (userType === "teacher") {
+    const response = await API.get("/requestsTeachers");
+    const request = response.data.find((item: any) => item.id == ticketId);
+    return request;
+  } else if (userType === "director") {
+    const response = await API.get("/requestsDirector");
+    const request = response.data.find((item: any) => item.id == ticketId);
+    return request;
+  } else {
+    throw new Error("Tipo de utilizador inválido!");
+  }
+}
+
+
 // -----------------------
 // Functions for Students
 // -----------------------
