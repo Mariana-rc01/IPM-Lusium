@@ -1,7 +1,6 @@
 <template>
   <div class="w-full max-w-md mx-auto">
     <div class="bg-green-50 rounded-lg shadow-sm border border-green-100 overflow-hidden">
-      <!-- Header -->
       <div class="flex justify-between items-center p-4 pb-2">
         <h3 class="text-base font-semibold text-gray-900">
           {{ isCreate ? 'Criar um pedido' : getTitle() }}
@@ -14,7 +13,6 @@
         </button>
       </div>
 
-      <!-- Subtítulo -->
       <div class="px-4 pb-2">
         <p :class="isCreate ? 'text-green-600' : 'text-green-600 text-sm'">
           {{ isCreate
@@ -23,9 +21,7 @@
         </p>
       </div>
 
-      <!-- Conteúdo -->
       <div class="px-4 space-y-3 pb-4">
-        <!-- Modo CRIAR -->
         <template v-if="isCreate">
           <div>
             <label class="block text-gray-900 text-sm font-medium mb-1">Assunto</label>
@@ -47,21 +43,22 @@
           </div>
         </template>
 
-        <!-- Modo VISUALIZAR/EDITAR -->
         <template v-else>
-          <div class="flex items-center">
-            <span class="text-sm font-medium text-gray-900 mr-2">Estado:</span>
-            <span
-              :class="{
-                'text-red-600': info.status === 'Recusado',
-                'text-green-600': info.status === 'Aceite',
-                'text-gray-600': info.status === 'Enviado' || info.status === 'Recebido'
-              }"
-              class="text-sm font-medium"
-            >
-              {{ info.status }}
-            </span>
-          </div>
+          <template v-if="!isFromDirector">
+            <div class="flex items-center">
+              <span class="text-sm font-medium text-gray-900 mr-2">Estado:</span>
+              <span
+                :class="{
+                  'text-red-600': info.status === 'Recusado',
+                  'text-green-600': info.status === 'Aceite',
+                  'text-gray-600': info.status === 'Enviado' || info.status === 'Recebido'
+                }"
+                class="text-sm font-medium"
+              >
+                {{ info.status }}
+              </span>
+            </div>
+          </template>
 
           <div>
             <label class="block text-gray-900 text-sm font-medium mb-1">Assunto</label>
@@ -77,11 +74,19 @@
             </div>
           </div>
 
-          <!-- Controles só para diretor -->
-          <template v-if="isDirector">
+          <template v-if="showResponseNotes && info.response">
             <div>
-              <label class="block text-gray-900 text-sm font-medium mb-1">Resposta (opcional)</label>
-                <textarea
+              <label class="block text-gray-900 text-sm font-medium mb-1">Notas</label>
+              <div class="border border-gray-300 rounded-md p-2 bg-white text-sm min-h-[80px]">
+                {{ info.response || '\u00A0' }}
+              </div>
+            </div>
+          </template>
+
+          <template v-if="isDirector && !isFromDirector">
+            <div>
+              <label class="block text-gray-900 text-sm font-medium mb-1">Notas (opcional)</label>
+              <textarea
                 v-model="directorResponse"
                 class="border border-gray-300 rounded-md p-2 bg-white text-sm min-h-[80px] w-full"
               ></textarea>
@@ -90,9 +95,7 @@
         </template>
       </div>
 
-      <!-- Botões de ação -->
       <div class="px-4 pb-4 flex justify-end space-x-2">
-        <!-- RESET da área de botões -->
         <template v-if="isCreate">
           <button
             @click="submitRequest"
@@ -102,7 +105,7 @@
             Enviar
           </button>
         </template>
-        <template v-else-if="isDirector">
+        <template v-else-if="isDirector && !isFromDirector">
           <button @click="rejectRequest" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md">
             Recusar
           </button>
@@ -133,7 +136,6 @@ const props = defineProps<{
   isCreate?: boolean
 }>()
 
-// estado interno
 interface RequestInfo {
   id: string
   status: string
@@ -151,14 +153,22 @@ const info = ref<RequestInfo>({
   sender: ''
 })
 const directorResponse = ref('')
-
-// novos campos para criação
 const newSubject = ref('')
 const newDescription = ref('')
 
-// helpers
 const isDirector = computed(() => props.userType === 'director')
 const isCreate = computed(() => props.isCreate === true)
+const isFromDirector = computed(() => info.value.sender === 'Diretor de Curso')
+
+const dataSenderId = ref<string | null>(null)
+
+const showResponseNotes = computed(() => {
+  const id = dataSenderId.value || ''
+  const isStudent = id.startsWith('a')
+  const isTeacher = id.startsWith('t')
+  return (isStudent || isTeacher) && !isDirector.value
+})
+
 const getTitle = () =>
   `O pedido de ${info.value.sender}`
 const getSubtitle = () =>
@@ -166,10 +176,8 @@ const getSubtitle = () =>
     ? 'Aqui podes gerir o pedido recebido.'
     : 'Aqui podes ver o estado do teu pedido.'
 
-// fechar modal
 const closeRequest = () => emit('close')
 
-// aceitar/recusar (diretor)
 const rejectRequest = async () => {
   await updateRequest(props.ticketId!, {
     status: 'Recusado',
@@ -187,15 +195,14 @@ const acceptRequest = async () => {
   info.value.response = directorResponse.value
 }
 
-// criar novo pedido
 const submitRequest = async () => {
   const userStore = useUserStore()
   const me = userStore.user!.id
-  const today = new Date().toISOString().slice(0, 10)  // "YYYY-MM-DD"
+  const today = new Date().toISOString().slice(0, 10)
   const created = await createRequest({
     subject: newSubject.value,
     sender: me,
-    recipient: 'd1',      // Diretor de curso
+    recipient: 'd1',
     date: today,
     status: "",
     description: newDescription.value,
@@ -206,19 +213,20 @@ const submitRequest = async () => {
     console.log(created)
 
   emit('created')
+  emit('close')
 }
 
-// carregar dados existentes
 onMounted(async () => {
   if (!isCreate.value && props.ticketId) {
     const data = await getRequestByTicketId(props.ticketId)
     if (data) {
-    const senderNamePromise = await getUserInfoById(data.sender)
-    let senderName = senderNamePromise.name
+      dataSenderId.value = data.sender
+      const senderInfo = await getUserInfoById(data.sender)
+      let senderName = senderInfo.name
 
-    if (data.sender.charAt(0) === "d") {
-      senderName = "Diretor de Curso"
-    }
+      if (data.sender.charAt(0) === "d") {
+        senderName = "Diretor de Curso"
+      }
 
       info.value = {
         id: data.id,
@@ -228,6 +236,7 @@ onMounted(async () => {
         response: data.response,
         sender: senderName
       }
+
       directorResponse.value = data.response || ''
     }
   }
