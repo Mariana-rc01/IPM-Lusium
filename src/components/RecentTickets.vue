@@ -26,10 +26,7 @@ defineProps({
   <div class="space-y-8">
     <div v-for="ticket in recentTickets" class="flex items-center gap-4 justify-between">
       <div class="flex items-center gap-4">
-        <Avatar class="h-9 w-9">
-          <AvatarImage src="/avatars/01.png" alt="Avatar" />
-          <AvatarFallback>{{ ticket.iniciais }}</AvatarFallback>
-        </Avatar>
+        <Avatar class="h-9 w-9">{{ ticket.iniciais }}</Avatar>
         <div class="space-y-1">
           <p class="text-sm font-medium leading-none text-emerald-900">
             {{ ticket.nome }}

@@ -1,157 +1,242 @@
-<script setup lang="ts">
-import { Button } from '@/components/ui/button'
+<script lang="ts">
+import { defineComponent } from 'vue';
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import {
-  Tabs,
-  TabsContent,
-} from '@/components/ui/tabs'
-import Overview from '@/components/Overview.vue'
-import RecentTickets from '@/components/RecentTickets.vue'
+} from '@/components/ui/card';
+import { Tabs, TabsContent } from '@/components/ui/tabs';
+import Overview from '@/components/Overview.vue';
+import RecentTickets from '@/components/RecentTickets.vue';
 import Timetable from '../components/Timetable.vue';
-import { ref } from 'vue'
-
-const role = ref('diretor') // *****TEMP***** Pode ser 'aluno', 'diretor' ou 'docente'
+import SuccessAlert from '@/components/popup/SuccessAlert.vue';
+import {
+  list_Requests_from_s_and_t,
+  list_Requests_from_d,
+  getCoursesOccupancy,
+  getGlobalOccupancy,
+  getStudentsNotAllocated,
+  getStudents,
+  getSolvedRequests,
+  getStudentById,
+  getStudentAllocations,
+  getAvailableCourses,
+  schedulesPublished,
+  publishSchedules,
+} from '@/api/api';
+import { useUserStore } from '@/stores/user';
 
 interface Ticket {
-  iniciais: string
-  nome: string
-  email: string
-  dataTicket: string
-  subject: string
+  iniciais: string;
+  nome: string;
+  email: string;
+  dataTicket: string;
+  subject: string;
 }
 
-// Example data for recent tickets
-const recentTickets = ref<Ticket[]>([
-    {
-      iniciais: 'AS',
-      nome: 'Afonso Dionísio Santos',
-      email: 'a104276@alunos.uminho.pt',
-      dataTicket: '23/02/2025',
-      subject: 'Assunto A',
-    },
-    {
-      iniciais: 'AP',
-      nome: 'Ana Margarida Campos Pires',
-      email: 'a96060@alunos.uminho.pt',
-      dataTicket: '23/02/2025',
-      subject: 'Assunto relativo ao pedido enviado',
-    },
-    {
-      iniciais: 'JC',
-      nome: 'José Francisco Creissac Freitas Campos',
-      email: 'jfc@di.uminho.pt',
-      dataTicket: '22/02/2025',
-      subject: 'Assunto do pedido',
-    },
-    {
-      iniciais: 'PP',
-      nome: 'Pedro Figueiredo Pereira',
-      email: 'a104082@alunos.uminho.pt',
-      dataTicket: '22/02/2025',
-      subject: 'Assunto D',
-    },
-    {
-      iniciais: 'OB',
-      nome: 'Orlando Manuel Oliveira Belo',
-      email: 'obelo@di.uminho.pt',
-      dataTicket: '21/02/2025',
-      subject: 'Assunto do pedido enviado no dia 21',
-    }
-  ])
+interface CourseOccupancy {
+  abreviatura: string;
+  percentagem: number;
+}
 
-  // Example data for timetable
-  const studentBlocks = [
-    {
-      name: 'IPM - PL4',
-      room: 'CP1 - 1.17',
-      day: 0, // Monday
-      startHour: '9:00',
-      endHour: '11:00', // 2-hour class
-      occupancy: {
-        current: 31,
-        total: 35,
-        percentage: 88.57
+interface ClassBlock {
+  id: string;
+  name: string;
+  room: string;
+  day: number;
+  startHour: string;
+  endHour: string;
+  type: string;
+  occupancy: {
+    current: number;
+    total: number;
+    percentage: number;
+  };
+}
+
+interface Course {
+  uc: string;
+  turnos: {
+    id: string;
+    name: string;
+    room: string;
+    day: number;
+    startHour: string;
+    endHour: string;
+    type: string;
+    occupancy: {
+      current: number;
+      total: number;
+      percentage: number;
+    };
+  }[];
+}
+
+export default defineComponent({
+  components: {
+    Button,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+    Tabs,
+    TabsContent,
+    Overview,
+    RecentTickets,
+    Timetable,
+    SuccessAlert,
+  },
+  data() {
+    return {
+      role: null as string | null,
+      areSchedulesPublished: null as boolean | null,
+      showSuccessAlert: false,
+      recentTickets: [] as Ticket[],
+      coursesOccupancy: [] as CourseOccupancy[],
+      globalOccupancy: null as number | null,
+      studentsNotAllocated: null as number | null,
+      totalStudents: null as number | null,
+      solvedRequests: null as number | null,
+      studentId: null as string | null,
+      enrolledCourses: [] as string[],
+      allocations: [] as string[],
+      availableCourses: [] as Course[],
+      studentShifts: [] as string[],
+    };
+  },
+  computed: {
+    studentBlocks(): ClassBlock[] {
+      return this.availableCourses.flatMap((course) =>
+        course.turnos
+          .filter((turno) => this.studentShifts.includes(turno.id))
+          .map((turno) => ({
+            ...turno,
+            name: `${course.uc} - ${turno.name}`,
+          }))
+      );
+    },
+  },
+  methods: {
+    async checkSchedulesPublished() {
+      try {
+        this.areSchedulesPublished = await schedulesPublished();
+      } catch (error) {
+        console.error('Erro ao verificar se os horários foram publicados:', error);
       }
     },
-    {
-      name: 'CG - T1',
-      room: 'CP1 - 0.08',
-      day: 0, // Monday
-      startHour: '11:00',
-      endHour: '13:00', // 2-hour class
-      occupancy: {
-        current: 94,
-        total: 95,
-        percentage: 98.94
+    async handlePublishSchedules() {
+      try {
+        await publishSchedules();
+        this.areSchedulesPublished = true;
+        this.showSuccessAlert = true;
+        console.log('Horários publicados com sucesso!');
+      } catch (error) {
+        console.error('Erro ao publicar os horários:', error);
       }
     },
-    {
-      name: 'PL - PL6',
-      room: 'CP1 - 0.17',
-      day: 1, // Tuesday
-      startHour: '9:00',
-      endHour: '11:00', // 2-hour class
-      occupancy: {
-        current: 45,
-        total: 45,
-        percentage: 100.00
+    async fetchTickets(role: string) {
+      try {
+        const tickets =
+          role !== 'director'
+            ? await list_Requests_from_d(5)
+            : await list_Requests_from_s_and_t(5);
+
+        this.recentTickets = tickets.map((t) => ({
+          iniciais: t.name.charAt(0).toUpperCase(),
+          nome: t.name,
+          email: t.email,
+          subject: t.subject,
+          dataTicket: t.date,
+        }));
+      } catch (error) {
+        console.error('Erro ao buscar os tickets:', error);
       }
     },
-    {
-      name: 'IPM - T1',
-      room: 'CP1 - 0.08',
-      day: 2, // Wednesday
-      startHour: '11:00',
-      endHour: '13:00', // 2-hour class
-      occupancy: {
-        current: 55,
-        total: 95,
-        percentage: 57.89
+    async fetchCoursesOccupancy() {
+      try {
+        const occupancyData = await getCoursesOccupancy();
+        this.coursesOccupancy = occupancyData.map((course: any) => ({
+          abreviatura: course.abbreviation,
+          percentagem: course.occupancy.percentage,
+        }));
+      } catch (error) {
+        console.error('Erro ao buscar a ocupação dos cursos:', error);
       }
     },
-    {
-      name: 'CG - PL3',
-      room: 'CP2 - 2.09',
-      day: 3, // Thursday
-      startHour: '8:00',
-      endHour: '10:00', // 2-hour class
-      occupancy: {
-        current: 30,
-        total: 35,
-        percentage: 85.71
+    async fetchGlobalOccupancy() {
+      try {
+        const occupancyData = await getGlobalOccupancy();
+        this.globalOccupancy = occupancyData.percentage;
+      } catch (error) {
+        console.error('Erro ao buscar o estado global de alocação:', error);
       }
     },
-    {
-      name: 'SSI - PL1',
-      room: 'CP1 - 2.21',
-      day: 3, // Thursday
-      startHour: '10:00',
-      endHour: '12:00', // 2-hour class
-      occupancy: {
-        current: 84,
-        total: 95,
-        percentage: 88.42
+    async fetchStudentsNotAllocated() {
+      try {
+        const studentsData = await getStudentsNotAllocated();
+        this.studentsNotAllocated = studentsData.length;
+      } catch (error) {
+        console.error('Erro ao buscar o número de alunos não alocados:', error);
       }
     },
-    {
-      name: 'PL - T1',
-      room: 'CP1 - 0.08',
-      day: 4, // Friday
-      startHour: '9:00',
-      endHour: '11:00', // 2-hour class
-      occupancy: {
-        current: 94,
-        total: 95,
-        percentage: 98.94
+    async fetchStudents() {
+      try {
+        const studentsData = await getStudents();
+        this.totalStudents = studentsData.length;
+      } catch (error) {
+        console.error('Erro ao buscar o número total de alunos:', error);
       }
+    },
+    async fetchSolvedRequests() {
+      try {
+        const requestsData = await getSolvedRequests();
+        this.solvedRequests = requestsData.length;
+      } catch (error) {
+        console.error('Erro ao buscar o número de pedidos resolvidos:', error);
+      }
+    },
+    async loadStudentData() {
+      try {
+        if (!this.studentId) return;
+
+        const student = await getStudentById(this.studentId);
+        this.enrolledCourses = student.enrolled;
+
+        this.allocations = await getStudentAllocations(this.studentId);
+        this.availableCourses = await getAvailableCourses(this.enrolledCourses);
+
+        this.studentShifts = this.allocations;
+      } catch (error: any) {
+        console.error('Erro ao carregar dados:', error.message);
+      }
+    },
+  },
+  mounted() {
+    const userStore = useUserStore();
+    const user = userStore.user;
+
+    if (!user) {
+      console.warn('Unexpected error: User not found in store');
+      return;
     }
-  ];
+
+    this.studentId = user.id;
+    this.role = user.type;
+
+    this.loadStudentData();
+    this.fetchTickets(this.role || '');
+    this.fetchCoursesOccupancy();
+    this.fetchGlobalOccupancy();
+    this.fetchStudentsNotAllocated();
+    this.fetchStudents();
+    this.fetchSolvedRequests();
+    this.checkSchedulesPublished();
+  },
+});
 </script>
 
 <template>
@@ -160,17 +245,20 @@ const recentTickets = ref<Ticket[]>([
       <div class="flex items-center justify-between space-y-2">
         <h2
           class="text-3xl font-bold tracking-tight text-zinc-950"
-          :class="{ 'mb-12': role !== 'diretor' }"
+          :class="{ 'mb-12': role !== 'director' }"
         >
           Página Principal
         </h2>
-        <div v-if="role === 'diretor'" class="flex items-center space-x-2">
-          <Button class="bg-emerald-900 hover:bg-emerald-400">Publicar Horários</Button>
+        <div v-if="role === 'director'" class="flex items-center space-x-2">
+          <Button class="bg-emerald-900 hover:bg-emerald-400" :disabled="areSchedulesPublished" @click="handlePublishSchedules">
+            {{ areSchedulesPublished ? 'Horários já publicados' : 'Publicar Horários' }}
+          </Button>
+          <SuccessAlert v-if="showSuccessAlert" :message="'Os Horários foram publicados com sucesso!'" @close="showSuccessAlert = false"/>
         </div>
       </div>
       <Tabs default-value="overview" class="space-y-4">
         <TabsContent value="overview" class="space-y-4">
-          <div v-if="role === 'diretor'" class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <div v-if="role === 'director'" class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <Card class="border-2 border-emerald-200 text-emerald-900">
               <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle class="text-sm font-medium">
@@ -180,7 +268,7 @@ const recentTickets = ref<Ticket[]>([
               </CardHeader>
               <CardContent>
                 <div class="text-2xl font-bold">
-                  97.88%
+                  {{ globalOccupancy !== null ? `${globalOccupancy}%` : '-' }}
                 </div>
               </CardContent>
             </Card>
@@ -194,7 +282,7 @@ const recentTickets = ref<Ticket[]>([
               </CardHeader>
               <CardContent>
                 <div class="text-2xl font-bold">
-                  16
+                  {{ studentsNotAllocated !== null ? studentsNotAllocated : '-' }}
                 </div>
               </CardContent>
             </Card>
@@ -208,7 +296,7 @@ const recentTickets = ref<Ticket[]>([
               </CardHeader>
               <CardContent>
                 <div class="text-2xl font-bold">
-                  755
+                  {{ totalStudents !== null ? totalStudents : '-' }}
                 </div>
               </CardContent>
             </Card>
@@ -222,18 +310,18 @@ const recentTickets = ref<Ticket[]>([
               </CardHeader>
               <CardContent>
                 <div class="text-2xl font-bold">
-                  43
+                  {{ solvedRequests !== null ? solvedRequests : '-' }}
                 </div>
               </CardContent>
             </Card>
           </div>
           <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-            <Card v-if="role != 'aluno'" class="col-span-4 border-2 border-emerald-200 text-emerald-900">
+            <Card v-if="role != 'student'" class="col-span-4 border-2 border-emerald-200 text-emerald-900">
               <CardHeader>
                 <CardTitle>Ocupação dos turnos</CardTitle>
               </CardHeader>
               <CardContent class="pl-2">
-                <Overview />
+                <Overview :CoursesOccupancy="coursesOccupancy" />
               </CardContent>
             </Card>
             <Card v-else class="col-span-4 border-2 border-emerald-200 text-emerald-900 h-[500px] overflow-y-auto">
@@ -241,7 +329,12 @@ const recentTickets = ref<Ticket[]>([
                 <CardTitle>Horário</CardTitle>
               </CardHeader>
               <CardContent class="pl-2">
-                <Timetable mode="student" :blocks="studentBlocks" />
+                <div v-if="areSchedulesPublished">
+                  <Timetable mode="student" :blocks="studentBlocks" />
+                </div>
+                <div v-else class="text-center text-gray-500">
+                  O horário ainda não foi publicado.
+                </div>
               </CardContent>
             </Card>
             <Card class="col-span-3 border-2 border-emerald-200">

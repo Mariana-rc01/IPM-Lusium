@@ -95,6 +95,82 @@ export async function list_RequestsDirector_by_id() {
   return dict;
 }
 
+// "DD-MM-YYYY" → Date
+function parseDDMMYYYY(str: string): Date {
+  const [day, month, year] = str.split('-').map(s => parseInt(s, 10));
+  return new Date(year, month - 1, day);
+}
+
+// Gets a limited number of requests (students and teachers) combined and sorted by date
+export async function list_Requests_from_s_and_t(limit: number) {
+  const [respS, respT, students, teachers] = await Promise.all([
+    API.get("/requestsStudents"),
+    API.get("/requestsTeachers"),
+    API.get("/students"),
+    API.get("/teachers"),
+  ]);
+
+  // 1) add parsedDate to each request
+  const withDates = [
+    ...respS.data.map((r: any) => ({ ...r, parsedDate: parseDDMMYYYY(r.date) })),
+    ...respT.data.map((r: any) => ({ ...r, parsedDate: parseDDMMYYYY(r.date) }))
+  ];
+
+  // 2) sort by parsedDate, from most recent to oldest
+  const sorted = withDates
+    .sort((a, b) => b.parsedDate.getTime() - a.parsedDate.getTime())
+    .slice(0, limit);
+
+  // 3) build the final payload, formatting the date in pt-PT
+  return sorted.map((req: any) => {
+    const user = req.studentId
+      ? students.data.find((s: any) => s.id === req.studentId)
+      : teachers.data.find((t: any) => t.id === req.teacherId);
+
+    return {
+      subject: req.subject,
+      date: req.parsedDate.toLocaleDateString('pt-PT'), // ex: "18/02/2025"
+      name:  user?.name  || "Unknown",
+      email: user?.email || "Unknown",
+    };
+  });
+}
+
+// Gets a limited number of requests (director) sorted by date
+export async function list_Requests_from_d(limit: number) {
+  const response = await API.get("/requestsDirector");
+  const data: types.RequestsDirector[] = response.data;
+
+  const directorsResponse = await API.get("/directors");
+  const directorsData = directorsResponse.data;
+
+  // Ensure there is at least one director
+  if (!directorsData || directorsData.length === 0) {
+    throw new Error("No directors found!");
+  }
+
+  const director = directorsData[0];
+
+  // 1) add parsedDate to each request
+  const withDates = data.map((r) => ({
+    ...r,
+    parsedDate: parseDDMMYYYY(r.date),
+  }));
+
+  // 2) sort by parsedDate, from most recent to oldest
+  const sorted = withDates
+    .sort((a, b) => b.parsedDate.getTime() - a.parsedDate.getTime())
+    .slice(0, limit);
+
+  // 3) build the final payload, formatting the date in pt-PT
+  return sorted.map((req) => ({
+    subject: req.subject,
+    date: req.parsedDate.toLocaleDateString('pt-PT'), // ex: "18/02/2025"
+    name: director.name || "Unknown",
+    email: director.email || "Unknown",
+  }));
+}
+
 // -----------------------
 // Functions for Students
 // -----------------------
@@ -108,6 +184,136 @@ export async function getStudents() {
 // Delete a student by ID
 export async function deleteStudentById(studentId: string) {
   await API.delete(`/students/${studentId}`);
+}
+
+// -----------------------
+// Functions for Course Director
+// -----------------------
+
+export async function schedulesPublished() {
+  const response = await API.get("/directors");
+  const directors = response.data;
+  if (directors.length === 0) {
+    throw new Error("No directors found!");
+  }
+  const director = directors[0];
+  return director.schedulePublished;
+}
+
+export async function publishSchedules() {
+  const response = await API.get("/directors");
+  const directors = response.data;
+  if (directors.length === 0) {
+    throw new Error("No directors found!");
+  }
+  const director = directors[0];
+  await API.patch(`/directors/${director.id}`, {
+    schedulePublished: true,
+  });
+}
+
+// -----------------------
+// Functions for Courses
+// -----------------------
+
+// Get each course shifts ocupation
+export async function getCoursesOccupancy() {
+  const response = await API.get("/courses");
+  const courses = response.data;
+
+  const shiftsResponse = await API.get("/shifts");
+  const shifts = shiftsResponse.data;
+
+  const classroomsResponse = await API.get("/classrooms");
+  const classrooms = classroomsResponse.data;
+
+  return courses.map((course: any) => {
+    const courseShifts = shifts.filter(
+      (shift: any) => String(shift.courseId) === String(course.id),
+    );
+
+    const totalCapacity = courseShifts.reduce((acc: number, shift: any) => {
+      const classroom = classrooms.find(
+        (c: any) => String(c.id) === String(shift.classroomId),
+      );
+      return acc + (classroom ? classroom.capacity : 0);
+    }, 0);
+
+    const totalRegistered = courseShifts.reduce(
+      (acc: number, shift: any) => acc + shift.totalStudentsRegistered,
+      0,
+    );
+
+    return {
+      id: course.id,
+      abbreviation: course.abbreviation,
+      occupancy: {
+        current: totalRegistered,
+        total: totalCapacity,
+        percentage:
+          totalCapacity > 0
+            ? parseFloat(((totalRegistered / totalCapacity) * 100).toFixed(2))
+            : 0,
+      },
+    };
+  });
+}
+
+// -----------------------
+// Functions for Statistics
+// -----------------------
+
+// Get global occupancy percentage (one unique value)
+export async function getGlobalOccupancy() {
+  const shiftsResponse = await API.get("/shifts");
+  const classroomsResponse = await API.get("/classrooms");
+
+  const shifts = shiftsResponse.data;
+  const classrooms = classroomsResponse.data;
+
+  const totalCapacity = classrooms.reduce(
+    (acc: number, classroom: any) => acc + classroom.capacity,
+    0,
+  );
+
+  const totalRegistered = shifts.reduce(
+    (acc: number, shift: any) => acc + shift.totalStudentsRegistered,
+    0,
+  );
+
+  return {
+    percentage:
+      totalCapacity > 0
+        ? parseFloat(((totalRegistered / totalCapacity) * 100).toFixed(2))
+        : 0,
+  };
+}
+
+// Get students not allocated to any shift
+export async function getStudentsNotAllocated() {
+  const studentsResponse = await API.get("/students");
+  const allocationsResponse = await API.get("/allocations");
+
+  const students = studentsResponse.data;
+  const allocations = allocationsResponse.data;
+
+  const allocatedStudentIds = new Set(
+    allocations.map((allocation: any) => allocation.studentId),
+  );
+
+  return students.filter(
+    (student: any) => !allocatedStudentIds.has(student.id),
+  );
+}
+
+// Get all "Aceite" or "Recusado" requests
+export async function getSolvedRequests() {
+  const requestsResponse = await API.get("/requestsStudents");
+  const requests = requestsResponse.data;
+
+  return requests.filter(
+    (request: any) => request.status === "Aceite" || request.status === "Recusado",
+  );
 }
 
 // -----------------------
