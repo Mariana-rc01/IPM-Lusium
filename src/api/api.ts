@@ -95,16 +95,16 @@ export async function list_RequestsDirector_by_id() {
   return dict;
 }
 
-export async function getRequestByTicketId(ticketId: string, userType: "student" | "teacher" | "director") {
-  if (userType === "student") {
+export async function getRequestByTicketId(ticketId: string, userType: string) {
+  if (userType == "student") {
     const response = await API.get("/requestsStudents");
     const request = response.data.find((item: any) => item.id == ticketId);
     return request;
-  } else if (userType === "teacher") {
+  } else if (userType == "teacher") {
     const response = await API.get("/requestsTeachers");
     const request = response.data.find((item: any) => item.id == ticketId);
     return request;
-  } else if (userType === "director") {
+  } else if (userType == "director") {
     const response = await API.get("/requestsDirector");
     const request = response.data.find((item: any) => item.id == ticketId);
     return request;
@@ -113,6 +113,30 @@ export async function getRequestByTicketId(ticketId: string, userType: "student"
   }
 }
 
+export async function updateRequest(
+  ticketId: string,
+  userType: string,
+  updatedFields: Partial<{ status: string; note: string }>
+) {
+  let endpoint = "";
+
+  switch (userType) {
+    case "student":
+      endpoint = `/requestsStudents/${ticketId}`;
+      break;
+    case "teacher":
+      endpoint = `/requestsTeachers/${ticketId}`;
+      break;
+    case "director":
+      endpoint = `/requestsDirector/${ticketId}`;
+      break;
+    default:
+      throw new Error("Tipo de utilizador inválido!");
+  }
+
+  const response = await API.patch(endpoint, updatedFields);
+  return response.data;
+}
 
 // -----------------------
 // Functions for Students

@@ -15,16 +15,18 @@
 
         <!-- Filter buttons -->
         <div class="flex gap-2">
-          <button @click="setFilter('enviados')" class="flex items-center gap-2 px-4 py-2 rounded-md text-sm" :class="activeFilter === 'enviados'
-            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-            : 'bg-white text-emerald-700 border border-dashed border-emerald-300'">
+          <button @click="setFilter('enviados')" class="flex items-center gap-2 px-4 py-2 rounded-md text-sm"
+            :class="activeFilter === 'enviados'
+              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+              : 'bg-white text-emerald-700 border border-dashed border-emerald-300'">
             <SendIcon class="h-4 w-4" />
             Enviados
           </button>
 
-          <button @click="setFilter('recebidos')" class="flex items-center gap-2 px-4 py-2 rounded-md text-sm" :class="activeFilter === 'recebidos'
-            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-            : 'bg-white text-emerald-700 border border-dashed border-emerald-300'">
+          <button @click="setFilter('recebidos')" class="flex items-center gap-2 px-4 py-2 rounded-md text-sm"
+            :class="activeFilter === 'recebidos'
+              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+              : 'bg-white text-emerald-700 border border-dashed border-emerald-300'">
             <PackageOpen class="h-4 w-4" />
             Recebidos
           </button>
@@ -43,13 +45,13 @@
     <div class="border border-emerald-200 rounded-lg overflow-hidden">
       <table class="w-full table-fixed">
         <colgroup>
-          <col class="w-[12%]" /> <!-- Código do Pedido -->
-          <col class="w-[25%]" /> <!-- Assunto -->
-          <col class="w-[12%]" /> <!-- Remetente -->
-          <col class="w-[20%]" /> <!-- Destinatário -->
-          <col class="w-[12%]" /> <!-- Data -->
-          <col class="w-[14%]" /> <!-- Estado -->
-          <col class="w-[5%]" /> <!-- Ações -->
+          <col class="w-[12%]" />
+          <col class="w-[25%]" />
+          <col class="w-[12%]" />
+          <col class="w-[20%]" />
+          <col class="w-[12%]" />
+          <col class="w-[14%]" />
+          <col class="w-[5%]" />
         </colgroup>
         <thead>
           <tr class="border-b border-emerald-200">
@@ -76,8 +78,8 @@
         </thead>
         <tbody>
           <tr v-for="pedido in paginatedPedidos" :key="pedido.codigo"
-              @click="openTicket(pedido.codigo)"
-              class="border-b border-emerald-100 hover:bg-gray-50 cursor-pointer">
+            @click="openTicket(pedido.codigo)"
+            class="border-b border-emerald-100 hover:bg-gray-50 cursor-pointer">
             <td class="py-3 px-4 text-sm truncate">{{ pedido.codigo }}</td>
             <td class="py-3 px-4 text-sm truncate">{{ pedido.assunto }}</td>
             <td class="py-3 px-4 text-sm truncate">{{ pedido.remetente }}</td>
@@ -154,9 +156,9 @@
 
     <!-- Modal de Ticket -->
     <div v-if="showModal" class="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center">
-      <component
-        :is="ticketComponent"
+      <Ticket
         :ticketId="selectedTicketId"
+        :userType="ticketType"
         @close="showModal = false"
       />
     </div>
@@ -178,10 +180,7 @@ import {
 import * as api from '../api/api'
 import { useUserStore } from '@/stores/user'
 
-// Importar componentes dos tickets
-import TicketStudent from '@/components/ticket/TicketStudent.vue'
-import TicketTeacher from '@/components/ticket/TicketTeacher.vue'
-import TicketTeacherAnnouncement from '@/components/ticket/TicketTeacherAnnouncement.vue'
+import Ticket from '@/components/ticket/Ticket.vue'
 
 interface Pedido {
   codigo: string
@@ -198,8 +197,7 @@ export default {
     Input, Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
     ChevronLeftIcon, ChevronRightIcon, ChevronsLeftIcon, ChevronsRightIcon,
     ChevronsUpDownIcon, CircleIcon, CheckIcon, XIcon, Trash2, PlusCircleIcon,
-    PackageOpen, SendIcon,
-    TicketStudent, TicketTeacher, TicketTeacherAnnouncement
+    PackageOpen, SendIcon, Ticket
   },
   data() {
     return {
@@ -211,10 +209,9 @@ export default {
       sortDirection: 'asc' as 'asc' | 'desc',
       pedidosEnviados: [] as Pedido[],
       pedidosRecebidos: [] as Pedido[],
-
       showModal: false,
       selectedTicketId: '',
-      ticketType: '', // 'student' | 'teacher' | 'announcement'
+      ticketType: '', // 'student' | 'teacher' | 'director'
     }
   },
   computed: {
@@ -246,14 +243,6 @@ export default {
       const startIndex = (this.currentPage - 1) * parseInt(this.rowsPerPage)
       return this.filteredPedidos.slice(startIndex, startIndex + parseInt(this.rowsPerPage))
     },
-    ticketComponent() {
-      switch (this.ticketType) {
-        case 'student': return 'TicketStudent'
-        case 'teacher': return 'TicketTeacher'
-        case 'announcement': return 'TicketTeacherAnnouncement'
-        default: return null
-      }
-    }
   },
   methods: {
     setFilter(filter: 'enviados' | 'recebidos') {
@@ -313,7 +302,7 @@ export default {
         }))
         break
       case 'director':
-        this.ticketType = 'announcement'
+        this.ticketType = 'director'
         const directorRaw = await api.list_RequestsDirector_by_id()
         result = Object.values(directorRaw).map(req => ({
           codigo: req.id.toString(),
