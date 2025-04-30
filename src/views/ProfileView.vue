@@ -2,9 +2,9 @@
   <div class="container mx-auto p-4 max-w-7xl">
     <div v-if="isLoading" class="text-center py-20">Carregando perfil...</div>
     <div v-else>
-      <div class="w-full grid grid-cols-1 lg:grid-cols-5">
+      <div class="w-full grid grid-cols-1 lg:grid-cols-7">
         <h1 class="col-span-1 text-2xl text-center font-bold mb-12 lg:mb-1">Perfil</h1>
-        <div class="col-span-4 flex-1 flex justify-center">
+        <div class="col-span-6 flex-1 flex justify-center">
           <div class="grid grid-cols-1 lg:grid-cols-2 grid-rows-5 gap-10">
             <div class="flex items-start row-span-2 gap-10">
               <div class="flex flex-col items-start gap-3">
