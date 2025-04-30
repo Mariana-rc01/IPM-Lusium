@@ -1,11 +1,11 @@
 <template>
-  <div class="p-6 flex justify-center">
-    <div class="w-full max-w-6xl mx-auto">
+  <div class="p-6 flex justify-start items-start min-h-screen">
+    <div class="w-full max-w-6xl mx-6">
       <!-- Title -->
-      <h1 class="text-2xl font-bold mb-1">Alocação manual de turnos</h1>
-      <p class="text-[#10B981] mb-6">Aqui pode alocar um aluno aos turnos de cada Unidade Curricular!</p>
+      <h1 class="text-2xl font-bold mb-1 text-left">Alocação manual de turnos</h1>
+      <p class="text-[#10B981] mb-6 text-left">Aqui pode alocar um aluno aos turnos de cada Unidade Curricular!</p>
 
-      <div class="flex flex-col md:flex-row gap-20">
+      <div class="flex flex-col md:flex-row gap-20 items-start">
         <!-- Sidebar with the options for Course and Shifts -->
         <div class="flex-1">
           <div class="border border-[#10B981] w-[250px] rounded-lg p-2">
@@ -66,328 +66,238 @@
     <SuccessAlert v-if="showModalSucess" :message="modalMessageSuccess || ''" @close="modalMessageSuccess = null" />
 
   </div>
-
 </template>
 
-<script setup lang="ts">
-import { ref, computed } from 'vue';
-import Timetable from '../components/Timetable.vue'
-import { ScrollArea } from '../components/ui/scroll-area'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Button } from '@/components/ui/button'
-import ConfirmModal from '@/components/popup/ConfirmModal.vue'
-import SuccessAlert from '@/components/popup/SuccessAlert.vue'
+<script lang="ts">
+import { defineComponent } from 'vue';
+import { useRoute } from 'vue-router';
+import Timetable from '../components/Timetable.vue';
+import { ScrollArea } from '../components/ui/scroll-area';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Button } from '@/components/ui/button';
+import ConfirmModal from '@/components/popup/ConfirmModal.vue';
+import SuccessAlert from '@/components/popup/SuccessAlert.vue';
+import {
+  getAllocationsByStudentId,
+  deleteAllocation,
+  createAllocation,
+  getShiftById,
+  updateShiftTotalStudents,
+  getAllAllocations,
+  getStudentById,
+  getStudentAllocations,
+  getAvailableCourses,
+  addStudentToNoAllocations
+} from '@/api/api';
 
 interface ClassBlock {
-  id: string
-  name: string
-  room: string
-  day: number
-  startHour: string
-  endHour: string
+  id: string;
+  name: string;
+  room: string;
+  day: number;
+  startHour: string;
+  endHour: string;
+  type: string;
   occupancy: {
-    current: number
-    total: number
-    percentage: number
-  }
+    current: number;
+    total: number;
+    percentage: number;
+  };
 }
 
 interface Course {
-  uc: string
-  turnos: ClassBlock[]
+  uc: string;
+  turnos: ClassBlock[];
 }
 
-const showModal = ref(false)
-const modalMessage = ref('')
-
-const showModalSucess = ref(false)
-const modalMessageSuccess = ref<string | null>(null)
-
-const availableCourses = ref<Course[]>([
-  {
-    uc: 'IPM',
-    turnos: [
-      {
-        id: 'IPM-T1',
-        name: 'T1',
-        room: 'CP1 - 0.08',
-        day: 0,
-        startHour: '11:00',
-        endHour: '13:00',
-        occupancy: { current: 94, total: 95, percentage: 98.94 }
-      },
-      {
-        id: 'IPM-PL1',
-        name: 'PL1',
-        room: 'CP1 - 0.08',
-        day: 0,
-        startHour: '8:00',
-        endHour: '10:00',
-        occupancy: { current: 30, total: 35, percentage: 85.71 }
-      },
-      {
-        id: 'IPM-PL3',
-        name: 'PL3',
-        room: 'CP1 - 0.08',
-        day: 1,
-        startHour: '11:00',
-        endHour: '13:00',
-        occupancy: { current: 55, total: 95, percentage: 57.89 }
-      },
-      {
-        id: 'IPM-PL4',
-        name: 'PL4',
-        room: 'CP1 - 1.17',
-        day: 0,
-        startHour: '9:00',
-        endHour: '11:00',
-        occupancy: { current: 25, total: 30, percentage: 85.03 }
-      }
-    ]
+export default defineComponent({
+  components: {
+    Timetable,
+    ScrollArea,
+    Checkbox,
+    Button,
+    ConfirmModal,
+    SuccessAlert
   },
-  {
-    uc: 'PL',
-    turnos: [
-      {
-        id: 'PL-T1',
-        name: 'T1',
-        room: 'CP1 - 0.08',
-        day: 4,
-        startHour: '11:00',
-        endHour: '13:00',
-        occupancy: { current: 94, total: 95, percentage: 98.94 }
-      },
-      {
-        id: 'PL-PL2',
-        name: 'PL2',
-        room: 'CP1 - 0.08',
-        day: 0,
-        startHour: '9:00',
-        endHour: '11:00',
-        occupancy: { current: 25, total: 30, percentage: 85.03 }
-      },
-      {
-        id: 'PL-PL3',
-        name: 'PL3',
-        room: 'CP1 - 0.08',
-        day: 0,
-        startHour: '9:00',
-        endHour: '10:00',
-        occupancy: { current: 30, total: 35, percentage: 85.71 }
-      },
-      {
-        id: 'PL-PL4',
-        name: 'PL4',
-        room: 'CP1 - 0.08',
-        day: 1,
-        startHour: '11:00',
-        endHour: '13:00',
-        occupancy: { current: 55, total: 95, percentage: 57.89 }
-      },
-      {
-        id: 'PL-PL5',
-        name: 'PL5',
-        room: 'CP1 - 0.08',
-        day: 1,
-        startHour: '11:00',
-        endHour: '13:00',
-        occupancy: { current: 55, total: 95, percentage: 57.89 }
-      },
-      {
-        id: 'PL-PL6',
-        name: 'PL6',
-        room: 'CP1 - 0.17',
-        day: 1,
-        startHour: '9:00',
-        endHour: '11:00',
-        occupancy: { current: 45, total: 45, percentage: 100.00 }
-      }
-    ]
+  data() {
+    return {
+      studentId: '' as string,
+      enrolledCourses: [] as string[],
+      allocations: [] as string[],
+      showModal: false,
+      modalMessage: '',
+      showModalSucess: false,
+      modalMessageSuccess: null as string | null,
+      availableCourses: [] as Course[],
+      selectedShifts: [] as string[],
+      expandedUCs: [] as string[],
+    }
   },
-  {
-    uc: 'CG',
-    turnos: [
-      {
-        id: 'CG-T1',
-        name: 'T1',
-        room: 'CP1 - 0.08',
-        day: 2,
-        startHour: '11:00',
-        endHour: '13:00',
-        occupancy: { current: 55, total: 95, percentage: 57.89 }
-      },
-      {
-        id: 'CG-PL1',
-        name: 'PL1',
-        room: 'CP1 - 0.08',
-        day: 2,
-        startHour: '9:00',
-        endHour: '11:00',
-        occupancy: { current: 25, total: 30, percentage: 85.03 }
-      },
-      {
-        id: 'CG-PL2',
-        name: 'PL2',
-        room: 'CP1 - 0.08',
-        day: 3,
-        startHour: '11:00',
-        endHour: '13:00',
-        occupancy: { current: 94, total: 95, percentage: 98.94 }
-      },
-      {
-        id: 'CG-PL3',
-        name: 'PL3',
-        room: 'CP2 - 2.09',
-        day: 3,
-        startHour: '8:00',
-        endHour: '10:00',
-        occupancy: { current: 30, total: 35, percentage: 85.71 }
-      }
-    ]
+  computed: {
+    selectedBlocks(): ClassBlock[] {
+      return this.availableCourses.flatMap(course =>
+        course.turnos
+          .filter(turno => this.selectedShifts.includes(turno.id))
+          .map(turno => ({ ...turno, name: `${course.uc} - ${turno.name }`}))
+      );
+    }
   },
-  {
-    uc: 'SSI',
-    turnos: [
-      {
-        id: 'SSI-T1',
-        name: 'T1',
-        room: 'CP1 - 0.08',
-        day: 3,
-        startHour: '9:00',
-        endHour: '11:00',
-        occupancy: { current: 94, total: 95, percentage: 98.94 }
-      },
-      {
-        id: 'SSI-PL1',
-        name: 'PL1',
-        room: 'CP1 - 0.08',
-        day: 4,
-        startHour: '9:00',
-        endHour: '11:00',
-        occupancy: { current: 25, total: 30, percentage: 85.03 }
+  methods: {
+    toggleUC(uc: string) {
+      const index = this.expandedUCs.indexOf(uc);
+      if (index > -1) {
+        this.expandedUCs.splice(index, 1);
+      } else {
+        this.expandedUCs.push(uc);
       }
-    ]
-  }
-])
+    },
+    updateSelection(checked: boolean, shiftId: string) {
+      if (checked) {
+        this.selectedShifts.push(shiftId);
+      } else {
+        this.selectedShifts = this.selectedShifts.filter(id => id !== shiftId);
+      }
+    },
+    async loadStudentData() {
+      try {
+        const route = useRoute();
+        this.studentId = route.params.idStudent as string;
 
-const hours = [
-  '08:00', '09:00', '10:00', '11:00', '12:00',
-  '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00'
-]
+        const student = await getStudentById(this.studentId);
+        this.enrolledCourses = student.enrolled;
 
-const expandedUCs = ref<string[]>([])
+        this.allocations = await getStudentAllocations(this.studentId);
+        this.availableCourses = await getAvailableCourses(this.enrolledCourses);
 
-const toggleUC = (uc: string) => {
-  const index = expandedUCs.value.indexOf(uc)
-  if (index > -1) {
-    expandedUCs.value.splice(index, 1)
-  } else {
-    expandedUCs.value.push(uc)
-  }
-}
+        this.selectedShifts = this.allocations;
+      } catch (error) {
+        console.error('Erro ao carregar dados:', (error as any).message);
+      }
+    },
+    async saveSchedule() {
+      try {
+        const oldAllocations = await getAllocationsByStudentId(this.studentId);
 
-const selectedShifts = ref<string[]>([])
+        await Promise.all(
+          oldAllocations.map(async (allocation: any) => {
+            const shift = await getShiftById(allocation.shiftId);
+            await updateShiftTotalStudents(allocation.shiftId, Math.max(0, shift.totalStudentsRegistered - 1));
+            await deleteAllocation(allocation.id);
+          })
+        );
 
-const selectedBlocks = computed<ClassBlock[]>(() =>
-  availableCourses.value.flatMap(course =>
-      course.turnos
-        .filter(turno => selectedShifts.value.includes(turno.id))
-        .map(turno => ({...turno, name: `${course.uc} - ${turno.name}`})))
-)
+        if (this.selectedShifts.length === 0) {
+          await addStudentToNoAllocations(this.studentId);
 
-const updateSelection = (checked: boolean, turnoID: string) => {
-  if (checked)
-    selectedShifts.value = [...selectedShifts.value, turnoID]
-  else
-    selectedShifts.value = selectedShifts.value.filter(id => id !== turnoID)
-}
+          this.showModalSucess = false;
+          this.nextTick(() => {
+            this.modalMessageSuccess = 'Nenhum turno selecionado. O aluno foi adicionado à lista de não alocados.';
+            this.showModalSucess = true;
+            this.loadStudentData();
+          });
+          return;
+        }
 
-const validateSchedule = (): { valid: boolean, issues: string[] } => {
-  const issues: string[] = [];
+        const allAllocations = await getAllAllocations();
+        const lastId = allAllocations.reduce((maxId: number, allocation: any) => Math.max(maxId, Number(allocation.id)), 0);
 
-  for (const course of availableCourses.value) {
-    const selected = course.turnos.filter(t => selectedShifts.value.includes(t.id));
-    const theoreticals = selected.filter(t => t.name.startsWith('T'));
-    const praticals = selected.filter(t => t.name.startsWith('PL'));
+        await Promise.all(
+          this.selectedShifts.map(async (shiftId, index) => {
+            const shift = await getShiftById(shiftId);
+            await updateShiftTotalStudents(shiftId, shift.totalStudentsRegistered + 1);
 
-    // Check if more than one theoretical or practical shift is selected
-    if (theoreticals.length > 1) {
-      issues.push(`Mais de um turno teórico selecionado para ${course.uc}`);
+            await createAllocation({
+              id: String(lastId + index + 1),
+              studentId: this.studentId,
+              shiftId: Number(shiftId),
+            });
+          })
+        );
+
+        this.showModalSucess = false;
+        this.nextTick(() => {
+          this.modalMessageSuccess = 'Horário atualizado com sucesso!';
+          this.showModalSucess = true;
+          this.loadStudentData();
+        });
+      } catch (error) {
+        console.error('Erro ao salvar horário:', error);
+        this.modalMessage = 'Erro ao atualizar o horário';
+        this.showModal = true;
+      }
+    },
+    handleCancel() {
+      console.log('Action canceled!');
+      this.showModal = false;
+      this.modalMessage = '';
+    },
+    handleConfirm() {
+      console.log('Action confirmed!');
+      console.log('Assign schedule:', this.selectedBlocks);
+      this.showModal = false;
+      this.modalMessage = '';
+    },
+    AssignSchedule() {
+      const validation = this.validateSchedule();
+
+      if (!validation.valid) {
+        this.modalMessage = `Erros:\n${validation.issues.join('. ')}`;
+        this.showModal = true;
+        return;
+      }
+
+      this.saveSchedule();
+    },
+    validateSchedule(): { valid: boolean; issues: string[] } {
+      const issues: string[] = [];
+
+      for (const course of this.availableCourses) {
+        const selected = course.turnos.filter(t =>
+          this.selectedShifts.includes(t.id)
+        );
+        const theoreticals = selected.filter(t => t.type === 'T');
+        const praticals = selected.filter(t => t.type === 'PL');
+
+        if (theoreticals.length > 1) {
+          issues.push(`Mais de um turno teórico selecionado para ${course.uc}`);
+        }
+        if (praticals.length > 1) {
+          issues.push(`Mais de um turno prático selecionado para ${course.uc}`);
+        }
+        if (theoreticals.length + praticals.length < 2 && course.uc !== 'LI2') {
+          issues.push(`Faltam turnos para ${course.uc}`);
+        }
+      }
+
+      const allSelectedShifts = this.availableCourses.flatMap(course =>
+        course.turnos.filter(t => this.selectedShifts.includes(t.id))
+      );
+
+      for (let i = 0; i < allSelectedShifts.length; i++) {
+        for (let j = i + 1; j < allSelectedShifts.length; j++) {
+          const shiftA = allSelectedShifts[i];
+          const shiftB = allSelectedShifts[j];
+
+          if (
+            shiftA.day === shiftB.day &&
+            shiftA.startHour < shiftB.endHour &&
+            shiftA.endHour > shiftB.startHour
+          ) {
+            issues.push(
+              `Conflito de horário entre ${shiftA.name} e ${shiftB.name}`
+            );
+          }
+        }
+      }
+
+      return { valid: issues.length === 0, issues };
+    },
+    nextTick(callback: () => void) {
+      (this as any).$nextTick(callback);
     }
-    if (praticals.length > 1) {
-      issues.push(`Mais de um turno prático selecionado para ${course.uc}`);
-    }
-
-    // Check if no shifts are selected for the course
-    if (theoreticals.length + praticals.length < 2) {
-      issues.push(`Faltam turnos para ${course.uc}`);
-    }
+  },
+  mounted() {
+    this.loadStudentData();
   }
-
-  // Check for overlapping blocks
-  const hasOverlap = selectedBlocks.value.some((block1, i) => {
-    return selectedBlocks.value.some((block2, j) => {
-      // Skip comparing the same block
-      if (i === j) return false;
-       // Skip blocks on different days
-      if (block1.day !== block2.day) return false;
-
-      const start1 = hours.indexOf(block1.startHour);
-      const end1 = hours.indexOf(block1.endHour);
-      const start2 = hours.indexOf(block2.startHour);
-      const end2 = hours.indexOf(block2.endHour);
-
-      // Check if the blocks overlap
-      return start1 < end2 && end1 > start2;
-    });
-  });
-
-  if (hasOverlap) {
-    issues.push('O horário possui sobreposições');
-  }
-
-  return {
-    valid: issues.length === 0,
-    issues,
-  };
-};
-
-function handleCancel() {
-  console.log('Action canceled!');
-  showModal.value = false;
-  // Resets the modal message
-  modalMessage.value = '';
-}
-
-const handleConfirm = () => {
-  console.log('Action confirmed!');
-  // Logs the allocated blocks
-  console.log('Assign schedule:', selectedBlocks.value);
-  showModal.value = false;
-  // Resets the modal message
-  modalMessage.value = '';
-};
-
-const AssignSchedule = () => {
-  const validation = validateSchedule();
-
-  if (!validation.valid) {
-    modalMessage.value = `Erros:\n${validation.issues.join('. ')}`;
-    showModal.value = true;
-    return;
-  }
-
-  showModalSucess.value = false;
-  nextTick(() => {
-    modalMessageSuccess.value = 'Horário alocado com sucesso!';
-    showModalSucess.value = true;
-  });
-  // TODO - Remove the old schedule and add the new one to the JSON server
-  // TODO - Update the number of students in the selected shifts
-};
-import { nextTick as vueNextTick } from 'vue';
-
-function nextTick(callback: () => void) {
-  vueNextTick(callback);
-}
+});
 </script>

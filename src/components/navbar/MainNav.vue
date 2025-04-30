@@ -23,14 +23,14 @@ const router = useRouter()
 
 const links = computed(() => {
   const commonLinks = [
-    { href: '/homepage', label: 'Home Page' },
-    { href: '/unidadescurriculares', label: 'Unidades Curriculares' },
-    { href: '/pedidos', label: 'Pedidos' }
+    { href: '/home', label: 'Home Page' },
+    { href: '/courses', label: 'Unidades Curriculares' },
+    { href: '/tickets', label: 'Pedidos' }
   ]
   if (userRole.value === 'diretor') {
     return [
       ...commonLinks,
-      { href: '/salas', label: 'Salas' }
+      { href: '/classrooms', label: 'Salas' }
     ]
   } else {
     return [
@@ -79,11 +79,11 @@ const toggleRole = () => {
         </DropdownMenuTrigger>
         <DropdownMenuContent class="w-56" align="end">
           <DropdownMenuItem as-child>
-            <a href="/alunos" class="w-full text-black">Todos os alunos</a>
+            <a href="/students" class="w-full text-black">Todos os alunos</a>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem as-child>
-            <a href="/alunos/nao-alocados" class="w-full text-black">Alunos não alocados</a>
+            <a href="/students/non-allocated" class="w-full text-black">Alunos não alocados</a>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -98,12 +98,6 @@ const toggleRole = () => {
     </div>
 
     <div class="flex items-center space-x-4">
-      <button
-        @click="toggleRole"
-        class="px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 transition"
-      >
-        Alternar para {{ userRole === 'student' ? 'Diretor' : 'Aluno' }}
-      </button>
       <UserNav />
     </div>
   </nav>

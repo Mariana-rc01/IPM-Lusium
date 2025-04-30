@@ -36,7 +36,7 @@ const closeSidebar = () => {
         isOpen ? 'translate-x-0 border-r border-gray-200' : '-translate-x-full'
       )"
     >
-      <div class="flex items-center justify-between p-4 border-b mt-16">
+      <div class="flex items-center justify-between p-4 border-b">
         <h2 class="font-semibold text-green-600">Criar um pedido</h2>
         <button 
           @click="closeSidebar"

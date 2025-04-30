@@ -1,9 +1,49 @@
 import json
+import random
 from datetime import datetime, timedelta
 
 # Load the JSON
 with open('db.json', 'r') as f:
     data = json.load(f)
+
+#
+# ─── PROFILE FIELDS INJECTION ────────────────────────────────────────────────
+#
+default_locations = ["Braga", "Porto", "Lisboa", "Coimbra", "Faro"]
+
+# Students
+for student in data['students']:
+    student['age'] = random.randint(18, 25)
+    student['year'] = random.randint(1, 3)
+    student['location'] = random.choice(default_locations)
+    student['profession'] = "Estudante"
+    student['objectives'] = "Concluir o curso com sucesso."
+    student['challenges'] = "Gerir o tempo e compreender o conteúdo."
+    student['solutions'] = "Participar em grupos de estudo e sessões de apoio."
+    student['citation'] = "Aprender é crescer todos os dias."
+
+# Teachers
+for teacher in data['teachers']:
+    teacher['age'] = random.randint(30, 65)
+    teacher['location'] = random.choice(default_locations)
+    teacher['profession'] = "Professor"
+    teacher['objectives'] = "Ensinar conteúdos de forma clara e motivadora."
+    teacher['challenges'] = "Manter o engajamento e atualizar materiais."
+    teacher['solutions'] = "Usar metodologias ativas e feedback constante."
+    teacher['citation'] = "Educar é semear com sabedoria e colher com paciência."
+
+# Directors
+for director in data['directors']:
+    director['age'] = random.randint(35, 70)
+    director['location'] = random.choice(default_locations)
+    director['profession'] = "Diretor"
+    director['objectives'] = "Assegurar o bom funcionamento académico."
+    director['challenges'] = "Conciliar recursos e expectativas variadas."
+    director['solutions'] = "Planeamento estratégico e comunicação eficaz."
+    director['citation'] = "Liderar é inspirar cada um a dar o seu melhor."
+#
+# ──────────────────────────────────────────────────────────────────────────────
+#
 
 # Mapping of shifts by course and type, with capacity control
 shifts_by_course = {}
@@ -34,6 +74,7 @@ def has_overlap(new_shift, scheduled_shifts):
         if new_day == existing_day and (new_start < existing_end and new_end > existing_start):
             return True
     return False
+
 
 # Allocations
 allocations = []
@@ -94,6 +135,6 @@ for shift in data['shifts']:
 
 data['allocations'] = allocations
 with open('allocations.json', 'w') as f:
-    json.dump(data, f, indent=2)
+    json.dump(data, f, ensure_ascii=False, indent=2)
 
 print(f"Allocations completed! Students without allocation: {unallocated_students}")

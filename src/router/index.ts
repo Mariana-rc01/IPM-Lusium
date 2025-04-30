@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
+import { useUserStore } from "@/stores/user";
 import LoginView from "@/views/LoginView.vue";
-import StudentView from "@/views/StudentView.vue";
-import TeacherView from "@/views/TeacherView.vue";
+import ScheduleView from "@/views/ScheduleView.vue";
+import UCScheduleView from "@/views/UCScheduleView.vue";
 import TicketsView from "@/views/TicketsView.vue";
 import ClassroomsView from "@/views/ClassroomsView.vue";
 import StudentsView from "@/views/StudentsView.vue";
@@ -11,6 +12,7 @@ import ShiftEditView from "@/views/ShiftEditView.vue";
 import ProfileView from "@/views/ProfileView.vue";
 import CourseListView from "@/views/CourseListView.vue";
 import NonAllocatedStudentsView from "@/views/NonAllocatedStudentsView.vue";
+import NotFoundView from "@/views/NotFoundView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -25,14 +27,14 @@ const router = createRouter({
       component: LoginView,
     },
     {
-      path: "/aluno",
-      name: "student",
-      component: StudentView,
+      path: "/schedule/:idStudent",
+      name: "schedule",
+      component: ScheduleView,
     },
     {
-      path: "/docente",
-      name: "teacher",
-      component: TeacherView,
+      path: "/uc-schedule/:idCourse",
+      name: "uc-schedule",
+      component: UCScheduleView,
     },
     {
       path: "/tickets",
@@ -50,12 +52,12 @@ const router = createRouter({
       component: StudentsView,
     },
     {
-      path: "/alocar-horario",
+      path: "/allocate/:idStudent",
       name: "allocate-schedule",
       component: AssignScheduleView,
     },
     {
-      path: "/turnos",
+      path: "/shifts/:idUC/:idShift",
       name: "shift",
       component: ShiftEditView,
     },
@@ -79,7 +81,21 @@ const router = createRouter({
       name: "nonAllocatedStudentsList",
       component: NonAllocatedStudentsView,
     },
+    {
+      path: "/:pathMatch(.*)*",
+      name: "not-found",
+      component: NotFoundView,
+    }
   ],
+});
+
+router.beforeEach((to, from, next) => {
+    const userStore = useUserStore();
+    if (!userStore.user && to.name !== "login") {
+        next({ name: "login" });
+    } else {
+        next();
+    }
 });
 
 export default router;
