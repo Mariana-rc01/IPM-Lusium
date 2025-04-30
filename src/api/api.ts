@@ -181,6 +181,24 @@ export async function getStudents() {
   return response.data;
 }
 
+// Get all non-allocated students
+export async function getNonAllocatedStudents() {
+  const noAllocationsResponse = await API.get("/noAllocations");
+  const studentsResponse = await API.get("/students");
+
+  const noAllocations = noAllocationsResponse.data;
+  const students = studentsResponse.data;
+
+  // get the students ID from the noAllocations and filter the students by that ID
+  const nonAllocatedStudents = students.filter((student: any) =>
+    noAllocations.some(
+      (noAllocation: any) => String(noAllocation.studentId) === String(student.id),
+    ),
+  );
+  return nonAllocatedStudents;
+}
+
+
 // Delete a student by ID
 export async function deleteStudentById(studentId: string) {
   await API.delete(`/students/${studentId}`);
