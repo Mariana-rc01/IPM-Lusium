@@ -62,81 +62,47 @@ export async function authenticateUser(userId: string, password: string) {
 // Function for Tickets
 // -----------------------
 
-// Gets all the requests from the student with the corresponding id
-export async function list_RequestsStudents_by_id(id: number) {
-  const response = await API.get("/requestsStudents");
-  const data: types.RequestsStudents[] = response.data;
-  const dict: types.RequestsStudentsDict = {};
-  data.forEach((item) => {
-    if (item.studentId === id) dict[item.id] = item;
-  });
-  return dict;
+// Gets all the requests with the corresponding id
+export async function list_Requests(): Promise<types.Request[]> {
+  const response = await API.get('/requests')
+  return response.data as types.Request[]
 }
 
-// Gets all the requests from the teacher with the corresponding id
-export async function list_RequestsTeachers_by_id(id: number) {
-  const response = await API.get("/requestsTeachers");
-  const data: types.RequestsTeachers[] = response.data;
-  const dict: types.RequestsTeachersDict = {};
-  data.forEach((item) => {
-    if (item.teacherId === id) dict[item.id] = item;
-  });
-  return dict;
-}
-
-// Gets all the requests from the director
-export async function list_RequestsDirector_by_id() {
-  const response = await API.get("/requestsDirector");
-  const data: types.RequestsDirector[] = response.data;
-  const dict: types.RequestsDirectorDict = {};
-  data.forEach((item) => {
-    dict[item.id] = item;
-  });
-  return dict;
-}
-
-export async function getRequestByTicketId(ticketId: string, userType: string) {
-  if (userType == "student") {
-    const response = await API.get("/requestsStudents");
-    const request = response.data.find((item: any) => item.id == ticketId);
-    return request;
-  } else if (userType == "teacher") {
-    const response = await API.get("/requestsTeachers");
-    const request = response.data.find((item: any) => item.id == ticketId);
-    return request;
-  } else if (userType == "director") {
-    const response = await API.get("/requestsDirector");
-    const request = response.data.find((item: any) => item.id == ticketId);
-    return request;
-  } else {
-    throw new Error("Tipo de utilizador inválido!");
-  }
+export async function getRequestByTicketId(ticketId: string): Promise<types.Request | undefined> {
+  const all = await list_Requests()
+  return all.find(r => r.id === ticketId)
 }
 
 export async function updateRequest(
   ticketId: string,
-  userType: string,
-  updatedFields: Partial<{ status: string; note: string }>
-) {
-  let endpoint = "";
+  updatedFields: Partial<{ status: string; response: string }>
+): Promise<types.Request> {
+  const response = await API.patch(`/requests/${ticketId}`, updatedFields)
+  return response.data
+}
 
-  switch (userType) {
-    case "student":
-      endpoint = `/requestsStudents/${ticketId}`;
-      break;
-    case "teacher":
-      endpoint = `/requestsTeachers/${ticketId}`;
-      break;
-    case "director":
-      endpoint = `/requestsDirector/${ticketId}`;
-      break;
-    default:
-      throw new Error("Tipo de utilizador inválido!");
-  }
+export async function createRequest(newReq: {
+  subject: string;
+  sender: string;
+  recipient: string;
+  date: string;
+  status: string;
+  description: string;
+  response: string;
+  }) {
+  const payload = {
+    id: "",
+    ...newReq
+  };
 
-  const response = await API.patch(endpoint, updatedFields);
+  const allRequests = await list_Requests();
+  const lastId = allRequests.length > 0 ? Math.max(...allRequests.map((r) => parseInt(r.id))) : 0;
+  payload.id = String(lastId + 1);
+
+  const response = await API.post("/requests", payload);
   return response.data;
 }
+
 
 // -----------------------
 // Functions for Students

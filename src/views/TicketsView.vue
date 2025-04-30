@@ -15,18 +15,16 @@
 
         <!-- Filter buttons -->
         <div class="flex gap-2">
-          <button @click="setFilter('enviados')" class="flex items-center gap-2 px-4 py-2 rounded-md text-sm"
-            :class="activeFilter === 'enviados'
-              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-              : 'bg-white text-emerald-700 border border-dashed border-emerald-300'">
+          <button @click="setFilter('enviados')" class="flex items-center gap-2 px-4 py-2 rounded-md text-sm" :class="activeFilter === 'enviados'
+            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+            : 'bg-white text-emerald-700 border border-dashed border-emerald-300'">
             <SendIcon class="h-4 w-4" />
             Enviados
           </button>
 
-          <button @click="setFilter('recebidos')" class="flex items-center gap-2 px-4 py-2 rounded-md text-sm"
-            :class="activeFilter === 'recebidos'
-              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-              : 'bg-white text-emerald-700 border border-dashed border-emerald-300'">
+          <button @click="setFilter('recebidos')" class="flex items-center gap-2 px-4 py-2 rounded-md text-sm" :class="activeFilter === 'recebidos'
+            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+            : 'bg-white text-emerald-700 border border-dashed border-emerald-300'">
             <PackageOpen class="h-4 w-4" />
             Recebidos
           </button>
@@ -77,8 +75,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="pedido in paginatedPedidos" :key="pedido.codigo"
-            @click="openTicket(pedido.codigo)"
+          <tr v-for="pedido in paginatedPedidos" :key="pedido.codigo" @click="openTicket(pedido.codigo)"
             class="border-b border-emerald-100 hover:bg-gray-50 cursor-pointer">
             <td class="py-3 px-4 text-sm truncate">{{ pedido.codigo }}</td>
             <td class="py-3 px-4 text-sm truncate">{{ pedido.assunto }}</td>
@@ -156,30 +153,26 @@
 
     <!-- Modal de Ticket -->
     <div v-if="showModal" class="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center">
-      <Ticket
-        :ticketId="selectedTicketId"
-        :userType="ticketType"
-        @close="showModal = false"
-      />
+      <Ticket :ticketId="selectedTicketId" :userType="ticketType" @close="showModal = false"/>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import {
-  ChevronLeftIcon, ChevronRightIcon, ChevronsLeftIcon, ChevronsRightIcon,
-  ChevronsUpDownIcon, CircleIcon, CheckIcon, XIcon, Trash2, PlusCircleIcon,
-  PackageOpen, SendIcon
+  ChevronLeftIcon, ChevronRightIcon,
+  ChevronsLeftIcon, ChevronsRightIcon,
+  ChevronsUpDownIcon, CircleIcon,
+  CheckIcon, XIcon, Trash2,
+  PlusCircleIcon, PackageOpen, SendIcon
 } from 'lucide-vue-next'
-
 import { Input } from '@/components/ui/input'
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  Select, SelectContent, SelectItem,
+  SelectTrigger, SelectValue,
 } from '@/components/ui/select'
-
-import * as api from '../api/api'
+import * as api from '@/api/api'
 import { useUserStore } from '@/stores/user'
-
 import Ticket from '@/components/ticket/Ticket.vue'
 
 interface Pedido {
@@ -194,10 +187,14 @@ interface Pedido {
 export default {
   name: 'TicketsView',
   components: {
-    Input, Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
-    ChevronLeftIcon, ChevronRightIcon, ChevronsLeftIcon, ChevronsRightIcon,
-    ChevronsUpDownIcon, CircleIcon, CheckIcon, XIcon, Trash2, PlusCircleIcon,
-    PackageOpen, SendIcon, Ticket
+    Input, Select, SelectContent, SelectItem,
+    SelectTrigger, SelectValue,
+    ChevronLeftIcon, ChevronRightIcon,
+    ChevronsLeftIcon, ChevronsRightIcon,
+    ChevronsUpDownIcon, CircleIcon,
+    CheckIcon, XIcon, Trash2,
+    PlusCircleIcon, PackageOpen, SendIcon,
+    Ticket
   },
   data() {
     return {
@@ -216,37 +213,44 @@ export default {
   },
   computed: {
     filteredPedidos(): Pedido[] {
-      const pedidos = this.activeFilter === 'enviados' ? this.pedidosEnviados : this.pedidosRecebidos
+      const pedidos = this.activeFilter === 'enviados'
+        ? this.pedidosEnviados
+        : this.pedidosRecebidos
       let result = pedidos
+
       if (this.searchQuery) {
-        const query = this.searchQuery.toLowerCase()
-        result = pedidos.filter((pedido: Pedido) =>
-          pedido.assunto.toLowerCase().includes(query) ||
-          pedido.codigo.toLowerCase().includes(query)
+        const q = this.searchQuery.toLowerCase()
+        result = result.filter(p =>
+          p.assunto.toLowerCase().includes(q) ||
+          p.codigo.toLowerCase().includes(q)
         )
       }
+
       if (this.sortColumn) {
-        result = [...result].sort((a: Pedido, b: Pedido) => {
-          const valueA = a[this.sortColumn!]
-          const valueB = b[this.sortColumn!]
+        result = [...result].sort((a, b) => {
+          const va = a[this.sortColumn!]
+          const vb = b[this.sortColumn!]
           return this.sortDirection === 'asc'
-            ? valueA.localeCompare(valueB)
-            : valueB.localeCompare(valueA)
+            ? va.localeCompare(vb)
+            : vb.localeCompare(va)
         })
       }
+
       return result
     },
     totalPages(): number {
-      return Math.max(1, Math.ceil(this.filteredPedidos.length / parseInt(this.rowsPerPage)))
+      return Math.max(1,
+        Math.ceil(this.filteredPedidos.length / parseInt(this.rowsPerPage))
+      )
     },
     paginatedPedidos(): Pedido[] {
-      const startIndex = (this.currentPage - 1) * parseInt(this.rowsPerPage)
-      return this.filteredPedidos.slice(startIndex, startIndex + parseInt(this.rowsPerPage))
+      const start = (this.currentPage - 1) * parseInt(this.rowsPerPage)
+      return this.filteredPedidos.slice(start, start + parseInt(this.rowsPerPage))
     },
   },
   methods: {
-    setFilter(filter: 'enviados' | 'recebidos') {
-      this.activeFilter = filter
+    setFilter(f: 'enviados' | 'recebidos') {
+      this.activeFilter = f
       this.currentPage = 1
     },
     goToPage(page: number) {
@@ -268,55 +272,55 @@ export default {
   async mounted() {
     const userStore = useUserStore()
     const user = userStore.user
-
     if (!user) return
 
-    const userType = user.type
-    const id = user.id
+    const allRequests = await api.list_Requests()
+    const me = user.id
+    this.ticketType = user.type
 
-    let result: Pedido[] = []
+    const mapped: Pedido[] = allRequests.map(req => {
+      const remetente = req.sender === me
+        ? 'Eu'
+        : req.sender === 'd1'
+          ? 'Diretor de Curso'
+          : 'Outro'
 
-    switch (userType) {
-      case 'student':
-        this.ticketType = 'student'
-        const studentRaw = await api.list_RequestsStudents_by_id(id)
-        result = Object.values(studentRaw).map(req => ({
-          codigo: req.id.toString(),
-          assunto: req.subject,
-          remetente: 'Eu',
-          destinatario: 'Diretor de Curso',
-          data: req.date,
-          estado: req.status,
-        }))
-        break
-      case 'teacher':
-        this.ticketType = 'teacher'
-        const teacherRaw = await api.list_RequestsTeachers_by_id(id)
-        result = Object.values(teacherRaw).map(req => ({
-          codigo: req.id.toString(),
-          assunto: req.subject,
-          remetente: 'Eu',
-          destinatario: 'Diretor de Curso',
-          data: req.date,
-          estado: req.status,
-        }))
-        break
-      case 'director':
-        this.ticketType = 'director'
-        const directorRaw = await api.list_RequestsDirector_by_id()
-        result = Object.values(directorRaw).map(req => ({
-          codigo: req.id.toString(),
-          assunto: req.subject,
-          remetente: 'Eu',
-          destinatario: 'Todos',
-          data: req.date,
-          estado: req.status,
-        }))
-        break
-    }
+      const destinatario = req.recipient === me
+        ? 'Eu'
+        : req.recipient === 'all'
+          ? 'Todos'
+          : req.recipient === 'd1'
+            ? 'Diretor de Curso'
+            : 'Outro'
 
-    this.pedidosEnviados = result.filter(p => ['Enviado', 'Aceite', 'Recusado'].includes(p.estado))
-    this.pedidosRecebidos = result.filter(p => p.estado === 'Recebido')
+      let estado: Pedido['estado']
+
+      if (req.sender === me) {
+        if (req.status === 'Aceite' || req.status === 'Recusado') {
+          estado = req.status as Pedido['estado']
+        } else {
+          estado = 'Enviado'
+        }
+      } else if (req.recipient === me || req.recipient === 'all') {
+        estado = 'Recebido'
+      } else {
+        estado = 'Recebido' // fallback seguro
+      }
+
+      return {
+        codigo: req.id,
+        assunto: req.subject,
+        remetente,
+        destinatario,
+        data: req.date,
+        estado
+      }
+    })
+
+    this.pedidosEnviados = mapped.filter(p => p.remetente === 'Eu')
+    this.pedidosRecebidos = mapped.filter(p =>
+      p.destinatario === 'Eu' || p.destinatario === 'Todos'
+    )
   }
 }
 </script>
@@ -329,9 +333,11 @@ export default {
   padding: 0 8px;
   font-size: 0.875rem;
 }
+
 .compact-select-trigger :deep(.flex) {
   gap: 0.25rem;
 }
+
 .compact-select-trigger :deep(svg) {
   height: 12px;
   width: 12px;
