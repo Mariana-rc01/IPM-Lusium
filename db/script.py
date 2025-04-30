@@ -14,6 +14,7 @@ default_locations = ["Braga", "Porto", "Lisboa", "Coimbra", "Faro"]
 # Students
 for student in data['students']:
     student['age'] = random.randint(18, 25)
+    student['year'] = random.randint(1, 3)
     student['location'] = random.choice(default_locations)
     student['profession'] = "Estudante"
     student['objectives'] = "Concluir o curso com sucesso."

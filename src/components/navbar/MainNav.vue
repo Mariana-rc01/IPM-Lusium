@@ -1,58 +1,49 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { cn } from '@/lib/utils'
-import UserNav from './UserNav.vue'
-import { useRouter } from 'vue-router'
+import { computed } from 'vue';
+import { cn } from '@/lib/utils';
+import UserNav from './UserNav.vue';
+import { useUserStore } from '@/stores/user';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuSeparator
-} from '@/components/ui/dropdown-menu'
+  DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu';
 
-const initialRole = localStorage.getItem('userRole') || 'student';
-const userRole = ref(initialRole)
-const router = useRouter()
+const userStore = useUserStore();
+const user = computed(() => userStore.user);
 
-const links = computed(() => {
-  const commonLinks = [
-    { href: '/home', label: 'Home Page' },
-    { href: '/courses', label: 'Unidades Curriculares' },
-    { href: '/tickets', label: 'Pedidos' }
-  ]
+const baseLinks = [
+  { href: '/home', label: 'Home Page' },
+  { href: '/courses', label: 'Unidades Curriculares' },
+  { href: '/tickets', label: 'Pedidos' },
+];
 
-  if (userRole.value === 'diretor') {
-    return [
-      ...commonLinks,
-      { href: '/classrooms', label: 'Salas' }
-    ]
-  } else {
-    return [
-      ...commonLinks,
-      { href: '/horario', label: 'Horário' }
-    ]
-  }
-})
+const scheduleLink = computed(() =>
+  user.value?.type === 'student'
+    ? [{ href: `/schedule/${user.value.id}`, label: 'Horário' }]
+    : []
+);
 
-const toggleRole = () => {
-  const newRole = userRole.value === 'student' ? 'diretor' : 'student'
-  userRole.value = newRole
-  localStorage.setItem('userRole', newRole)
+const showTeacherAlunos = computed(() =>
+  user.value?.type === 'teacher'
+);
 
-  if (newRole === 'student') {
-    router.push('/aluno')
-  } else {
-    router.push('/docente')
-  }
-}
+const showDirectorAlunosDropdown = computed(() =>
+  user.value?.type === 'director'
+);
+
+const showSalas = computed(() =>
+  user.value?.type === 'director'
+);
 </script>
 
 <template>
   <nav :class="cn('flex items-center justify-between w-full border-none', $attrs.class ?? '')">
     <div class="flex items-center space-x-4 lg:space-x-6">
       <a
-        v-for="(link, index) in links.slice(0, 3)"
+        v-for="link in baseLinks"
         :key="link.href"
         :href="link.href"
         class="text-sm font-medium text-black transition-colors hover:text-primary"
@@ -60,7 +51,25 @@ const toggleRole = () => {
         {{ link.label }}
       </a>
 
-      <DropdownMenu v-if="userRole === 'diretor'">
+      <a
+        v-for="link in scheduleLink"
+        :key="link.href"
+        :href="link.href"
+        class="text-sm font-medium text-black transition-colors hover:text-primary"
+      >
+        {{ link.label }}
+      </a>
+
+      <a
+        v-if="showTeacherAlunos"
+        href="/students"
+        class="text-sm font-medium text-black transition-colors hover:text-primary"
+      >
+        Alunos
+      </a>
+
+      <!-- Dropdown menu for directors -->
+      <DropdownMenu v-if="showDirectorAlunosDropdown">
         <DropdownMenuTrigger class="text-sm font-medium text-black transition-colors hover:text-primary">
           Alunos
         </DropdownMenuTrigger>
@@ -76,21 +85,15 @@ const toggleRole = () => {
       </DropdownMenu>
 
       <a
-        v-for="link in links.slice(3)"
-        :key="link.href"
-        :href="link.href"
+        v-if="showSalas"
+        href="/classrooms"
         class="text-sm font-medium text-black transition-colors hover:text-primary"
       >
-        {{ link.label }}
+        Salas
       </a>
     </div>
+
     <div class="flex items-center space-x-4">
-      <button
-        @click="toggleRole"
-        class="px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 transition"
-      >
-        Alternar para {{ userRole === 'student' ? 'Diretor' : 'Aluno' }}
-      </button>
       <UserNav />
     </div>
   </nav>

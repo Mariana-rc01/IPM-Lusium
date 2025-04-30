@@ -5,13 +5,14 @@
       "name": "José",
       "email": "jose@di.uminho.pt",
       "password": "123",
-      "age": 45,
-      "location": "Faro",
+      "age": 55,
+      "location": "Lisboa",
       "profession": "Diretor",
       "objectives": "Assegurar o bom funcionamento académico.",
       "challenges": "Conciliar recursos e expectativas variadas.",
       "solutions": "Planeamento estratégico e comunicação eficaz.",
-      "citation": "Liderar é inspirar cada um a dar o seu melhor."
+      "citation": "Liderar é inspirar cada um a dar o seu melhor.",
+      "schedulePublished": false
     }
   ],
   "teachers": [
@@ -20,8 +21,8 @@
       "name": "Pedro",
       "email": "pedro@di.uminho.pt",
       "password": "123",
-      "age": 56,
-      "location": "Porto",
+      "age": 48,
+      "location": "Faro",
       "profession": "Professor",
       "objectives": "Ensinar conteúdos de forma clara e motivadora.",
       "challenges": "Manter o engajamento e atualizar materiais.",
@@ -33,7 +34,7 @@
       "name": "Ana",
       "email": "ana@di.uminho.pt",
       "password": "123",
-      "age": 46,
+      "age": 49,
       "location": "Porto",
       "profession": "Professor",
       "objectives": "Ensinar conteúdos de forma clara e motivadora.",
@@ -46,8 +47,8 @@
       "name": "Luís",
       "email": "luis@di.uminho.pt",
       "password": "123",
-      "age": 33,
-      "location": "Lisboa",
+      "age": 40,
+      "location": "Porto",
       "profession": "Professor",
       "objectives": "Ensinar conteúdos de forma clara e motivadora.",
       "challenges": "Manter o engajamento e atualizar materiais.",
@@ -60,7 +61,7 @@
       "email": "maria@di.uminho.pt",
       "password": "123",
       "age": 56,
-      "location": "Faro",
+      "location": "Braga",
       "profession": "Professor",
       "objectives": "Ensinar conteúdos de forma clara e motivadora.",
       "challenges": "Manter o engajamento e atualizar materiais.",
@@ -72,8 +73,8 @@
       "name": "João",
       "email": "joao@di.uminho.pt",
       "password": "123",
-      "age": 30,
-      "location": "Faro",
+      "age": 51,
+      "location": "Coimbra",
       "profession": "Professor",
       "objectives": "Ensinar conteúdos de forma clara e motivadora.",
       "challenges": "Manter o engajamento e atualizar materiais.",
@@ -97,12 +98,13 @@
         "6"
       ],
       "age": 20,
-      "location": "Porto",
+      "location": "Faro",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 1
     },
     {
       "id": "a2",
@@ -118,13 +120,14 @@
         "5",
         "6"
       ],
-      "age": 18,
-      "location": "Porto",
+      "age": 24,
+      "location": "Coimbra",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 1
     },
     {
       "id": "a3",
@@ -146,7 +149,8 @@
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 2
     },
     {
       "id": "a4",
@@ -162,13 +166,14 @@
         "5",
         "6"
       ],
-      "age": 23,
+      "age": 18,
       "location": "Porto",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 1
     },
     {
       "id": "a5",
@@ -184,13 +189,14 @@
         "5",
         "6"
       ],
-      "age": 21,
-      "location": "Braga",
+      "age": 18,
+      "location": "Faro",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 2
     },
     {
       "id": "a6",
@@ -208,13 +214,14 @@
         "7",
         "8"
       ],
-      "age": 20,
-      "location": "Lisboa",
+      "age": 22,
+      "location": "Porto",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 2
     },
     {
       "id": "a7",
@@ -230,13 +237,14 @@
         "5",
         "6"
       ],
-      "age": 18,
-      "location": "Coimbra",
+      "age": 19,
+      "location": "Braga",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 3
     },
     {
       "id": "a8",
@@ -252,13 +260,14 @@
         "5",
         "6"
       ],
-      "age": 19,
-      "location": "Faro",
+      "age": 20,
+      "location": "Lisboa",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 3
     },
     {
       "id": "a9",
@@ -276,13 +285,14 @@
         "9",
         "10"
       ],
-      "age": 19,
-      "location": "Coimbra",
+      "age": 23,
+      "location": "Faro",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 1
     },
     {
       "id": "a10",
@@ -299,13 +309,14 @@
         "11",
         "12"
       ],
-      "age": 21,
-      "location": "Faro",
+      "age": 19,
+      "location": "Lisboa",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 1
     },
     {
       "id": "a11",
@@ -321,13 +332,14 @@
         "5",
         "6"
       ],
-      "age": 19,
-      "location": "Braga",
+      "age": 18,
+      "location": "Faro",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 2
     },
     {
       "id": "a12",
@@ -343,13 +355,14 @@
         "5",
         "6"
       ],
-      "age": 20,
+      "age": 21,
       "location": "Porto",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 1
     },
     {
       "id": "a13",
@@ -371,7 +384,8 @@
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 2
     },
     {
       "id": "a14",
@@ -387,13 +401,14 @@
         "5",
         "6"
       ],
-      "age": 22,
-      "location": "Lisboa",
+      "age": 21,
+      "location": "Braga",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 1
     },
     {
       "id": "a15",
@@ -410,12 +425,13 @@
         "6"
       ],
       "age": 21,
-      "location": "Lisboa",
+      "location": "Braga",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 1
     },
     {
       "id": "a16",
@@ -433,13 +449,14 @@
         "7",
         "8"
       ],
-      "age": 20,
+      "age": 23,
       "location": "Porto",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 2
     },
     {
       "id": "a17",
@@ -455,13 +472,14 @@
         "5",
         "6"
       ],
-      "age": 25,
+      "age": 18,
       "location": "Porto",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 2
     },
     {
       "id": "a18",
@@ -477,13 +495,14 @@
         "5",
         "6"
       ],
-      "age": 23,
+      "age": 25,
       "location": "Lisboa",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 2
     },
     {
       "id": "a19",
@@ -501,13 +520,14 @@
         "9",
         "10"
       ],
-      "age": 19,
-      "location": "Faro",
+      "age": 22,
+      "location": "Lisboa",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 1
     },
     {
       "id": "a20",
@@ -524,13 +544,14 @@
         "11",
         "12"
       ],
-      "age": 22,
-      "location": "Braga",
+      "age": 19,
+      "location": "Coimbra",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 2
     },
     {
       "id": "a21",
@@ -546,13 +567,14 @@
         "5",
         "6"
       ],
-      "age": 25,
+      "age": 20,
       "location": "Braga",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 1
     },
     {
       "id": "a22",
@@ -568,13 +590,14 @@
         "5",
         "6"
       ],
-      "age": 23,
-      "location": "Lisboa",
+      "age": 21,
+      "location": "Braga",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 2
     },
     {
       "id": "a23",
@@ -590,13 +613,14 @@
         "5",
         "6"
       ],
-      "age": 22,
+      "age": 19,
       "location": "Porto",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 2
     },
     {
       "id": "a24",
@@ -612,13 +636,14 @@
         "5",
         "6"
       ],
-      "age": 22,
-      "location": "Braga",
+      "age": 25,
+      "location": "Coimbra",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 3
     },
     {
       "id": "a25",
@@ -634,13 +659,14 @@
         "5",
         "6"
       ],
-      "age": 21,
-      "location": "Coimbra",
+      "age": 18,
+      "location": "Faro",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 1
     },
     {
       "id": "a26",
@@ -658,13 +684,14 @@
         "7",
         "8"
       ],
-      "age": 25,
-      "location": "Braga",
+      "age": 23,
+      "location": "Porto",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 2
     },
     {
       "id": "a27",
@@ -680,13 +707,14 @@
         "5",
         "6"
       ],
-      "age": 23,
-      "location": "Lisboa",
+      "age": 22,
+      "location": "Porto",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 3
     },
     {
       "id": "a28",
@@ -703,12 +731,13 @@
         "6"
       ],
       "age": 20,
-      "location": "Coimbra",
+      "location": "Braga",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 1
     },
     {
       "id": "a29",
@@ -726,13 +755,14 @@
         "9",
         "10"
       ],
-      "age": 23,
-      "location": "Coimbra",
+      "age": 21,
+      "location": "Faro",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 3
     },
     {
       "id": "a30",
@@ -749,13 +779,14 @@
         "11",
         "12"
       ],
-      "age": 20,
-      "location": "Faro",
+      "age": 23,
+      "location": "Porto",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 1
     },
     {
       "id": "a31",
@@ -771,13 +802,14 @@
         "11",
         "12"
       ],
-      "age": 19,
-      "location": "Coimbra",
+      "age": 22,
+      "location": "Porto",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 3
     },
     {
       "id": "a32",
@@ -793,13 +825,14 @@
         "11",
         "12"
       ],
-      "age": 23,
-      "location": "Lisboa",
+      "age": 19,
+      "location": "Faro",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 1
     },
     {
       "id": "a33",
@@ -815,13 +848,14 @@
         "11",
         "12"
       ],
-      "age": 24,
+      "age": 23,
       "location": "Lisboa",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 1
     },
     {
       "id": "a34",
@@ -837,13 +871,14 @@
         "11",
         "12"
       ],
-      "age": 24,
+      "age": 22,
       "location": "Faro",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 2
     },
     {
       "id": "a35",
@@ -859,13 +894,14 @@
         "11",
         "12"
       ],
-      "age": 19,
-      "location": "Coimbra",
+      "age": 23,
+      "location": "Faro",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 1
     },
     {
       "id": "a36",
@@ -882,13 +918,14 @@
         "13",
         "14"
       ],
-      "age": 24,
-      "location": "Porto",
+      "age": 18,
+      "location": "Coimbra",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 3
     },
     {
       "id": "a37",
@@ -906,13 +943,14 @@
         "14",
         "15"
       ],
-      "age": 21,
+      "age": 18,
       "location": "Faro",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 3
     },
     {
       "id": "a38",
@@ -929,13 +967,14 @@
         "16",
         "17"
       ],
-      "age": 23,
-      "location": "Faro",
+      "age": 18,
+      "location": "Lisboa",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 1
     },
     {
       "id": "a39",
@@ -951,13 +990,14 @@
         "11",
         "12"
       ],
-      "age": 19,
-      "location": "Coimbra",
+      "age": 20,
+      "location": "Porto",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 1
     },
     {
       "id": "a40",
@@ -973,13 +1013,14 @@
         "11",
         "12"
       ],
-      "age": 20,
-      "location": "Lisboa",
+      "age": 24,
+      "location": "Porto",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 2
     },
     {
       "id": "a41",
@@ -995,13 +1036,14 @@
         "11",
         "12"
       ],
-      "age": 20,
-      "location": "Lisboa",
+      "age": 24,
+      "location": "Porto",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 3
     },
     {
       "id": "a42",
@@ -1017,13 +1059,14 @@
         "11",
         "12"
       ],
-      "age": 21,
+      "age": 23,
       "location": "Coimbra",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 1
     },
     {
       "id": "a43",
@@ -1039,13 +1082,14 @@
         "11",
         "12"
       ],
-      "age": 19,
-      "location": "Braga",
+      "age": 20,
+      "location": "Coimbra",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 3
     },
     {
       "id": "a44",
@@ -1061,13 +1105,14 @@
         "11",
         "12"
       ],
-      "age": 19,
-      "location": "Braga",
+      "age": 20,
+      "location": "Porto",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 3
     },
     {
       "id": "a45",
@@ -1084,13 +1129,14 @@
         "13",
         "14"
       ],
-      "age": 22,
-      "location": "Faro",
+      "age": 18,
+      "location": "Porto",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 1
     },
     {
       "id": "a46",
@@ -1108,13 +1154,14 @@
         "14",
         "15"
       ],
-      "age": 20,
-      "location": "Faro",
+      "age": 24,
+      "location": "Lisboa",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 3
     },
     {
       "id": "a47",
@@ -1131,13 +1178,14 @@
         "16",
         "17"
       ],
-      "age": 23,
-      "location": "Coimbra",
+      "age": 19,
+      "location": "Porto",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 1
     },
     {
       "id": "a48",
@@ -1153,13 +1201,14 @@
         "11",
         "12"
       ],
-      "age": 22,
-      "location": "Faro",
+      "age": 18,
+      "location": "Coimbra",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 1
     },
     {
       "id": "a49",
@@ -1175,13 +1224,14 @@
         "11",
         "12"
       ],
-      "age": 25,
-      "location": "Braga",
+      "age": 20,
+      "location": "Lisboa",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 1
     },
     {
       "id": "a50",
@@ -1197,13 +1247,14 @@
         "11",
         "12"
       ],
-      "age": 18,
-      "location": "Faro",
+      "age": 20,
+      "location": "Lisboa",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 3
     },
     {
       "id": "a51",
@@ -1219,13 +1270,14 @@
         "11",
         "12"
       ],
-      "age": 24,
+      "age": 18,
       "location": "Lisboa",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 2
     },
     {
       "id": "a52",
@@ -1241,13 +1293,14 @@
         "11",
         "12"
       ],
-      "age": 20,
-      "location": "Coimbra",
+      "age": 18,
+      "location": "Lisboa",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 2
     },
     {
       "id": "a53",
@@ -1263,13 +1316,14 @@
         "11",
         "12"
       ],
-      "age": 22,
-      "location": "Lisboa",
+      "age": 23,
+      "location": "Faro",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 3
     },
     {
       "id": "a54",
@@ -1287,12 +1341,13 @@
         "14"
       ],
       "age": 22,
-      "location": "Lisboa",
+      "location": "Porto",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 2
     },
     {
       "id": "a55",
@@ -1310,13 +1365,14 @@
         "14",
         "15"
       ],
-      "age": 24,
+      "age": 23,
       "location": "Faro",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 2
     },
     {
       "id": "a56",
@@ -1333,13 +1389,14 @@
         "16",
         "17"
       ],
-      "age": 19,
-      "location": "Coimbra",
+      "age": 23,
+      "location": "Faro",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 2
     },
     {
       "id": "a57",
@@ -1356,12 +1413,13 @@
         "12"
       ],
       "age": 19,
-      "location": "Coimbra",
+      "location": "Braga",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 3
     },
     {
       "id": "a58",
@@ -1378,12 +1436,13 @@
         "13"
       ],
       "age": 20,
-      "location": "Braga",
+      "location": "Coimbra",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 2
     },
     {
       "id": "a59",
@@ -1399,13 +1458,14 @@
         "17",
         "18"
       ],
-      "age": 24,
-      "location": "Coimbra",
+      "age": 18,
+      "location": "Faro",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 3
     },
     {
       "id": "a60",
@@ -1422,13 +1482,14 @@
         "19",
         "10"
       ],
-      "age": 20,
-      "location": "Coimbra",
+      "age": 18,
+      "location": "Lisboa",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 2
     },
     {
       "id": "a61",
@@ -1445,13 +1506,14 @@
         "20",
         "11"
       ],
-      "age": 24,
-      "location": "Faro",
+      "age": 21,
+      "location": "Lisboa",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 2
     },
     {
       "id": "a62",
@@ -1468,13 +1530,14 @@
         "20",
         "9"
       ],
-      "age": 25,
-      "location": "Braga",
+      "age": 18,
+      "location": "Porto",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 3
     },
     {
       "id": "a63",
@@ -1490,13 +1553,14 @@
         "17",
         "18"
       ],
-      "age": 19,
+      "age": 25,
       "location": "Lisboa",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 1
     },
     {
       "id": "a64",
@@ -1513,13 +1577,14 @@
         "19",
         "7"
       ],
-      "age": 22,
-      "location": "Lisboa",
+      "age": 19,
+      "location": "Porto",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 1
     },
     {
       "id": "a65",
@@ -1536,13 +1601,14 @@
         "18",
         "10"
       ],
-      "age": 18,
+      "age": 23,
       "location": "Lisboa",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 3
     },
     {
       "id": "a66",
@@ -1558,13 +1624,14 @@
         "17",
         "19"
       ],
-      "age": 23,
-      "location": "Lisboa",
+      "age": 19,
+      "location": "Porto",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 2
     },
     {
       "id": "a67",
@@ -1580,13 +1647,14 @@
         "17",
         "20"
       ],
-      "age": 19,
-      "location": "Faro",
+      "age": 20,
+      "location": "Coimbra",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 2
     },
     {
       "id": "a68",
@@ -1602,13 +1670,14 @@
         "17",
         "18"
       ],
-      "age": 21,
-      "location": "Coimbra",
+      "age": 20,
+      "location": "Lisboa",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 3
     },
     {
       "id": "a69",
@@ -1624,13 +1693,14 @@
         "11",
         "13"
       ],
-      "age": 21,
-      "location": "Faro",
+      "age": 23,
+      "location": "Lisboa",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 3
     },
     {
       "id": "a70",
@@ -1646,13 +1716,14 @@
         "17",
         "18"
       ],
-      "age": 24,
-      "location": "Coimbra",
+      "age": 21,
+      "location": "Braga",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 2
     },
     {
       "id": "a71",
@@ -1669,13 +1740,14 @@
         "19",
         "10"
       ],
-      "age": 20,
-      "location": "Faro",
+      "age": 19,
+      "location": "Braga",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 1
     },
     {
       "id": "a72",
@@ -1692,13 +1764,14 @@
         "20",
         "11"
       ],
-      "age": 18,
-      "location": "Coimbra",
+      "age": 20,
+      "location": "Braga",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 1
     },
     {
       "id": "a73",
@@ -1715,13 +1788,14 @@
         "20",
         "9"
       ],
-      "age": 25,
-      "location": "Lisboa",
+      "age": 18,
+      "location": "Porto",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 2
     },
     {
       "id": "a74",
@@ -1738,12 +1812,13 @@
         "18"
       ],
       "age": 24,
-      "location": "Faro",
+      "location": "Lisboa",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 3
     },
     {
       "id": "a75",
@@ -1760,13 +1835,14 @@
         "19",
         "7"
       ],
-      "age": 24,
+      "age": 21,
       "location": "Faro",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 2
     },
     {
       "id": "a76",
@@ -1783,13 +1859,14 @@
         "18",
         "10"
       ],
-      "age": 19,
-      "location": "Braga",
+      "age": 23,
+      "location": "Lisboa",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 3
     },
     {
       "id": "a77",
@@ -1805,13 +1882,14 @@
         "17",
         "19"
       ],
-      "age": 22,
-      "location": "Porto",
+      "age": 25,
+      "location": "Faro",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 1
     },
     {
       "id": "a78",
@@ -1827,13 +1905,14 @@
         "17",
         "20"
       ],
-      "age": 24,
-      "location": "Faro",
+      "age": 22,
+      "location": "Coimbra",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 1
     },
     {
       "id": "a79",
@@ -1849,13 +1928,14 @@
         "17",
         "18"
       ],
-      "age": 19,
-      "location": "Coimbra",
+      "age": 18,
+      "location": "Faro",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 1
     },
     {
       "id": "a80",
@@ -1871,13 +1951,14 @@
         "11",
         "13"
       ],
-      "age": 24,
+      "age": 22,
       "location": "Faro",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 3
     },
     {
       "id": "a81",
@@ -1894,12 +1975,13 @@
         "18"
       ],
       "age": 20,
-      "location": "Porto",
+      "location": "Braga",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 2
     },
     {
       "id": "a82",
@@ -1916,13 +1998,14 @@
         "19",
         "10"
       ],
-      "age": 23,
+      "age": 20,
       "location": "Lisboa",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 1
     },
     {
       "id": "a83",
@@ -1939,13 +2022,14 @@
         "20",
         "11"
       ],
-      "age": 18,
-      "location": "Braga",
+      "age": 25,
+      "location": "Porto",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 1
     },
     {
       "id": "a84",
@@ -1963,12 +2047,13 @@
         "9"
       ],
       "age": 19,
-      "location": "Braga",
+      "location": "Coimbra",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 2
     },
     {
       "id": "a85",
@@ -1984,13 +2069,14 @@
         "17",
         "18"
       ],
-      "age": 18,
-      "location": "Porto",
+      "age": 22,
+      "location": "Braga",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 1
     },
     {
       "id": "a86",
@@ -2007,13 +2093,14 @@
         "19",
         "7"
       ],
-      "age": 20,
-      "location": "Braga",
+      "age": 23,
+      "location": "Coimbra",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 3
     },
     {
       "id": "a87",
@@ -2031,12 +2118,13 @@
         "10"
       ],
       "age": 20,
-      "location": "Coimbra",
+      "location": "Faro",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 3
     },
     {
       "id": "a88",
@@ -2052,13 +2140,14 @@
         "17",
         "19"
       ],
-      "age": 20,
-      "location": "Braga",
+      "age": 25,
+      "location": "Porto",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 3
     },
     {
       "id": "a89",
@@ -2074,13 +2163,14 @@
         "17",
         "20"
       ],
-      "age": 22,
-      "location": "Lisboa",
+      "age": 24,
+      "location": "Porto",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 2
     },
     {
       "id": "a90",
@@ -2096,13 +2186,14 @@
         "17",
         "18"
       ],
-      "age": 18,
-      "location": "Braga",
+      "age": 25,
+      "location": "Lisboa",
       "profession": "Estudante",
       "objectives": "Concluir o curso com sucesso.",
       "challenges": "Gerir o tempo e compreender o conteúdo.",
       "solutions": "Participar em grupos de estudo e sessões de apoio.",
-      "citation": "Aprender é crescer todos os dias."
+      "citation": "Aprender é crescer todos os dias.",
+      "year": 3
     }
   ],
   "degrees": [
@@ -9133,4 +9224,3 @@
     }
   ]
 }
-

@@ -92,13 +92,13 @@
                 </div>
               </td>
               <td class="py-3 px-4 text-sm text-center flex gap-4 justify-end">
-                <button>
+                <router-link :to="`/profile/${aluno.numero}`">
                   <UserCircleIcon class="h-5 w-5" />
-                </button>
-                <button>
+                </router-link>
+                <router-link :to="`/schedule/${aluno.numero}`">
                   <CalendarIcon class="h-5 w-5" />
-                </button>
-                <button v-if="role === 'diretor'">
+                </router-link>
+                <button v-if="role === 'director'" @click="deleteStudent(aluno.numero)">
                   <Trash2 class="h-5 w-5" />
                 </button>
               </td>
@@ -175,226 +175,188 @@
     </div>
   </template>
   
-  <script setup lang="ts">
-  import { ref, computed } from 'vue'
+  <script lang="ts">
+import { defineComponent } from 'vue';
+import { getStudents, deleteStudentById } from '@/api/api';
+import { useUserStore } from '@/stores/user';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronsLeftIcon,
+  ChevronsRightIcon,
+  ChevronsUpDownIcon,
+  Trash2,
+  SlidersHorizontalIcon,
+  XCircleIcon,
+  CalendarIcon,
+  UserCircleIcon,
+  BriefcaseIcon,
+  DumbbellIcon
+} from 'lucide-vue-next';
 
-  const role = ref('diretor') // *****TEMP***** Pode ser 'aluno', 'diretor' ou 'docente'
+interface Aluno {
+  numero: string;
+  nome: string;
+  estatuto: string;
+  ano: number;
+}
 
-  import {
+export default defineComponent({
+  components: {
+    Input,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+    Button,
     ChevronLeftIcon,
     ChevronRightIcon,
     ChevronsLeftIcon,
     ChevronsRightIcon,
     ChevronsUpDownIcon,
     Trash2,
-    BriefcaseIcon,
-    DumbbellIcon,
     SlidersHorizontalIcon,
+    XCircleIcon,
+    CalendarIcon,
     UserCircleIcon,
-    CalendarIcon
-  } from 'lucide-vue-next'
-  
-  // Imports from shadcn-vue
-  import { Input } from '@/components/ui/input'
-  import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue
-  } from '@/components/ui/select'
-  import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger
-  } from '@/components/ui/dropdown-menu'
-  
-  // Types
-  interface Aluno {
-    numero: string
-    nome: string
-    estatuto: string
-    ano: number
-  }
-  
-  // States
-  const searchQuery = ref('')
-  const selectedFilter = ref('')
-  const currentPage = ref(1)
-  const rowsPerPage = ref('5')
-  const sortColumn = ref<'numero' | 'nome' | 'estatuto' | null>(null)
-  const sortDirection = ref<'asc' | 'desc'>('asc')
-  
-  // Example data
-  const alunos = ref<Aluno[]>([
-    {
-      numero: 'a104725',
-      nome: 'Afonso Dionisio Santos',
-      estatuto: 'Trabalhador-Estudante',
-      ano: 3
+    BriefcaseIcon,
+    DumbbellIcon
+  },
+  data() {
+    return {
+      role: null as string | null,
+      searchQuery: '' as string,
+      selectedFilter: '' as string,
+      currentPage: 1 as number,
+      rowsPerPage: '5' as string,
+      sortColumn: null as 'numero' | 'nome' | 'estatuto' | null,
+      sortDirection: 'asc' as 'asc' | 'desc',
+      alunos: [] as Aluno[]
+    };
+  },
+  computed: {
+    filteredAlunos(): Aluno[] {
+      let result = this.alunos;
+      if (this.searchQuery) {
+        const query = this.searchQuery.toLowerCase();
+        result = result.filter(aluno => aluno.nome.toLowerCase().includes(query) || aluno.numero.toLowerCase().includes(query));
+      }
+      if (this.selectedFilter) {
+        switch (this.selectedFilter) {
+          case 'ano1': result = result.filter(aluno => aluno.ano === 1); break;
+          case 'ano2': result = result.filter(aluno => aluno.ano === 2); break;
+          case 'ano3': result = result.filter(aluno => aluno.ano === 3); break;
+          case 'Trabalhador-Estudante': result = result.filter(aluno => aluno.estatuto === 'Trabalhador-Estudante'); break;
+          case 'Atleta': result = result.filter(aluno => aluno.estatuto === 'Atleta'); break;
+        }
+      }
+      if (this.sortColumn) {
+        result = [...result].sort((a, b) => {
+          const va = a[this.sortColumn!]; const vb = b[this.sortColumn!];
+          if (va < vb) return this.sortDirection === 'asc' ? -1 : 1;
+          if (va > vb) return this.sortDirection === 'asc' ? 1 : -1;
+          return 0;
+        });
+      }
+      return result;
     },
-    {
-      numero: 'a104732',
-      nome: 'Afonso Gonçalves Pedreira',
-      estatuto: 'Atleta',
-      ano: 3
+    totalPages(): number {
+      return Math.max(1, Math.ceil(this.filteredAlunos.length / parseInt(this.rowsPerPage)));
     },
-    {
-      numero: 'a104527',
-      nome: 'Afonso Gregório de Sousa',
-      estatuto: 'Trabalhador-Estudante',
-      ano: 2
-    },
-    {
-      numero: 'a104338',
-      nome: 'Alex Araujo da Silva',
-      estatuto: 'Nenhum',
-      ano: 3
-    },
-    {
-      numero: 'a104612',
-      nome: 'Alexandre Antes Dias',
-      estatuto: 'Trabalhador-Estudante',
-      ano: 2
-    },
-    {
-      numero: 'a104765',
-      nome: 'Alexandre de Oliveira Monsanto',
-      estatuto: 'Nenhum',
-      ano: 1
-    },
-    {
-      numero: 'a104920',
-      nome: 'Alexandre Marques Miranda',
-      estatuto: 'Atleta',
-      ano: 1
-    },
-    {
-      numero: 'a105011',
-      nome: 'Ana Carolina Penha Cerqueira',
-      estatuto: 'Nenhum',
-      ano: 3
-    },
-    {
-      numero: 'a105288',
-      nome: 'Júda Rodrigues Coelho',
-      estatuto: 'Atleta',
-      ano: 2
-    },
-    {
-      numero: 'a105469',
-      nome: 'Ana Margarida Campos Pires',
-      estatuto: 'Trabalhador-Estudante',
-      ano: 3
+    paginatedAlunos(): Aluno[] {
+      const start = (this.currentPage - 1) * parseInt(this.rowsPerPage);
+      return this.filteredAlunos.slice(start, start + parseInt(this.rowsPerPage));
     }
-  ])
-  
-  // Computed properties
-  const filteredAlunos = computed(() => {
-
-    // Apply search filter
-    let result = alunos.value
-    if (searchQuery.value) {
-      const query = searchQuery.value.toLowerCase()
-      result = result.filter((aluno) =>
-        aluno.nome.toLowerCase().includes(query) ||
-        aluno.numero.toLowerCase().includes(query)
-      )
-    }
-  
-    // Dropdown filter
-    if (selectedFilter.value) {
-      switch (selectedFilter.value) {
-        case 'ano1':
-          result = result.filter((aluno) => aluno.ano === 1)
-          break
-        case 'ano2':
-          result = result.filter((aluno) => aluno.ano === 2)
-          break
-        case 'ano3':
-          result = result.filter((aluno) => aluno.ano === 3)
-          break
-        case 'Trabalhador-Estudante':
-          result = result.filter((aluno) => aluno.estatuto === 'Trabalhador-Estudante')
-          break
-        case 'Atleta':
-          result = result.filter((aluno) => aluno.estatuto === 'Atleta')
-          break
-        default:
-          break
+  },
+  methods: {
+    estatutoIcon(est: string) {
+      switch(est) {
+        case 'Atleta': return DumbbellIcon;
+        case 'Trabalhador-Estudante': return BriefcaseIcon;
+        default: return UserCircleIcon;
+      }
+    },
+    async fetchAlunos() {
+      try {
+        const students = await getStudents();
+        this.alunos = students.map((aluno: any) => ({
+          numero: aluno.id,
+          nome: aluno.name,
+          estatuto: this.mapSpecialStatus(aluno.specialStatus),
+          ano: aluno.year
+        }));
+      } catch (error) {
+        console.error('Error fetching students:', error);
+      }
+    },
+    mapSpecialStatus(status: string): string {
+      switch (status) {
+        case 'athlete': return 'Atleta';
+        case 'working student': return 'Trabalhador-Estudante';
+        default: return 'Sem Estatuto';
+      }
+    },
+    applyFilter(value: string) {
+      this.selectedFilter = value;
+      this.currentPage = 1;
+    },
+    clearFilters() {
+      this.selectedFilter = '';
+      this.currentPage = 1;
+      this.searchQuery = '';
+    },
+    sortBy(column: 'numero' | 'nome' | 'estatuto') {
+      if (this.sortColumn === column) this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+      else { this.sortColumn = column; this.sortDirection = 'asc'; }
+    },
+    goToPage(page: number) {
+      if (page < 1) page = 1;
+      if (page > this.totalPages) page = this.totalPages;
+      this.currentPage = page;
+    },
+    async deleteStudent(studentId: string) {
+      try {
+        await deleteStudentById(studentId);
+        this.alunos = this.alunos.filter(a => a.numero !== studentId);
+      } catch (error) {
+        console.error('Erro ao eliminar o aluno:', error);
       }
     }
-    
-    // Apply sorting
-    if (sortColumn.value) {
-      result = [...result].sort((a, b) => {
-        const valueA = a[sortColumn.value!]
-        const valueB = b[sortColumn.value!]
-  
-        if (valueA < valueB) return sortDirection.value === 'asc' ? -1 : 1
-        if (valueA > valueB) return sortDirection.value === 'asc' ? 1 : -1
-        return 0
-      })
-    }
-    
-    return result
-  })
-  
-  const totalPages = computed(() => {
-    return Math.max(1, Math.ceil(filteredAlunos.value.length / parseInt(rowsPerPage.value)))
-  })
-  
-  const paginatedAlunos = computed(() => {
-    const startIndex = (currentPage.value - 1) * parseInt(rowsPerPage.value)
-    const endIndex = startIndex + parseInt(rowsPerPage.value)
-    return filteredAlunos.value.slice(startIndex, endIndex)
-  })
-  
-  // Methods
-  function goToPage(page: number) {
-    currentPage.value = page
+  },
+  mounted() {
+    const userStore = useUserStore();
+    const user = userStore.user;
+    if (!user) { window.location.href = '/not-found'; return; }
+    this.role = user.type;
+    if (this.role === 'student') { window.location.href = '/not-found'; return; }
+    this.fetchAlunos();
   }
-  
-  function sortBy(column: 'numero' | 'nome' | 'estatuto') {
-    if (sortColumn.value === column) {
-      // Reverse direction if the column is already selected
-      sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc'
-    } else {
-      // New column selected
-      sortColumn.value = column
-      sortDirection.value = 'asc'
-    }
-  }
-  
-  function applyFilter(filterKey: string) {
-    selectedFilter.value = filterKey
-    currentPage.value = 1
-  }
-  
-  function clearFilters() {
-    selectedFilter.value = ''
-    currentPage.value = 1
-  }
-  </script>
-  
-  <style scoped>
-  /* Custom style for compact select */
-  .compact-select-trigger {
-    height: 30px;
-    min-width: 0;
-    width: 45px;
-    padding: 0 8px;
-    font-size: 0.875rem;
-  }
-  
-  .compact-select-trigger :deep(.flex) {
-    gap: 0.25rem;
-  }
-  
-  .compact-select-trigger :deep(svg) {
-    height: 12px;
-    width: 12px;
-  }
-  </style>
+});
+</script>
+
+<style scoped>
+.compact-select-trigger {
+  height: 30px;
+  min-width: 0;
+  width: 45px;
+  padding: 0 8px;
+  font-size: 0.875rem;
+}
+.compact-select-trigger :deep(.flex) {
+  gap: 0.25rem;
+}
+.compact-select-trigger :deep(svg) {
+  height: 12px;
+  width: 12px;
+}
+</style>
