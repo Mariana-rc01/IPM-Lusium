@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { computed } from 'vue';
 import { cn } from '@/lib/utils';
 import UserNav from './UserNav.vue';
-import { useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/user';
 import {
   DropdownMenu,
@@ -12,36 +11,39 @@ import {
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 
-const router = useRouter();
 const userStore = useUserStore();
 const user = computed(() => userStore.user);
 
-const commonLinks = [
+const baseLinks = [
   { href: '/home', label: 'Home Page' },
   { href: '/courses', label: 'Unidades Curriculares' },
   { href: '/tickets', label: 'Pedidos' },
 ];
 
-const scheduleLink = computed(() => user.value?.type === 'student'
-  ? [{ href: `/schedule/${user.value.id}`, label: 'Horário' }]
-  : []);
-
-const showSalas = computed(() =>
-  user.value?.type === 'director' || user.value?.type === 'teacher'
+const scheduleLink = computed(() =>
+  user.value?.type === 'student'
+    ? [{ href: `/schedule/${user.value.id}`, label: 'Horário' }]
+    : []
 );
 
-const showAlunosDropdown = computed(() =>
+const showTeacherAlunos = computed(() =>
+  user.value?.type === 'teacher'
+);
+
+const showDirectorAlunosDropdown = computed(() =>
   user.value?.type === 'director'
 );
 
+const showSalas = computed(() =>
+  user.value?.type === 'director'
+);
 </script>
 
 <template>
   <nav :class="cn('flex items-center justify-between w-full border-none', $attrs.class ?? '')">
     <div class="flex items-center space-x-4 lg:space-x-6">
-      <!-- Links comuns -->
       <a
-        v-for="link in commonLinks"
+        v-for="link in baseLinks"
         :key="link.href"
         :href="link.href"
         class="text-sm font-medium text-black transition-colors hover:text-primary"
@@ -49,8 +51,25 @@ const showAlunosDropdown = computed(() =>
         {{ link.label }}
       </a>
 
-      <!-- Dropdown Alunos -->
-      <DropdownMenu v-if="showAlunosDropdown">
+      <a
+        v-for="link in scheduleLink"
+        :key="link.href"
+        :href="link.href"
+        class="text-sm font-medium text-black transition-colors hover:text-primary"
+      >
+        {{ link.label }}
+      </a>
+
+      <a
+        v-if="showTeacherAlunos"
+        href="/students"
+        class="text-sm font-medium text-black transition-colors hover:text-primary"
+      >
+        Alunos
+      </a>
+
+      <!-- Dropdown menu for directors -->
+      <DropdownMenu v-if="showDirectorAlunosDropdown">
         <DropdownMenuTrigger class="text-sm font-medium text-black transition-colors hover:text-primary">
           Alunos
         </DropdownMenuTrigger>
@@ -65,23 +84,12 @@ const showAlunosDropdown = computed(() =>
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <!-- Link Salas -->
       <a
         v-if="showSalas"
         href="/classrooms"
         class="text-sm font-medium text-black transition-colors hover:text-primary"
       >
         Salas
-      </a>
-
-      <!-- Horário para estudantes -->
-      <a
-        v-for="link in scheduleLink"
-        :key="link.href"
-        :href="link.href"
-        class="text-sm font-medium text-black transition-colors hover:text-primary"
-      >
-        {{ link.label }}
       </a>
     </div>
 
