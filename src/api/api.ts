@@ -116,8 +116,6 @@ export async function list_Recent_Requests(limit: number, userID: string): Promi
       (request) => request.sender === userID || request.recipient === userID || request.recipient == "all"
     );
 
-    console.log(userRequests)
-
     const sortedRequests = userRequests.sort((a, b) => {
       const [dayA, monthA, yearA] = a.date.split("-");
       const dateA = new Date(`${yearA}-${monthA}-${dayA}`).getTime();
