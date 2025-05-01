@@ -149,6 +149,9 @@ export default defineComponent({
 
         const tickets = await list_Recent_Requests(5, user.id);
 
+        console.log("tickets")
+        console.log(tickets)
+
         this.recentTickets = tickets.map((t) => ({
           iniciais: t.name.charAt(0).toUpperCase(),
           nome: t.name,

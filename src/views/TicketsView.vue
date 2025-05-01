@@ -43,13 +43,13 @@
     <div class="border border-emerald-200 rounded-lg overflow-hidden">
       <table class="w-full table-fixed">
         <colgroup>
-          <col class="w-[12%]" />
-          <col class="w-[25%]" />
-          <col class="w-[12%]" />
-          <col class="w-[20%]" />
-          <col class="w-[12%]" />
-          <col class="w-[14%]" />
-          <col class="w-[5%]" />
+          <col class="w-[12%]" /> <!-- Código do Pedido -->
+          <col class="w-[25%]" /> <!-- Assunto -->
+          <col class="w-[12%]" /> <!-- Remetente -->
+          <col class="w-[20%]" /> <!-- Destinatário -->
+          <col class="w-[12%]" /> <!-- Data -->
+          <col class="w-[14%]" /> <!-- Estado -->
+          <col class="w-[5%]" /> <!-- Ações -->
         </colgroup>
         <thead>
           <tr class="border-b border-emerald-200">

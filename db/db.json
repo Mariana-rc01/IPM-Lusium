@@ -9219,7 +9219,7 @@
       "subject": "IPM - Alterações de Salas",
       "sender": "d1",
       "recipient": "all",
-      "date": "12-02-2025",
+      "date": "12-02-2022",
       "status": "",
       "description": "Houve mudanças em alguns horários de IPM, agradecia que confirmassem os vossos horários.",
       "response": ""
@@ -9272,6 +9272,16 @@
       "date": "01-05-2025",
       "status": "",
       "description": "Preciso de trocar para o turno TP3.",
+      "response": ""
+    },
+    {
+      "id": "15",
+      "subject": "Troca de turnos",
+      "sender": "d1",
+      "recipient": "all",
+      "date": "02-05-2025",
+      "status": "",
+      "description": "Não irei fazer troca de turnos esta semana.",
       "response": ""
     }
   ]

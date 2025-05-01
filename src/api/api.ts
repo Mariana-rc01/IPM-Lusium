@@ -1,6 +1,5 @@
 import axios from "axios";
 import * as types from "./types";
-import { containsProp } from "@vueuse/core";
 
 const API = axios.create({
   baseURL: "http://localhost:3000",
@@ -104,12 +103,6 @@ export async function createRequest(newReq: {
   return response.data;
 }
 
-// "DD-MM-YYYY" → Date
-function parseDDMMYYYY(str: string): Date {
-  const [day, month, year] = str.split('-').map(s => parseInt(s, 10));
-  return new Date(year, month - 1, day);
-}
-
 export async function list_Recent_Requests(limit: number, userID: string): Promise<{
   subject: string;
   date: string;
@@ -120,18 +113,22 @@ export async function list_Recent_Requests(limit: number, userID: string): Promi
     const allRequests = await list_Requests();
 
     const userRequests = allRequests.filter(
-      (request) => request.sender === userID || request.recipient === userID
+      (request) => request.sender === userID || request.recipient === userID || request.recipient == "all"
     );
 
+    console.log(userRequests)
+
     const sortedRequests = userRequests.sort((a, b) => {
-      const dateA = new Date(a.date).getTime();
-      const dateB = new Date(b.date).getTime();
+      const [dayA, monthA, yearA] = a.date.split("-");
+      const dateA = new Date(`${yearA}-${monthA}-${dayA}`).getTime();
+      const [dayB, monthB, yearB] = b.date.split("-");
+      const dateB = new Date(`${yearB}-${monthB}-${dayB}`).getTime();
       return dateB - dateA;
     });
 
     const formattedRequests = await Promise.all(
       sortedRequests.slice(0, limit).map(async (req) => {
-        const user = await getUserInfoById(userID)
+        const user = await getUserInfoById(req.sender)
 
         return {
           subject: req.subject,
@@ -141,8 +138,6 @@ export async function list_Recent_Requests(limit: number, userID: string): Promi
         };
       })
     );
-
-
 
     return formattedRequests;
   } catch (error) {

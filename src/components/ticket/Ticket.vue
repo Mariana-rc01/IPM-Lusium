@@ -250,7 +250,7 @@ const submitRequest = async () => {
   const created = await createRequest({
     subject: newSubject.value,
     sender: me,
-    recipient: 'd1',
+    recipient: userStore.user?.type ? 'all' : 'd1',
     date: today.split('-').reverse().join('-'),
     status: "",
     description: newDescription.value,
