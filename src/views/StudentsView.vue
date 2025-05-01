@@ -3,7 +3,7 @@
       <!-- Header -->
       <h1 class="text-2xl font-bold mb-1">Listagem de Alunos</h1>
       <p class="text-emerald-500 mb-6">Aqui pode ver a listagem de todos os alunos!</p>
-  
+
       <!-- Search bar and filter -->
       <div class="flex justify-between items-center mb-4">
         <!-- Search bar -->
@@ -14,7 +14,7 @@
             class="w-full border-emerald-200 focus:border-emerald-500 focus:ring-emerald-500"
           />
         </div>
-  
+
         <!-- Filter -->
         <DropdownMenu>
           <DropdownMenuTrigger as="button" class="border border-emerald-300 px-3 py-2 rounded-md flex items-center gap-2 text-sm hover:bg-emerald-50">
@@ -106,7 +106,7 @@
           </tbody>
         </table>
       </div>
-  
+
       <!-- Footer -->
       <div class="flex justify-between items-center mt-4 gap-8">
         <!-- Label -->
@@ -136,33 +136,33 @@
                 </SelectContent>
                 </Select>
             </div>
-            
+
             <div class="flex items-center gap-4">
                 <span class="text-sm">Página {{ currentPage }} de {{ totalPages }}</span>
                 <div class="flex gap-1">
-                <button 
-                    @click="goToPage(1)" 
+                <button
+                    @click="goToPage(1)"
                     :disabled="currentPage === 1"
                     class="border border-emerald-200 p-1.5 rounded-sm disabled:opacity-50 disabled:cursor-not-allowed h-8 w-8 flex items-center justify-center"
                 >
                     <ChevronsLeftIcon class="h-4 w-4" />
                 </button>
-                <button 
-                    @click="goToPage(currentPage - 1)" 
+                <button
+                    @click="goToPage(currentPage - 1)"
                     :disabled="currentPage === 1"
                     class="border border-emerald-200 p-1.5 rounded-sm disabled:opacity-50 disabled:cursor-not-allowed h-8 w-8 flex items-center justify-center"
                 >
                     <ChevronLeftIcon class="h-4 w-4" />
                 </button>
-                <button 
-                    @click="goToPage(currentPage + 1)" 
+                <button
+                    @click="goToPage(currentPage + 1)"
                     :disabled="currentPage === totalPages"
                     class="border border-emerald-200 p-1.5 rounded-sm disabled:opacity-50 disabled:cursor-not-allowed h-8 w-8 flex items-center justify-center"
                 >
                     <ChevronRightIcon class="h-4 w-4" />
                 </button>
-                <button 
-                    @click="goToPage(totalPages)" 
+                <button
+                    @click="goToPage(totalPages)"
                     :disabled="currentPage === totalPages"
                     class="border border-emerald-200 p-1.5 rounded-sm disabled:opacity-50 disabled:cursor-not-allowed h-8 w-8 flex items-center justify-center"
                 >
@@ -174,7 +174,7 @@
       </div>
     </div>
   </template>
-  
+
   <script lang="ts">
 import { defineComponent } from 'vue';
 import { getStudents, deleteStudentById } from '@/api/api';

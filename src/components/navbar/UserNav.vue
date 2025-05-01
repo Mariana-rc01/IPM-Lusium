@@ -35,7 +35,7 @@ function logout() {
     </DropdownMenuTrigger>
     <DropdownMenuContent class="w-56" align="end">
       <DropdownMenuItem as-child>
-        <a href="/profile">Perfil</a>
+        <router-link :to="`/profile/${userStore.user?.id}`">Perfil</router-link>
       </DropdownMenuItem>
       <DropdownMenuSeparator />
       <DropdownMenuItem @click="logout">

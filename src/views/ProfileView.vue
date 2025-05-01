@@ -49,8 +49,8 @@
           </div>
         </div>
       </div>
-      <div v-if="user?.type === 'student'" class="flex justify-center mt-24 lg:mt-0 lg:justify-end">
-        <router-link :to="`/schedule/${user.id}`">
+      <div v-if="userType === 'student'" class="flex justify-center mt-24 lg:mt-0 lg:justify-end">
+        <router-link :to="`/schedule/${userId}`">
           <Button
             type="button"
             :disabled="isLoading"
@@ -67,7 +67,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { useUserStore } from '@/stores/user';
+import { useRoute } from 'vue-router';
 import { getUserInfoById } from '@/api/api';
 import {
   Avatar,
@@ -100,9 +100,10 @@ export default defineComponent({
     Button,
   },
   data() {
-    const userStore = useUserStore();
+    const route = useRoute();
     return {
-      user: userStore.user,
+      userId: route.params.idUser as string,
+      userType: 'student' as string,
       profile: {
         id: '',
         name: '',
@@ -131,16 +132,16 @@ export default defineComponent({
   },
   methods: {
     async loadProfile() {
-      if (!this.user) {
-        this.error = 'Utilizador não autenticado.';
-        return;
-      }
-
       this.isLoading = true;
       try {
-        const data = await getUserInfoById(this.user.id);
+        const data = await getUserInfoById(this.userId);
+
+        this.userType = this.userId.startsWith('a') ? 'student'
+                     : this.userId.startsWith('t') ? 'teacher'
+                     : 'director';
+
         this.profile = {
-          id: data.id,
+          id: this.userId,
           name: data.name,
           email: data.email,
           age: data.age,
