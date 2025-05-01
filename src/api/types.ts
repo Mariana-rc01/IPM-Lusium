@@ -1,39 +1,12 @@
-export type RequestsStudents = {
-    id: number;
+export type Request = {
+    id: string;
     subject: string;
-    studentId: number;
-    date: string;
-    status: 'Enviado' | 'Aceite' | 'Recusado' | 'Recebido';
+    sender: string;       // user ID of the sender (e.g. student, teacher, director)
+    recipient: string;    // user ID of the recipient or 'all' for broadcasts
+    date: string;         // in format "DD-MM-YYYY"
+    status: '' | 'Enviado' | 'Aceite' | 'Recusado' | 'Recebido';
     description: string;
     response: string;
-};
+  };
 
-export type RequestsStudentsDict = {
-    [key: number]: RequestsStudents;
-};
-
-export type RequestsTeachers = {
-    id: number;
-    subject: string;
-    teacherId: number;
-    date: string;
-    status: 'Enviado' | 'Aceite' | 'Recusado' | 'Recebido';
-    description: string;
-    response: string;
-};
-
-export type RequestsTeachersDict = {
-    [key: number]: RequestsTeachers;
-};
-
-export type RequestsDirector = {
-    id: number;
-    subject: string;
-    date: string;
-    status: 'Enviado' | 'Aceite' | 'Recusado' | 'Recebido';
-    description: string;
-};
-
-export type RequestsDirectorDict = {
-    [key: number]: RequestsDirector;
-};
+  export type Requests = Request[];

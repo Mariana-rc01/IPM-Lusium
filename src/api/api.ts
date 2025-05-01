@@ -62,113 +62,86 @@ export async function authenticateUser(userId: string, password: string) {
 // Function for Tickets
 // -----------------------
 
-// Gets all the requests from the student with the corresponding id
-export async function list_RequestsStudents_by_id(id: number) {
-  const response = await API.get("/requestsStudents");
-  const data: types.RequestsStudents[] = response.data;
-  const dict: types.RequestsStudentsDict = {};
-  data.forEach((item) => {
-    if (item.studentId === id) dict[item.id] = item;
-  });
-  return dict;
+// Gets all the requests with the corresponding id
+export async function list_Requests(): Promise<types.Request[]> {
+  const response = await API.get('/requests')
+  return response.data as types.Request[]
 }
 
-// Gets all the requests from the teacher with the corresponding id
-export async function list_RequestsTeachers_by_id(id: number) {
-  const response = await API.get("/requestsTeachers");
-  const data: types.RequestsTeachers[] = response.data;
-  const dict: types.RequestsTeachersDict = {};
-  data.forEach((item) => {
-    if (item.teacherId === id) dict[item.id] = item;
-  });
-  return dict;
+export async function getRequestByTicketId(ticketId: string): Promise<types.Request | undefined> {
+  const all = await list_Requests()
+  return all.find(r => r.id === ticketId)
 }
 
-// Gets all the requests from the director
-export async function list_RequestsDirector_by_id() {
-  const response = await API.get("/requestsDirector");
-  const data: types.RequestsDirector[] = response.data;
-  const dict: types.RequestsDirectorDict = {};
-  data.forEach((item) => {
-    dict[item.id] = item;
-  });
-  return dict;
+export async function updateRequest(
+  ticketId: string,
+  updatedFields: Partial<{ status: string; response: string }>
+): Promise<types.Request> {
+  const response = await API.patch(`/requests/${ticketId}`, updatedFields)
+  return response.data
 }
 
-// "DD-MM-YYYY" → Date
-function parseDDMMYYYY(str: string): Date {
-  const [day, month, year] = str.split('-').map(s => parseInt(s, 10));
-  return new Date(year, month - 1, day);
+export async function createRequest(newReq: {
+  subject: string;
+  sender: string;
+  recipient: string;
+  date: string;
+  status: string;
+  description: string;
+  response: string;
+}) {
+  const payload = {
+    id: "",
+    ...newReq
+  };
+
+  const allRequests = await list_Requests();
+  const lastId = allRequests.length > 0 ? Math.max(...allRequests.map((r) => parseInt(r.id))) : 0;
+  payload.id = String(lastId + 1);
+
+  const response = await API.post("/requests", payload);
+  return response.data;
 }
 
-// Gets a limited number of requests (students and teachers) combined and sorted by date
-export async function list_Requests_from_s_and_t(limit: number) {
-  const [respS, respT, students, teachers] = await Promise.all([
-    API.get("/requestsStudents"),
-    API.get("/requestsTeachers"),
-    API.get("/students"),
-    API.get("/teachers"),
-  ]);
+export async function list_Recent_Requests(limit: number, userID: string): Promise<{
+  subject: string;
+  date: string;
+  name: string;
+  email: string;
+}[]> {
+  try {
+    const allRequests = await list_Requests();
 
-  // 1) add parsedDate to each request
-  const withDates = [
-    ...respS.data.map((r: any) => ({ ...r, parsedDate: parseDDMMYYYY(r.date) })),
-    ...respT.data.map((r: any) => ({ ...r, parsedDate: parseDDMMYYYY(r.date) }))
-  ];
+    const userRequests = allRequests.filter(
+      (request) => request.sender === userID || request.recipient === userID || request.recipient == "all"
+    );
 
-  // 2) sort by parsedDate, from most recent to oldest
-  const sorted = withDates
-    .sort((a, b) => b.parsedDate.getTime() - a.parsedDate.getTime())
-    .slice(0, limit);
+    const sortedRequests = userRequests.sort((a, b) => {
+      const [dayA, monthA, yearA] = a.date.split("-");
+      const dateA = new Date(`${yearA}-${monthA}-${dayA}`).getTime();
+      const [dayB, monthB, yearB] = b.date.split("-");
+      const dateB = new Date(`${yearB}-${monthB}-${dayB}`).getTime();
+      return dateB - dateA;
+    });
 
-  // 3) build the final payload, formatting the date in pt-PT
-  return sorted.map((req: any) => {
-    const user = req.studentId
-      ? students.data.find((s: any) => s.id === req.studentId)
-      : teachers.data.find((t: any) => t.id === req.teacherId);
+    const formattedRequests = await Promise.all(
+      sortedRequests.slice(0, limit).map(async (req) => {
+        const user = await getUserInfoById(req.sender)
 
-    return {
-      subject: req.subject,
-      date: req.parsedDate.toLocaleDateString('pt-PT'), // ex: "18/02/2025"
-      name:  user?.name  || "Unknown",
-      email: user?.email || "Unknown",
-    };
-  });
-}
+        return {
+          subject: req.subject,
+          date: req.date.replace(/-/g, "/"),
+          name: user?.name || "Unknown",
+          email: user?.email || "Unknown",
+        };
+      })
+    );
 
-// Gets a limited number of requests (director) sorted by date
-export async function list_Requests_from_d(limit: number) {
-  const response = await API.get("/requestsDirector");
-  const data: types.RequestsDirector[] = response.data;
-
-  const directorsResponse = await API.get("/directors");
-  const directorsData = directorsResponse.data;
-
-  // Ensure there is at least one director
-  if (!directorsData || directorsData.length === 0) {
-    throw new Error("No directors found!");
+    return formattedRequests;
+  } catch (error) {
+    console.error("Error listing recent tickets:", error);
+    throw error;
   }
-
-  const director = directorsData[0];
-
-  // 1) add parsedDate to each request
-  const withDates = data.map((r) => ({
-    ...r,
-    parsedDate: parseDDMMYYYY(r.date),
-  }));
-
-  // 2) sort by parsedDate, from most recent to oldest
-  const sorted = withDates
-    .sort((a, b) => b.parsedDate.getTime() - a.parsedDate.getTime())
-    .slice(0, limit);
-
-  // 3) build the final payload, formatting the date in pt-PT
-  return sorted.map((req) => ({
-    subject: req.subject,
-    date: req.parsedDate.toLocaleDateString('pt-PT'), // ex: "18/02/2025"
-    name: director.name || "Unknown",
-    email: director.email || "Unknown",
-  }));
 }
 
 // -----------------------
@@ -367,7 +340,7 @@ export async function getStudentsNotAllocated() {
 
 // Get all "Aceite" or "Recusado" requests
 export async function getSolvedRequests() {
-  const requestsResponse = await API.get("/requestsStudents");
+  const requestsResponse = await API.get("/requests");
   const requests = requestsResponse.data;
 
   return requests.filter(
@@ -456,11 +429,11 @@ export async function getAvailableCourses(enrolledCourses: string[]) {
               total: classroom ? classroom.capacity : 0,
               percentage: classroom
                 ? parseFloat(
-                    (
-                      (shift.totalStudentsRegistered / classroom.capacity) *
-                      100
-                    ).toFixed(2),
-                  )
+                  (
+                    (shift.totalStudentsRegistered / classroom.capacity) *
+                    100
+                  ).toFixed(2),
+                )
                 : 0,
             },
           };

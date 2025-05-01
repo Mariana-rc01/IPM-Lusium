@@ -14,8 +14,7 @@ import RecentTickets from '@/components/RecentTickets.vue';
 import Timetable from '../components/Timetable.vue';
 import SuccessAlert from '@/components/popup/SuccessAlert.vue';
 import {
-  list_Requests_from_s_and_t,
-  list_Requests_from_d,
+  list_Recent_Requests,
   getCoursesOccupancy,
   getGlobalOccupancy,
   getStudentsNotAllocated,
@@ -138,12 +137,17 @@ export default defineComponent({
         console.error('Erro ao publicar os horários:', error);
       }
     },
-    async fetchTickets(role: string) {
+    async fetchTickets() {
       try {
-        const tickets =
-          role !== 'director'
-            ? await list_Requests_from_d(5)
-            : await list_Requests_from_s_and_t(5);
+        const userStore = useUserStore();
+        const user = userStore.user;
+
+        if (!user) {
+          console.warn('Unexpected error: User not found in store');
+          return;
+        }
+
+        const tickets = await list_Recent_Requests(5, user.id);
 
         this.recentTickets = tickets.map((t) => ({
           iniciais: t.name.charAt(0).toUpperCase(),
@@ -228,7 +232,7 @@ export default defineComponent({
     this.role = user.type;
 
     this.loadStudentData();
-    this.fetchTickets(this.role || '');
+    this.fetchTickets();
     this.fetchCoursesOccupancy();
     this.fetchGlobalOccupancy();
     this.fetchStudentsNotAllocated();
