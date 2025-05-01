@@ -1,5 +1,15 @@
 <template>
   <div class="w-full max-w-md mx-auto">
+    <SuccessAlert
+      v-if="successMessage"
+      :message="successMessage"
+      class="mb-4"
+    />
+    <ErrorAlert
+      v-if="errorMessage"
+      :message="errorMessage"
+      class="mb-4"
+    />
     <div class="bg-green-50 rounded-lg shadow-sm border border-green-100 overflow-hidden">
       <div class="flex justify-between items-center p-4 pb-2">
         <h3 class="text-base font-semibold text-gray-900">
@@ -96,7 +106,8 @@
       </div>
 
       <div class="px-4 pb-4 flex justify-end space-x-2">
-        <template v-if="isCreate">
+      <template v-if="isCreate">
+        <div class="relative group">
           <button
             @click="submitRequest"
             :disabled="!newSubject || !newDescription"
@@ -104,17 +115,36 @@
           >
             Enviar
           </button>
-        </template>
-        <template v-else-if="isDirector && !isFromDirector">
-          <button @click="rejectRequest" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md">
-            Recusar
-          </button>
-          <button @click="acceptRequest" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md">
-            Aceitar
-          </button>
-        </template>
-      </div>
+          <div 
+            v-if="!newSubject || !newDescription" 
+            class="absolute bottom-full mb-2 right-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none"
+          >
+            <div class="w-72 border border-red-500 rounded-md bg-white p-3 shadow-lg">
+              <div class="flex items-start space-x-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="8" x2="12" y2="12"></line>
+                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <div>
+                  <p class="text-red-500 text-sm">Os campos do assunto e descrição devem ser preenchidos.</p>
+                </div>
+              </div>
+            </div>
+            <div class="absolute -bottom-1 right-4 w-3 h-3 bg-white border-r border-b border-red-500 transform rotate-45"></div>
+          </div>
+        </div>
+      </template>
+      <template v-else-if="isDirector && !isFromDirector">
+        <button @click="rejectRequest" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md">
+          Recusar
+        </button>
+        <button @click="acceptRequest" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md">
+          Aceitar
+        </button>
+      </template>
     </div>
+  </div>
   </div>
 </template>
 
@@ -128,6 +158,8 @@ import {
   getUserInfoById
 } from '@/api/api'
 import { useUserStore } from '@/stores/user'
+import SuccessAlert from '../popup/SuccessAlert.vue'
+import ErrorAlert from '../popup/ErrorAlert.vue'
 
 const emit = defineEmits(['close','created']);
 const props = defineProps<{
@@ -169,8 +201,20 @@ const showResponseNotes = computed(() => {
   return (isStudent || isTeacher) && !isDirector.value
 })
 
-const getTitle = () =>
-  `O pedido de ${info.value.sender}`
+const successMessage = ref('')
+const errorMessage = ref('')
+
+const getTitle = () => {
+  const id = dataSenderId.value || ''
+  const isStudent = id.startsWith('a')
+  const isTeacher = id.startsWith('t')
+  if (isStudent || isTeacher) {
+    return `O teu pedido #${info.value.id}`
+  }
+
+  return `O pedido de ${info.value.sender}`
+}
+
 const getSubtitle = () =>
   isDirector.value
     ? 'Aqui podes gerir o pedido recebido.'
@@ -185,6 +229,8 @@ const rejectRequest = async () => {
   })
   info.value.status = 'Recusado'
   info.value.response = directorResponse.value
+
+  successMessage.value = "Pedido recusado com sucesso!"
 }
 const acceptRequest = async () => {
   await updateRequest(props.ticketId!, {
@@ -193,6 +239,8 @@ const acceptRequest = async () => {
   })
   info.value.status = 'Aceite'
   info.value.response = directorResponse.value
+
+  successMessage.value = "Pedido aceite com sucesso!"
 }
 
 const submitRequest = async () => {
@@ -212,8 +260,9 @@ const submitRequest = async () => {
   if (!created)
     console.log(created)
 
+  successMessage.value = "Pedido enviado com sucesso!"
+
   emit('created')
-  emit('close')
 }
 
 onMounted(async () => {
