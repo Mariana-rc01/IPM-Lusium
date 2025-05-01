@@ -4,7 +4,12 @@
       <h1 class="text-2xl font-bold mb-1">Horário</h1>
       <p class="text-green-500 mb-6">Aqui pode consultar o horário que lhe foi atribuído!</p>
 
-      <Timetable mode="student" :blocks="studentBlocks" />
+      <div v-if="areSchedulesPublished">
+        <Timetable mode="student" :blocks="studentBlocks" />
+      </div>
+      <div v-else class="text-emerald-900 mt-4">
+        Os horários ainda não foram publicados.
+      </div>
     </div>
   </div>
 </template>
@@ -16,7 +21,8 @@ import Timetable from '../components/Timetable.vue';
 import {
   getStudentById,
   getStudentAllocations,
-  getAvailableCourses
+  getAvailableCourses,
+  schedulesPublished
 } from '@/api/api';
 import { useUserStore } from '@/stores/user';
 
@@ -50,6 +56,7 @@ export default defineComponent({
     const allocations = ref<string[]>([]);
     const availableCourses = ref<Course[]>([]);
     const studentShifts = ref<string[]>([]);
+    const areSchedulesPublished = ref(false);
 
     const studentBlocks = computed<ClassBlock[]>(() =>
       availableCourses.value.flatMap(course =>
@@ -80,8 +87,18 @@ export default defineComponent({
       }
     };
 
-    onMounted(() => {
-      loadStudentData();
+    const checkSchedulesPublished = async () => {
+      try {
+        areSchedulesPublished.value = await schedulesPublished();
+      } catch (error) {
+        console.error('Erro ao verificar publicação:', error);
+        areSchedulesPublished.value = false;
+      }
+    };
+
+    onMounted(async () => {
+      await loadStudentData();
+      await checkSchedulesPublished();
 
       const userStore = useUserStore();
       const user = userStore.user;
@@ -101,12 +118,13 @@ export default defineComponent({
 
       // If the user is a student, verify if the ID matches; if not, redirect to login
       if (userType === 'student' && id !== studentId.value) {
-        window.location.href = '/login';
+        window.location.href = '/not-found';
       }
     });
 
     return {
-      studentBlocks
+      studentBlocks,
+      areSchedulesPublished
     };
   }
 });

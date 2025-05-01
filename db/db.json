@@ -11,7 +11,8 @@
       "objectives": "Assegurar o bom funcionamento académico.",
       "challenges": "Conciliar recursos e expectativas variadas.",
       "solutions": "Planeamento estratégico e comunicação eficaz.",
-      "citation": "Liderar é inspirar cada um a dar o seu melhor."
+      "citation": "Liderar é inspirar cada um a dar o seu melhor.",
+      "schedulePublished": false
     }
   ],
   "teachers": [
@@ -9132,94 +9133,156 @@
       "buildingId": 4
     }
   ],
-  "requestsStudents": [
+  "requests": [
     {
       "id": "1",
       "subject": "Mudança do turno de EPTN",
-      "studentId": "a1",
+      "sender": "a1",
+      "recipient": "d1",
       "date": "18-02-2025",
-      "status": "Recebido",
+      "status": "Aceite",
       "description": "Gostaria de mudar para o turno TP2.",
-      "response": ""
+      "response": "aa"
     },
     {
       "id": "2",
       "subject": "Horário",
-      "studentId": "a90",
+      "sender": "a90",
+      "recipient": "d1",
       "date": "20-02-2025",
-      "status": "Recebido",
+      "status": "Recusado",
       "description": "Não tenho horário atribuído.",
-      "response": ""
+      "response": "Nahh"
     },
     {
       "id": "3",
       "subject": "Mudança de Horário",
-      "studentId": "a3",
+      "sender": "a3",
+      "recipient": "d1",
       "date": "23-02-2025",
-      "status": "Recebido",
+      "status": "Aceite",
       "description": "Tenho estatudo e o meu horário não é compatível com o trabalho. Se fosse possível, queria ter apenas aulas de manhã.",
-      "response": ""
+      "response": "Notas Notas"
     },
     {
       "id": "4",
       "subject": "Mudança de salas dos turnos SO",
-      "studentId": "a34",
+      "sender": "a34",
+      "recipient": "d1",
       "date": "18-02-2025",
-      "status": "Recebido",
+      "status": "Aceite",
       "description": "Gostaria de mudar para o turno TP7.",
       "response": ""
-    }
-  ],
-  "requestsTeachers": [
+    },
     {
-      "id": "1",
+      "id": "5",
       "subject": "Mudança de salas dos turnos de EPTN",
-      "teacherId": "t1",
+      "sender": "t1",
+      "recipient": "d1",
       "date": "10-02-2025",
-      "status": "Recebido",
+      "status": "",
       "description": "Se fosse possível trocar os turnos teóricos de sala agradecia, pois os alunos são muito assíduos e não cabem todos nas salas de aulas.",
       "response": ""
     },
     {
-      "id": "2",
+      "id": "6",
       "subject": "Mudança de sala do turno prático de PL",
-      "teacherId": "t3",
+      "sender": "t3",
+      "recipient": "d1",
       "date": "15-02-2025",
-      "status": "Recebido",
+      "status": "Aceite",
       "description": "Se fosse possível trocar o turno prático TP1 de sala agradecia, pois os alunos são muito assíduos e não cabem todos na sala de aula.",
       "response": ""
     },
     {
-      "id": "3",
+      "id": "7",
       "subject": "Mudança de sala do turno teórico de ATS",
-      "teacherId": "t4",
+      "sender": "t4",
+      "recipient": "d1",
       "date": "27-02-2025",
-      "status": "Recebido",
+      "status": "Recusado",
       "description": "Se fosse possível trocar o turno teórico de sala agradecia, pois sobram muitos lugares vazios.",
       "response": ""
-    }
-  ],
-  "requestsDirector": [
+    },
     {
-      "id": "1",
+      "id": "8",
       "subject": "Mudança de salas dos turnos SSI",
+      "sender": "d1",
+      "recipient": "all",
       "date": "10-02-2025",
-      "status": "Recebido",
-      "description": "A sala do turno teórico de SSI foi mudada, agradecia que confirmassem os vossos horários."
+      "status": "",
+      "description": "A sala do turno teórico de SSI foi mudada, agradecia que confirmassem os vossos horários.",
+      "response": ""
     },
     {
-      "id": "2",
+      "id": "9",
       "subject": "IPM - Alterações de Salas",
-      "date": "12-02-2025",
-      "status": "Recebido",
-      "description": "Houve mudanças em alguns horários de IPM, agradecia que confirmassem os vossos horários."
+      "sender": "d1",
+      "recipient": "all",
+      "date": "12-02-2022",
+      "status": "",
+      "description": "Houve mudanças em alguns horários de IPM, agradecia que confirmassem os vossos horários.",
+      "response": ""
     },
     {
-      "id": "3",
+      "id": "10",
       "subject": "Alteração temporária de Salas",
+      "sender": "d1",
+      "recipient": "all",
       "date": "13-02-2025",
-      "status": "Recebido",
-      "description": "Houve mudanças em alguns horários, agradecia que confirmassem os vossos horários."
+      "status": "",
+      "description": "Houve mudanças em alguns horários, agradecia que confirmassem os vossos horários.",
+      "response": ""
+    },
+    {
+      "id": "11",
+      "subject": "Troca de turno de Análise",
+      "sender": "a1",
+      "recipient": "d1",
+      "date": "14-02-2025",
+      "status": "",
+      "description": "Preciso de mudar de turno de Análise, pois não tenho disponibilidade.",
+      "response": ""
+    },
+    {
+      "id": "12",
+      "subject": "Troca de turno de Sistemas de Computação",
+      "sender": "a1",
+      "recipient": "d1",
+      "date": "17-02-2025",
+      "status": "Aceite",
+      "description": "Preciso de mudar de turno de Sistemas de Computação, pois não tenho horário.",
+      "response": ""
+    },
+    {
+      "id": "13",
+      "subject": "Troca de turno de Desenvolvimento de Sistemas de Software",
+      "sender": "a1",
+      "recipient": "d1",
+      "date": "18-02-2025",
+      "status": "",
+      "description": "Preciso de mudar de turno de Desenvolvimento de Sistemas de Software, pois não tenho horário.",
+      "response": ""
+    },
+    {
+      "id": "14",
+      "subject": "Turno de Lógica",
+      "sender": "a1",
+      "recipient": "d1",
+      "date": "01-05-2025",
+      "status": "",
+      "description": "Preciso de trocar para o turno TP3.",
+      "response": ""
+    },
+    {
+      "id": "15",
+      "subject": "Troca de turnos",
+      "sender": "d1",
+      "recipient": "all",
+      "date": "02-05-2025",
+      "status": "",
+      "description": "Não irei fazer troca de turnos esta semana.",
+      "response": ""
     }
   ]
 }
