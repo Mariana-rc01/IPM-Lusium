@@ -152,17 +152,20 @@ export default defineComponent({
           solutions: data.solutions,
           quote: data.quote,
           avatarUrl: '/avatars/01.png',
-          specialStatus:
-            data.specialStatus === '' || data.specialStatus == null
-              ? null
-              : data.specialStatus.charAt(0).toUpperCase() +
-                data.specialStatus.slice(1).toLowerCase(),
+          specialStatus:this.mapSpecialStatus(data.specialStatus),
         };
       } catch (err: any) {
         console.error('Erro ao carregar perfil:', err);
         this.error = 'Não foi possível carregar o perfil.';
       } finally {
         this.isLoading = false;
+      }
+    },
+    mapSpecialStatus(status: string): string {
+      switch (status) {
+        case 'athlete': return 'Atleta';
+        case 'working student': return 'Trabalhador-Estudante';
+        default: return '';
       }
     },
   },
