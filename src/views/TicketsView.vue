@@ -31,8 +31,8 @@
         </div>
       </div>
 
-      <!-- Create new request button -->
       <button
+        @click="createNewTicket"
         class="flex items-center gap-2 px-4 py-2 rounded-md text-sm border border-emerald-500 text-emerald-700 bg-white hover:bg-emerald-50">
         <PlusCircleIcon class="h-4 w-4" />
         Criar novo pedido
@@ -111,7 +111,6 @@
         </tbody>
       </table>
     </div>
-
     <!-- Pagination -->
     <div class="flex justify-end items-center mt-4 gap-8">
       <div class="flex items-center gap-2">
@@ -153,7 +152,12 @@
 
     <!-- Modal de Ticket -->
     <div v-if="showModal" class="fixed inset-0 bg-black bg-opacity-40 z-50 flex items-center justify-center">
-      <Ticket :ticketId="selectedTicketId" :userType="ticketType" @close="showModal = false"/>
+      <Ticket
+        :ticketId="selectedTicketId"
+        :userType="ticketType"
+        :isCreate="isCreating"
+        @close="showModal = false"
+      />
     </div>
   </div>
 </template>
@@ -209,6 +213,7 @@ export default {
       showModal: false,
       selectedTicketId: '',
       ticketType: '', // 'student' | 'teacher' | 'director'
+      isCreating: false,
     }
   },
   computed: {
@@ -266,6 +271,12 @@ export default {
     },
     openTicket(id: string) {
       this.selectedTicketId = id
+      this.isCreating = false
+      this.showModal = true
+    },
+    createNewTicket() {
+      this.selectedTicketId = ''
+      this.isCreating = true
       this.showModal = true
     }
   },
@@ -278,12 +289,15 @@ export default {
     const me = user.id
     this.ticketType = user.type
 
-    const mapped: Pedido[] = allRequests.map(req => {
+    const mapped: Pedido[] = await Promise.all(allRequests.map(async req => {
+      const senderInfo = await api.getUserInfoById(req.sender)
+      let senderName = senderInfo.name
+
       const remetente = req.sender === me
         ? 'Eu'
         : req.sender === 'd1'
           ? 'Diretor de Curso'
-          : 'Outro'
+          : senderName
 
       const destinatario = req.recipient === me
         ? 'Eu'
@@ -291,7 +305,7 @@ export default {
           ? 'Todos'
           : req.recipient === 'd1'
             ? 'Diretor de Curso'
-            : 'Outro'
+            : req.recipient
 
       let estado: Pedido['estado']
 
@@ -301,10 +315,12 @@ export default {
         } else {
           estado = 'Enviado'
         }
-      } else if (req.recipient === me || req.recipient === 'all') {
-        estado = 'Recebido'
       } else {
-        estado = 'Recebido' // fallback seguro
+        if (req.status === 'Aceite' || req.status === 'Recusado') {
+          estado = req.status as Pedido['estado']
+        } else {
+          estado = 'Recebido'
+        }
       }
 
       return {
@@ -315,7 +331,7 @@ export default {
         data: req.date,
         estado
       }
-    })
+    }))
 
     this.pedidosEnviados = mapped.filter(p => p.remetente === 'Eu')
     this.pedidosRecebidos = mapped.filter(p =>
