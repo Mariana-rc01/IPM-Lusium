@@ -103,9 +103,14 @@
               </div>
             </td>
             <td class="py-3 px-4 text-sm text-center">
-              <button class="text-gray-700 hover:text-gray-900">
-                <Trash2 class="h-5 w-5" />
-              </button>
+              <div class="flex justify-center">
+                <div v-if="pedido.remetente === 'Eu'">
+                  <button @click.stop="removePedido(pedido)" class="text-gray-700 hover:text-gray-900">
+                    <Trash2 class="h-5 w-5" />
+                  </button>
+                </div>
+                <div v-else class="w-5 h-5"></div> <!-- Espaço reservado -->
+              </div>
             </td>
           </tr>
         </tbody>
@@ -160,6 +165,13 @@
       />
     </div>
   </div>
+
+
+  <ConfirmModal v-if="showModalRemovePedido" :message="modalMessageRemovePedido" @save="confirmRemovePedido" @cancel="showModalRemovePedido = false"/>
+
+  <SuccessAlert v-if="showModalSucess" :message="modalMessageSuccess || ''" @close="modalMessageSuccess = null" />
+
+  <ErrorAlert v-if="showMessageError" :message="errorMessage || ''" @close="errorMessage = null" />
 </template>
 
 <script lang="ts">
@@ -178,6 +190,9 @@ import {
 import * as api from '@/api/api'
 import { useUserStore } from '@/stores/user'
 import Ticket from '@/components/ticket/Ticket.vue'
+import SuccessAlert from '@/components/popup/SuccessAlert.vue';
+import ConfirmModal from '@/components/popup/ConfirmModal.vue';
+import ErrorAlert from '@/components/popup/ErrorAlert.vue';
 
 interface Pedido {
   codigo: string
@@ -198,7 +213,10 @@ export default {
     ChevronsUpDownIcon, CircleIcon,
     CheckIcon, XIcon, Trash2,
     PlusCircleIcon, PackageOpen, SendIcon,
-    Ticket
+    Ticket,
+    SuccessAlert,
+    ConfirmModal,
+    ErrorAlert
   },
   data() {
     return {
@@ -214,6 +232,15 @@ export default {
       selectedTicketId: '',
       ticketType: '', // 'student' | 'teacher' | 'director'
       isCreating: false,
+      selectedPedidoToRemove: null as Pedido | null,
+      showModalRemovePedido: false,
+      modalMessageRemovePedido: '',
+      showModalSucess: false,
+      modalMessageSuccess: null as string | null,
+      errorMessage: null as string | null,
+      showMessageError: false,
+      errorMessageDialog: null as string | null,
+      showMessageErrorDialog: false,
     }
   },
   computed: {
@@ -278,6 +305,34 @@ export default {
       this.selectedTicketId = ''
       this.isCreating = true
       this.showModal = true
+    },
+    removePedido(pedido: Pedido) {
+      this.modalMessageRemovePedido = `Tem a certeza que deseja eliminar o pedido com o assunto "${pedido.assunto}"?`;
+      this.selectedPedidoToRemove = pedido;
+      this.showModalRemovePedido = true;
+    },
+    async confirmRemovePedido() {
+      if (!this.selectedPedidoToRemove) return;
+
+      try {
+        await api.deleteRequest(this.selectedPedidoToRemove.codigo);
+
+        // Remove da lista
+        this.pedidosEnviados = this.pedidosEnviados.filter(
+          p => p.codigo !== this.selectedPedidoToRemove?.codigo
+        );
+
+        // Feedback opcional
+        this.modalMessageSuccess = 'O pedido foi eliminado com sucesso!';
+        this.showModalSucess = true;
+      } catch (error) {
+        console.error('Erro ao eliminar pedido:', error);
+        this.errorMessage = 'Erro ao eliminar o pedido. Por favor, tente novamente.';
+        this.showMessageError = true;
+      }
+
+      this.showModalRemovePedido = false;
+      this.selectedPedidoToRemove = null;
     }
   },
   async mounted() {

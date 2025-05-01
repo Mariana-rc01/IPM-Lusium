@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import {
   Avatar,
-  AvatarFallback,
-  AvatarImage,
 } from '@/components/ui/avatar'
 import type { PropType } from 'vue'
 
