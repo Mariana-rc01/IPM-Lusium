@@ -1,0 +1,42 @@
+{
+  "name": "my-vue-app",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc -b && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@unovis/ts": "^1.5.1",
+    "@unovis/vue": "^1.5.1",
+    "@vueuse/core": "^12.8.2",
+    "add": "^2.0.6",
+    "avatar": "^0.1.0",
+    "axios": "^1.8.4",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "json-server": "^1.0.0-beta.3",
+    "lucide-vue-next": "^0.475.0",
+    "pinia": "^3.0.2",
+    "radix-vue": "^1.9.15",
+    "reka-ui": "^2.2.0",
+    "shadcn": "^2.4.0-canary.17",
+    "tailwind-merge": "^3.0.2",
+    "tailwindcss-animate": "^1.0.7",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0",
+    "vue-toastification": "^2.0.0-rc.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.4",
+    "@vitejs/plugin-vue": "^5.2.1",
+    "@vue/tsconfig": "^0.7.0",
+    "autoprefixer": "^10.4.20",
+    "tailwindcss": "^3.4.17",
+    "typescript": "~5.7.2",
+    "vite": "^6.1.0",
+    "vue-tsc": "^2.2.0"
+  }
+}
