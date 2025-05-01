@@ -11,7 +11,8 @@
       "objectives": "Assegurar o bom funcionamento académico.",
       "challenges": "Conciliar recursos e expectativas variadas.",
       "solutions": "Planeamento estratégico e comunicação eficaz.",
-      "citation": "Liderar é inspirar cada um a dar o seu melhor."
+      "citation": "Liderar é inspirar cada um a dar o seu melhor.",
+      "schedulePublished": false
     }
   ],
   "teachers": [
@@ -9209,7 +9210,7 @@
       "sender": "d1",
       "recipient": "all",
       "date": "10-02-2025",
-      "status": "NÃO PODE TER ESTADO PORQUE VEIO DO DC",
+      "status": "",
       "description": "A sala do turno teórico de SSI foi mudada, agradecia que confirmassem os vossos horários.",
       "response": ""
     },
@@ -9219,7 +9220,7 @@
       "sender": "d1",
       "recipient": "all",
       "date": "12-02-2025",
-      "status": "NÃO PODE TER ESTADO PORQUE VEIO DO DC",
+      "status": "",
       "description": "Houve mudanças em alguns horários de IPM, agradecia que confirmassem os vossos horários.",
       "response": ""
     },
@@ -9229,7 +9230,7 @@
       "sender": "d1",
       "recipient": "all",
       "date": "13-02-2025",
-      "status": "NÃO PODE TER ESTADO PORQUE VEIO DO DC",
+      "status": "",
       "description": "Houve mudanças em alguns horários, agradecia que confirmassem os vossos horários.",
       "response": ""
     },
@@ -9265,272 +9266,12 @@
     },
     {
       "id": "14",
-      "subject": "Teste",
+      "subject": "Turno de Lógica",
       "sender": "a1",
       "recipient": "d1",
-      "date": "2025-04-30",
+      "date": "01-05-2025",
       "status": "",
-      "description": "Teste de desc.",
-      "response": ""
-    },
-    {
-      "id": "15",
-      "subject": "Teste1",
-      "sender": "d1",
-      "recipient": "d1",
-      "date": "2025-04-30",
-      "status": "",
-      "description": "Teste2",
-      "response": ""
-    },
-    {
-      "id": "16",
-      "subject": "Turno de IPM",
-      "sender": "d1",
-      "recipient": "d1",
-      "date": "2025-05-01",
-      "status": "",
-      "description": "Trocar turno T1 para T2",
-      "response": ""
-    },
-    {
-      "id": "17",
-      "subject": "aSA",
-      "sender": "a1",
-      "recipient": "d1",
-      "date": "2025-05-01",
-      "status": "",
-      "description": "ASS",
-      "response": ""
-    },
-    {
-      "id": "18",
-      "subject": "TEST",
-      "sender": "a1",
-      "recipient": "d1",
-      "date": "2025-05-01",
-      "status": "",
-      "description": "TEST",
-      "response": ""
-    },
-    {
-      "id": "19",
-      "subject": "a",
-      "sender": "a1",
-      "recipient": "d1",
-      "date": "2025-05-01",
-      "status": "",
-      "description": "a",
-      "response": ""
-    },
-    {
-      "id": "20",
-      "subject": "as",
-      "sender": "a1",
-      "recipient": "d1",
-      "date": "2025-05-01",
-      "status": "",
-      "description": "ASs",
-      "response": ""
-    },
-    {
-      "id": "21",
-      "subject": "",
-      "sender": "a1",
-      "recipient": "d1",
-      "date": "2025-05-01",
-      "status": "",
-      "description": "",
-      "response": ""
-    },
-    {
-      "id": "22",
-      "subject": "",
-      "sender": "a1",
-      "recipient": "d1",
-      "date": "2025-05-01",
-      "status": "",
-      "description": "",
-      "response": ""
-    },
-    {
-      "id": "23",
-      "subject": "",
-      "sender": "a1",
-      "recipient": "d1",
-      "date": "2025-05-01",
-      "status": "",
-      "description": "a",
-      "response": ""
-    },
-    {
-      "id": "24",
-      "subject": "",
-      "sender": "a1",
-      "recipient": "d1",
-      "date": "2025-05-01",
-      "status": "",
-      "description": "a",
-      "response": ""
-    },
-    {
-      "id": "25",
-      "subject": "",
-      "sender": "a1",
-      "recipient": "d1",
-      "date": "2025-05-01",
-      "status": "",
-      "description": "a",
-      "response": ""
-    },
-    {
-      "id": "26",
-      "subject": "",
-      "sender": "a1",
-      "recipient": "d1",
-      "date": "2025-05-01",
-      "status": "",
-      "description": "a",
-      "response": ""
-    },
-    {
-      "id": "27",
-      "subject": "",
-      "sender": "a1",
-      "recipient": "d1",
-      "date": "2025-05-01",
-      "status": "",
-      "description": "a",
-      "response": ""
-    },
-    {
-      "id": "28",
-      "subject": "",
-      "sender": "a1",
-      "recipient": "d1",
-      "date": "2025-05-01",
-      "status": "",
-      "description": "a",
-      "response": ""
-    },
-    {
-      "id": "29",
-      "subject": "",
-      "sender": "a1",
-      "recipient": "d1",
-      "date": "2025-05-01",
-      "status": "",
-      "description": "a",
-      "response": ""
-    },
-    {
-      "id": "30",
-      "subject": "",
-      "sender": "a1",
-      "recipient": "d1",
-      "date": "2025-05-01",
-      "status": "",
-      "description": "a",
-      "response": ""
-    },
-    {
-      "id": "31",
-      "subject": "",
-      "sender": "a1",
-      "recipient": "d1",
-      "date": "2025-05-01",
-      "status": "",
-      "description": "a",
-      "response": ""
-    },
-    {
-      "id": "32",
-      "subject": "",
-      "sender": "a1",
-      "recipient": "d1",
-      "date": "2025-05-01",
-      "status": "",
-      "description": "",
-      "response": ""
-    },
-    {
-      "id": "33",
-      "subject": "",
-      "sender": "a1",
-      "recipient": "d1",
-      "date": "2025-05-01",
-      "status": "",
-      "description": "a",
-      "response": ""
-    },
-    {
-      "id": "34",
-      "subject": "",
-      "sender": "a1",
-      "recipient": "d1",
-      "date": "2025-05-01",
-      "status": "",
-      "description": "a",
-      "response": ""
-    },
-    {
-      "id": "35",
-      "subject": "",
-      "sender": "a1",
-      "recipient": "d1",
-      "date": "2025-05-01",
-      "status": "",
-      "description": "a",
-      "response": ""
-    },
-    {
-      "id": "36",
-      "subject": "",
-      "sender": "a1",
-      "recipient": "d1",
-      "date": "2025-05-01",
-      "status": "",
-      "description": "a",
-      "response": ""
-    },
-    {
-      "id": "37",
-      "subject": "",
-      "sender": "a1",
-      "recipient": "d1",
-      "date": "2025-05-01",
-      "status": "",
-      "description": "a",
-      "response": ""
-    },
-    {
-      "id": "38",
-      "subject": "",
-      "sender": "a1",
-      "recipient": "d1",
-      "date": "2025-05-01",
-      "status": "",
-      "description": "a",
-      "response": ""
-    },
-    {
-      "id": "39",
-      "subject": "",
-      "sender": "a1",
-      "recipient": "d1",
-      "date": "2025-05-01",
-      "status": "",
-      "description": "a",
-      "response": ""
-    },
-    {
-      "id": "40",
-      "subject": "a",
-      "sender": "a1",
-      "recipient": "d1",
-      "date": "2025-05-01",
-      "status": "",
-      "description": "a",
+      "description": "Preciso de trocar para o turno TP3.",
       "response": ""
     }
   ]

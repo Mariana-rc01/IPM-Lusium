@@ -251,7 +251,7 @@ const submitRequest = async () => {
     subject: newSubject.value,
     sender: me,
     recipient: 'd1',
-    date: today,
+    date: today.split('-').reverse().join('-'),
     status: "",
     description: newDescription.value,
     response: ""
