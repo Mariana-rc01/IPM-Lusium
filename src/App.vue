@@ -10,27 +10,27 @@ const sidebarOpen = ref(false);
 
 provide('sidebar', {
   isOpen: sidebarOpen,
-  toggle: () => sidebarOpen.value = !sidebarOpen.value
+  toggle: () => (sidebarOpen.value = !sidebarOpen.value),
 });
 </script>
 
 <template>
   <div class="min-h-screen bg-white">
-    <SideBar :isOpen="sidebarOpen" @update:isOpen="sidebarOpen = $event" />
+    <SideBar />
 
-    <div 
+    <div
       class="min-h-screen flex flex-col transition-all duration-300 ease-in-out"
-      :style="{ 
-        marginLeft: sidebarOpen ? '320px' : '0', 
-        width: sidebarOpen ? 'calc(100% - 320px)' : '100%'
+      :style="{
+        marginLeft: sidebarOpen ? '340px' : '0',
+        width: sidebarOpen ? 'calc(100% - 340px)' : '100%'
       }"
     >
       <div
-        v-if="route.name !== 'login'"
+        v-show="route.name !== 'login'"
         class="fixed top-0 left-0 right-0 z-10 bg-white transition-all duration-300 ease-in-out"
-        :style="{ 
-          marginLeft: sidebarOpen ? '320px' : '0', 
-          width: sidebarOpen ? 'calc(100% - 320px)' : '100%'
+        :style="{
+          marginLeft: sidebarOpen ? '340px' : '0',
+          width: sidebarOpen ? 'calc(100% - 340px)' : '100%'
         }"
       >
         <Navbar />

@@ -1,17 +1,23 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted } from 'vue';
-import { X } from 'lucide-vue-next';
+import { onMounted, onUnmounted, ref, inject, watch, type Ref } from 'vue';
 import { cn } from '@/lib/utils';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import Ticket from '@/components/ticket/Ticket.vue';
+import { useMarkedTicketStore } from '@/stores/markedTicket';
+import { useUserStore } from '@/stores/user';
 
-const props = defineProps<{
-  isOpen: boolean
-}>();
+// Usa inject em vez de props/emits
+const sidebar = inject('sidebar') as {
+  isOpen: Ref<boolean>,
+  toggle: () => void
+};
 
-const emit = defineEmits(['update:isOpen']);
+const activeTab = ref('tab1');
+const showModal = ref(true);
 
 const handleEscape = (e: KeyboardEvent) => {
-  if (e.key === 'Escape' && props.isOpen) {
-    emit('update:isOpen', false);
+  if (e.key === 'Escape' && sidebar.isOpen.value) {
+    sidebar.toggle();
   }
 };
 
@@ -23,58 +29,73 @@ onUnmounted(() => {
   window.removeEventListener('keydown', handleEscape);
 });
 
-const closeSidebar = () => {
-  emit('update:isOpen', false);
+const handleCloseModal = () => {
+  showModal.value = false;
 };
+
+const markedTicketStore = useMarkedTicketStore();
+const userStore = useUserStore();
+
+const ticketId = ref(markedTicketStore.getMarkedTicketId || '-1');
+
+watch(
+  () => markedTicketStore.getMarkedTicketId,
+  (newId) => {
+    ticketId.value = newId || '-1';
+    console.log('Atualizado ticketId:', ticketId.value);
+  }
+);
+
+const userType = ref(userStore.user.type);
 </script>
 
 <template>
   <div>
-    <aside 
+    <aside
       :class="cn(
-        'fixed top-0 left-0 z-20 h-full w-80 bg-white transition-transform duration-300 ease-in-out',
-        isOpen ? 'translate-x-0 border-r border-gray-200' : '-translate-x-full'
+        'fixed top-0 left-0 z-20 h-full w-[340px] bg-white transition-transform duration-300 ease-in-out',
+        sidebar.isOpen.value ? 'translate-x-0 border-r border-gray-200' : '-translate-x-full'
       )"
     >
       <div class="flex items-center justify-between p-4 border-b">
-        <h2 class="font-semibold text-green-600">Criar um pedido</h2>
-        <button 
-          @click="closeSidebar"
-          class="p-1 rounded-full hover:bg-gray-100"
-          aria-label="Fechar sidebar"
-        >
-          <X class="h-5 w-5" />
-        </button>
-      </div>
-      
-      <div class="p-4 bg-green-50/50 h-[calc(100%-4rem-4rem)] overflow-y-auto">
-        <p class="text-sm text-green-600 mb-4">Este pedido será comunicado ao diretor de curso</p>
-        
-        <div class="space-y-4">
-          <div>
-            <label for="sidebar-assunto" class="block text-sm font-medium text-gray-700 mb-1">Assunto</label>
-            <input 
-              id="sidebar-assunto" 
-              type="text" 
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
-              placeholder="Indique o assunto"
-            />
-          </div>
-          
-          <div>
-            <label for="sidebar-descricao" class="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
-            <textarea 
-              id="sidebar-descricao" 
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500"
-              rows="6"
-              placeholder="Apresente aqui a informação relevante para descrever o assunto indicado"
-            ></textarea>
-          </div>
-          
-          <button class="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md transition-colors">
-            Enviar
-          </button>
+        <div class="flex items-center gap-2 text-lg font-medium">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+               class="h-6 w-6">
+            <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3" />
+          </svg>
+          Lusium
         </div>
+      </div>
+
+      <div class="p-4 bg-green-50/50 h-[calc(100%-4rem-4rem)] overflow-y-auto">
+        <Tabs v-model="activeTab" class="w-full mb-4">
+          <TabsList class="grid w-full grid-cols-2">
+            <TabsTrigger value="tab1">Pedido Atual</TabsTrigger>
+            <TabsTrigger value="tab2">Criar Pedido</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="tab1" class="mt-2">
+            <Ticket
+              :key="ticketId"
+              :ticketId="ticketId"
+              :userType="userType"
+              :isSidebar="true"
+              @close="handleCloseModal"
+            />
+          </TabsContent>
+
+          <TabsContent value="tab2" class="mt-2">
+            <Ticket
+              :key="`create-${ticketId}`"
+              :ticketId="ticketId"
+              :userType="userType"
+              :isCreate="true"
+              :isSidebar="true"
+              @close="handleCloseModal"
+            />
+          </TabsContent>
+        </Tabs>
       </div>
     </aside>
   </div>

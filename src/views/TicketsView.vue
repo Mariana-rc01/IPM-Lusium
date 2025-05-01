@@ -166,7 +166,6 @@
     </div>
   </div>
 
-
   <ConfirmModal v-if="showModalRemovePedido" :message="modalMessageRemovePedido" @save="confirmRemovePedido" @cancel="showModalRemovePedido = false"/>
 
   <SuccessAlert v-if="showModalSucess" :message="modalMessageSuccess || ''" @close="modalMessageSuccess = null" />
