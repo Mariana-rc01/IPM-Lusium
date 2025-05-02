@@ -109,7 +109,7 @@
                     <Trash2 class="h-5 w-5" />
                   </button>
                 </div>
-                <div v-else class="w-5 h-5"></div> <!-- Espaço reservado -->
+                <div v-else class="w-5 h-5"></div>
               </div>
             </td>
           </tr>
@@ -162,15 +162,24 @@
         :userType="ticketType"
         :isCreate="isCreating"
         @close="showModal = false"
+        @created="handleCreated"
       />
     </div>
+
+    <!-- SuccessAlert -->
+    <SuccessAlert v-if="showModalSuccess" :message="modalMessageSuccess" @close="showModalSuccess = false" class="mb-4" />
+
+    <!-- ConfirmModal -->
+    <ConfirmModal
+      v-if="showModalRemovePedido"
+      :message="modalMessageRemovePedido"
+      @save="confirmRemovePedido"
+      @cancel="showModalRemovePedido = false"
+    />
+
+    <!-- ErrorAlert -->
+    <ErrorAlert v-if="showMessageError" :message="errorMessage || ''" @close="showMessageError = false" />
   </div>
-
-  <ConfirmModal v-if="showModalRemovePedido" :message="modalMessageRemovePedido" @save="confirmRemovePedido" @cancel="showModalRemovePedido = false"/>
-
-  <SuccessAlert v-if="showModalSucess" :message="modalMessageSuccess || ''" @close="modalMessageSuccess = null" />
-
-  <ErrorAlert v-if="showMessageError" :message="errorMessage || ''" @close="errorMessage = null" />
 </template>
 
 <script lang="ts">
@@ -234,12 +243,14 @@ export default {
       selectedPedidoToRemove: null as Pedido | null,
       showModalRemovePedido: false,
       modalMessageRemovePedido: '',
-      showModalSucess: false,
-      modalMessageSuccess: null as string | null,
-      errorMessage: null as string | null,
+      showModalSuccess: false,
+      modalMessageSuccess: '',
+      errorMessage: '',
       showMessageError: false,
       errorMessageDialog: null as string | null,
       showMessageErrorDialog: false,
+      showModalConfirm: false,
+      modalMessageConfirm: '',
     }
   },
   computed: {
@@ -316,14 +327,12 @@ export default {
       try {
         await api.deleteRequest(this.selectedPedidoToRemove.codigo);
 
-        // Remove da lista
         this.pedidosEnviados = this.pedidosEnviados.filter(
           p => p.codigo !== this.selectedPedidoToRemove?.codigo
         );
 
-        // Feedback opcional
         this.modalMessageSuccess = 'O pedido foi eliminado com sucesso!';
-        this.showModalSucess = true;
+        this.showModalSuccess = true;
       } catch (error) {
         console.error('Erro ao eliminar pedido:', error);
         this.errorMessage = 'Erro ao eliminar o pedido. Por favor, tente novamente.';
@@ -332,6 +341,14 @@ export default {
 
       this.showModalRemovePedido = false;
       this.selectedPedidoToRemove = null;
+    },
+    handleCreated() {
+      this.showModal = false;
+      this.modalMessageSuccess = 'Pedido enviado com sucesso!';
+      this.showModalSuccess = true;
+    },
+    closeConfirm() {
+      this.showModalConfirm = false;
     }
   },
   async mounted() {
@@ -340,6 +357,7 @@ export default {
     if (!user) return
 
     const allRequests = await api.list_Requests()
+    console.log(allRequests)
     const me = user.id
     this.ticketType = user.type
 
