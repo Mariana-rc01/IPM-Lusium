@@ -98,7 +98,7 @@
                 <router-link :to="`/schedule/${aluno.numero}`">
                   <CalendarIcon class="h-5 w-5" />
                 </router-link>
-                <button v-if="role === 'director'" @click="deleteStudent(aluno.numero)">
+                <button v-if="role === 'director'" @click="removeStudent(aluno)">
                   <Trash2 class="h-5 w-5" />
                 </button>
               </td>
@@ -173,6 +173,9 @@
         </div>
       </div>
     </div>
+    <ConfirmModal v-if="showModalRemoveAluno" :message="modalMessageRemoveAluno" @save="confirmRemoveStudent" @cancel="showModalRemoveAluno = false"/>
+    <SuccessAlert v-if="showModalSucess" :message="modalMessageSuccess || ''" @close="modalMessageSuccess = null" />
+    <ErrorAlert v-if="showMessageError" :message="errorMessage || ''" @close="errorMessage = null" />
   </template>
 
   <script lang="ts">
@@ -197,6 +200,9 @@ import {
   BriefcaseIcon,
   DumbbellIcon
 } from 'lucide-vue-next';
+import SuccessAlert from '@/components/popup/SuccessAlert.vue';
+import ConfirmModal from '@/components/popup/ConfirmModal.vue';
+import ErrorAlert from '@/components/popup/ErrorAlert.vue';
 
 interface Aluno {
   numero: string;
@@ -219,6 +225,9 @@ export default defineComponent({
     DropdownMenuSeparator,
     DropdownMenuTrigger,
     Button,
+    SuccessAlert,
+    ConfirmModal,
+    ErrorAlert,
     ChevronLeftIcon,
     ChevronRightIcon,
     ChevronsLeftIcon,
@@ -241,7 +250,16 @@ export default defineComponent({
       rowsPerPage: '5' as string,
       sortColumn: null as 'numero' | 'nome' | 'estatuto' | null,
       sortDirection: 'asc' as 'asc' | 'desc',
-      alunos: [] as Aluno[]
+      alunos: [] as Aluno[],
+      selectedAlunoToRemove: null as Aluno | null,
+      showModalRemoveAluno: false,
+      modalMessageRemoveAluno: '',
+      showModalSucess: false,
+      modalMessageSuccess: null as string | null,
+      errorMessage: null as string | null,
+      showMessageError: false,
+      errorMessageDialog: null as string | null,
+      showMessageErrorDialog: false,
     };
   },
   computed: {
@@ -324,13 +342,29 @@ export default defineComponent({
       if (page > this.totalPages) page = this.totalPages;
       this.currentPage = page;
     },
-    async deleteStudent(studentId: string) {
+    removeStudent(aluno: Aluno) {
+      this.modalMessageRemoveAluno = `Tem a certeza que deseja eliminar o aluno com o número mecanográfico "${aluno.numero}"?`;
+      this.selectedAlunoToRemove = aluno;
+      this.showModalRemoveAluno = true;
+    },
+    async confirmRemoveStudent() {
+      if (!this.selectedAlunoToRemove) return;
       try {
-        await deleteStudentById(studentId);
-        this.alunos = this.alunos.filter(a => a.numero !== studentId);
+        await deleteStudentById(this.selectedAlunoToRemove.numero);
+        // Remove da lista
+        this.alunos = this.alunos.filter(
+          p => p.numero !== this.selectedAlunoToRemove?.numero
+        );
+        // Feedback opcional
+        this.modalMessageSuccess = 'O aluno foi eliminado com sucesso!';
+        this.showModalSucess = true;
       } catch (error) {
-        console.error('Erro ao eliminar o aluno:', error);
+        console.error('Erro ao eliminar aluno:', error);
+        this.errorMessage = 'Erro ao eliminar o aluno. Por favor, tente novamente.';
+        this.showMessageError = true;
       }
+      this.showModalRemoveAluno = false;
+      this.selectedAlunoToRemove = null;
     }
   },
   mounted() {
