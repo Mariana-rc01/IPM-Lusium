@@ -270,7 +270,6 @@ const showResponseNotes = computed(() => {
 const successMessage = ref('')
 const errorMessage = ref('')
 
-// Atualiza o estado isMarked quando o markedTicketId mudar no store
 watch(() => markedTicketStore.markedTicketId, (newMarkedTicketId) => {
   if (props.ticketId) {
     isMarked.value = newMarkedTicketId === props.ticketId
@@ -364,7 +363,6 @@ const submitRequest = async () => {
 const fill = ref('none')
 
 onMounted(async () => {
-  // Verificar se este ticket está marcado no store
   if (!isCreate.value && props.ticketId) {
     isMarked.value = markedTicketStore.markedTicketId === props.ticketId
 
