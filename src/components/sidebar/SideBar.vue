@@ -1,23 +1,28 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, inject, watch, type Ref } from 'vue';
+import { onMounted, onUnmounted, ref, watch } from 'vue';
 import { cn } from '@/lib/utils';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Ticket from '@/components/ticket/Ticket.vue';
 import { useMarkedTicketStore } from '@/stores/markedTicket';
 import { useUserStore } from '@/stores/user';
+import { useSidebarStateStore } from '@/stores/sidebarState';
 
-// Usa inject em vez de props/emits
-const sidebar = inject('sidebar') as {
-  isOpen: Ref<boolean>,
-  toggle: () => void
-};
+const sidebarStore = useSidebarStateStore();
 
-const activeTab = ref('tab1');
+// 🔁 Restaurar tab ativa do localStorage ou usar 'tab1'
+const savedTab = localStorage.getItem('sidebarActiveTab') || 'tab1';
+const activeTab = ref(savedTab);
+
+// 🔁 Sempre que mudar, salvar no localStorage
+watch(activeTab, (newVal) => {
+  localStorage.setItem('sidebarActiveTab', newVal);
+});
+
 const showModal = ref(true);
 
 const handleEscape = (e: KeyboardEvent) => {
-  if (e.key === 'Escape' && sidebar.isOpen.value) {
-    sidebar.toggle();
+  if (e.key === 'Escape' && sidebarStore.isOpen) {
+    sidebarStore.toggle();
   }
 };
 
@@ -54,7 +59,7 @@ const userType = ref(userStore.user.type);
     <aside
       :class="cn(
         'fixed top-0 left-0 z-20 h-full w-[340px] bg-white transition-transform duration-300 ease-in-out',
-        sidebar.isOpen.value ? 'translate-x-0 border-r border-gray-200' : '-translate-x-full'
+        sidebarStore.isOpen ? 'translate-x-0 border-r border-gray-200' : '-translate-x-full'
       )"
     >
       <div class="flex items-center justify-between p-4 border-b">

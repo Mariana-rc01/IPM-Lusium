@@ -229,6 +229,27 @@ const info = ref<RequestInfo>({
 const directorResponse = ref('')
 const newSubject = ref('')
 const newDescription = ref('')
+onMounted(() => {
+  if (isCreate.value) {
+    newSubject.value = localStorage.getItem('ticket.newSubject') || ''
+    newDescription.value = localStorage.getItem('ticket.newDescription') || ''
+  }
+
+  if (isDirector.value && !isFromDirector.value) {
+    directorResponse.value = localStorage.getItem(`ticket.response`) || ''
+  }
+})
+watch(newSubject, (val) => {
+  localStorage.setItem('ticket.newSubject', val)
+})
+watch(newDescription, (val) => {
+  localStorage.setItem('ticket.newDescription', val)
+})
+watch(directorResponse, (val) => {
+  if (isDirector.value && !isFromDirector.value && props.ticketId) {
+    localStorage.setItem(`ticket.response`, val)
+  }
+})
 const isMarked = ref(false) // Estado para controlar se o pedido está marcado
 const markedTicketStore = useMarkedTicketStore()
 
@@ -298,6 +319,9 @@ const rejectRequest = async () => {
   info.value.response = directorResponse.value
 
   successMessage.value = "Pedido recusado com sucesso!"
+  localStorage.removeItem('ticket.newSubject')
+  localStorage.removeItem('ticket.newDescription')
+  localStorage.removeItem(`ticket.response`)
 }
 const acceptRequest = async () => {
   await updateRequest(props.ticketId!, {
@@ -308,6 +332,9 @@ const acceptRequest = async () => {
   info.value.response = directorResponse.value
 
   successMessage.value = "Pedido aceite com sucesso!"
+  localStorage.removeItem('ticket.newSubject')
+  localStorage.removeItem('ticket.newDescription')
+  localStorage.removeItem(`ticket.response`)
 }
 
 const submitRequest = async () => {
@@ -325,9 +352,11 @@ const submitRequest = async () => {
   })
 
   if (!created)
-    console.log(created)
 
   successMessage.value = "Pedido enviado com sucesso!"
+  localStorage.removeItem('ticket.newSubject')
+  localStorage.removeItem('ticket.newDescription')
+  localStorage.removeItem(`ticket.response`)
 
   emit('created')
 }

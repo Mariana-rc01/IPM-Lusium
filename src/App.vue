@@ -1,17 +1,20 @@
 <script setup lang="ts">
-import { ref, provide } from 'vue';
-import Navbar from './components/navbar/Navbar.vue';
+import { watch } from 'vue';
 import { useRoute } from 'vue-router';
+import Navbar from './components/navbar/Navbar.vue';
 import SideBar from './components/sidebar/SideBar.vue';
+import { useSidebarStateStore } from '@/stores/sidebarState';
 
 const route = useRoute();
+const sidebarStore = useSidebarStateStore();
 
-const sidebarOpen = ref(false);
-
-provide('sidebar', {
-  isOpen: sidebarOpen,
-  toggle: () => (sidebarOpen.value = !sidebarOpen.value),
-});
+watch(
+  () => sidebarStore.isOpen,
+  (newVal) => {
+    localStorage.setItem("sidebarState", JSON.stringify(newVal));
+  },
+  { immediate: true }
+);
 </script>
 
 <template>
@@ -21,16 +24,16 @@ provide('sidebar', {
     <div
       class="min-h-screen flex flex-col transition-all duration-300 ease-in-out"
       :style="{
-        marginLeft: sidebarOpen ? '340px' : '0',
-        width: sidebarOpen ? 'calc(100% - 340px)' : '100%'
+        marginLeft: sidebarStore.isOpen ? '340px' : '0',
+        width: sidebarStore.isOpen ? 'calc(100% - 340px)' : '100%'
       }"
     >
       <div
         v-show="route.name !== 'login'"
         class="fixed top-0 left-0 right-0 z-10 bg-white transition-all duration-300 ease-in-out"
         :style="{
-          marginLeft: sidebarOpen ? '340px' : '0',
-          width: sidebarOpen ? 'calc(100% - 340px)' : '100%'
+          marginLeft: sidebarStore.isOpen ? '340px' : '0',
+          width: sidebarStore.isOpen ? 'calc(100% - 340px)' : '100%'
         }"
       >
         <Navbar />

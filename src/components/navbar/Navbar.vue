@@ -1,20 +1,16 @@
 <script setup lang="ts">
-import { inject, type Ref } from 'vue';
+import { useSidebarStateStore } from '@/stores/sidebarState';
 import MainNav from './MainNav.vue';
-import { Menu } from 'lucide-vue-next'; // ícone de menu (hambúrguer)
+import { Menu } from 'lucide-vue-next';
 
-const sidebar = inject('sidebar') as {
-  isOpen: Ref<boolean>,
-  toggle: () => void
-};
+const sidebarStore = useSidebarStateStore();
 </script>
 
 <template>
   <div class="border-none">
     <div class="flex h-16 items-center px-5">
-      <!-- Botão para abrir a sidebar -->
       <button
-        @click="sidebar?.toggle()"
+        @click="sidebarStore.toggle"
         class="p-2 rounded-md hover:bg-gray-100"
         aria-label="Abrir sidebar"
       >
@@ -22,8 +18,7 @@ const sidebar = inject('sidebar') as {
       </button>
 
       <MainNav class="mx-6" />
-      <div class="ml-auto flex items-center space-x-4">
-      </div>
+      <div class="ml-auto flex items-center space-x-4"></div>
     </div>
   </div>
 </template>
