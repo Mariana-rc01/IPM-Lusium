@@ -11,15 +11,21 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { useMarkedTicketStore } from '@/stores/markedTicket'
+import { useSidebarStateStore } from '@/stores/sidebarState'
 import { useUserStore } from '@/stores/user'
 import { useRouter } from 'vue-router'
 
 const userStore = useUserStore()
+const sidebarStateStore = useSidebarStateStore()
 const router = useRouter()
+const markedTicket = useMarkedTicketStore()
 
 function logout() {
-  userStore.clearUser()
-  router.push('/login')
+  userStore.clearUser();
+  sidebarStateStore.$reset();
+  markedTicket.clearMarkedTicketId();
+  router.push('/login');
 }
 </script>
 

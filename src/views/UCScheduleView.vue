@@ -47,7 +47,7 @@ export default defineComponent({
     const courses = await getAvailableCourses([courseId.value]);
     if (courses.length > 0) {
       const course = courses[0];
-      computedTitle.value = `Horário da UC ${course.uc}`;
+      computedTitle.value = `Horário de ${course.uc}`;
       teacherBlocks.value = course.turnos.map((t: any) => ({
         uc: course.uc,
         shiftName: t.name,

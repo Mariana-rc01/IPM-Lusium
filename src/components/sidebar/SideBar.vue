@@ -6,6 +6,7 @@ import Ticket from '@/components/ticket/Ticket.vue';
 import { useMarkedTicketStore } from '@/stores/markedTicket';
 import { useUserStore } from '@/stores/user';
 import { useSidebarStateStore } from '@/stores/sidebarState';
+import SuccessAlert from '@/components/popup/SuccessAlert.vue';
 
 const sidebarStore = useSidebarStateStore();
 
@@ -19,6 +20,8 @@ watch(activeTab, (newVal) => {
 });
 
 const showModal = ref(true);
+const showModalSuccess = ref(false);
+const modalMessageSuccess = ref('');
 
 const handleEscape = (e: KeyboardEvent) => {
   if (e.key === 'Escape' && sidebarStore.isOpen) {
@@ -36,6 +39,11 @@ onUnmounted(() => {
 
 const handleCloseModal = () => {
   showModal.value = false;
+};
+
+const handleCreated = () => {
+  showModalSuccess.value = true;
+  modalMessageSuccess.value = 'Pedido enviado com sucesso!';
 };
 
 const markedTicketStore = useMarkedTicketStore();
@@ -74,6 +82,12 @@ const userType = ref(userStore.user.type);
       </div>
 
       <div class="p-4 bg-green-50/50 h-[calc(100%-4rem-4rem)] overflow-y-auto">
+        <SuccessAlert
+          v-if="showModalSuccess"
+          :message="modalMessageSuccess"
+          @close="showModalSuccess = false"
+          class="mb-4"/>
+
         <Tabs v-model="activeTab" class="w-full mb-4">
           <TabsList class="grid w-full grid-cols-2">
             <TabsTrigger value="tab1">Pedido Atual</TabsTrigger>
@@ -98,6 +112,7 @@ const userType = ref(userStore.user.type);
               :isCreate="true"
               :isSidebar="true"
               @close="handleCloseModal"
+              @created="handleCreated"
             />
           </TabsContent>
         </Tabs>

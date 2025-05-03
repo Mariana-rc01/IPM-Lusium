@@ -66,8 +66,9 @@
       <div class="px-4 pb-2">
         <p :class="isCreate ? 'text-green-600' : 'text-green-600 text-sm'">
           {{ isCreate
-             ? 'Este pedido será comunicado aos alunos e docentes'
-             : getSubtitle() }}
+            ? (isDirector ? 'Este pedido será comunicado aos alunos e docentes'
+                          : 'Este pedido será comunicado ao diretor de curso')
+            : getSubtitle() }}
         </p>
       </div>
 
@@ -229,6 +230,7 @@ const info = ref<RequestInfo>({
 const directorResponse = ref('')
 const newSubject = ref('')
 const newDescription = ref('')
+
 onMounted(() => {
   if (isCreate.value) {
     newSubject.value = localStorage.getItem('ticket.newSubject') || ''
@@ -292,15 +294,21 @@ const toggleMarked = () => {
 }
 
 const getTitle = () => {
-  const id = dataSenderId.value || ''
-  const isStudent = id.startsWith('a')
-  const isTeacher = id.startsWith('t')
-  if (isStudent || isTeacher) {
-    return `O teu pedido #${info.value.id}`
+  const id = dataSenderId.value || '';
+  const isStudent = id.startsWith('a');
+  const isTeacher = id.startsWith('t');
+  const isDirector = id.startsWith('d');
+
+  if (id === useUserStore().user?.id) {
+    return `O teu pedido #${info.value.id}`;
   }
 
-  return `O pedido de ${info.value.sender}`
-}
+  if (isStudent || isTeacher || isDirector) {
+    return `O pedido de ${info.value.sender}`;
+  }
+
+  return `Pedido #${info.value.id}`;
+};
 
 const getSubtitle = () =>
   isDirector.value
