@@ -73,6 +73,10 @@ export async function getRequestByTicketId(ticketId: string): Promise<types.Requ
   return all.find(r => r.id === ticketId)
 }
 
+export async function deleteRequest(ticketId: string): Promise<void> {
+  await API.delete(`/requests/${ticketId}`)
+}
+
 export async function updateRequest(
   ticketId: string,
   updatedFields: Partial<{ status: string; response: string }>

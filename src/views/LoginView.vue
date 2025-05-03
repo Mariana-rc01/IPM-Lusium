@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import UserAuthForm from '../components/auth/UserAuthForm.vue'
+import { useSidebarStateStore } from '@/stores/sidebarState';
+
+const sidebarStore = useSidebarStateStore();
+sidebarStore.close();
 </script>
 
 <template>

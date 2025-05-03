@@ -103,9 +103,14 @@
               </div>
             </td>
             <td class="py-3 px-4 text-sm text-center">
-              <button class="text-gray-700 hover:text-gray-900">
-                <Trash2 class="h-5 w-5" />
-              </button>
+              <div class="flex justify-center">
+                <div v-if="pedido.remetente === 'Eu'">
+                  <button @click.stop="removePedido(pedido)" class="text-gray-700 hover:text-gray-900">
+                    <Trash2 class="h-5 w-5" />
+                  </button>
+                </div>
+                <div v-else class="w-5 h-5"></div>
+              </div>
             </td>
           </tr>
         </tbody>
@@ -157,8 +162,23 @@
         :userType="ticketType"
         :isCreate="isCreating"
         @close="showModal = false"
+        @created="handleCreated"
       />
     </div>
+
+    <!-- SuccessAlert -->
+    <SuccessAlert v-if="showModalSuccess" :message="modalMessageSuccess" @close="showModalSuccess = false" class="mb-4" />
+
+    <!-- ConfirmModal -->
+    <ConfirmModal
+      v-if="showModalRemovePedido"
+      :message="modalMessageRemovePedido"
+      @save="confirmRemovePedido"
+      @cancel="showModalRemovePedido = false"
+    />
+
+    <!-- ErrorAlert -->
+    <ErrorAlert v-if="showMessageError" :message="errorMessage || ''" @close="showMessageError = false" />
   </div>
 </template>
 
@@ -178,6 +198,9 @@ import {
 import * as api from '@/api/api'
 import { useUserStore } from '@/stores/user'
 import Ticket from '@/components/ticket/Ticket.vue'
+import SuccessAlert from '@/components/popup/SuccessAlert.vue';
+import ConfirmModal from '@/components/popup/ConfirmModal.vue';
+import ErrorAlert from '@/components/popup/ErrorAlert.vue';
 
 interface Pedido {
   codigo: string
@@ -198,7 +221,10 @@ export default {
     ChevronsUpDownIcon, CircleIcon,
     CheckIcon, XIcon, Trash2,
     PlusCircleIcon, PackageOpen, SendIcon,
-    Ticket
+    Ticket,
+    SuccessAlert,
+    ConfirmModal,
+    ErrorAlert
   },
   data() {
     return {
@@ -214,6 +240,17 @@ export default {
       selectedTicketId: '',
       ticketType: '', // 'student' | 'teacher' | 'director'
       isCreating: false,
+      selectedPedidoToRemove: null as Pedido | null,
+      showModalRemovePedido: false,
+      modalMessageRemovePedido: '',
+      showModalSuccess: false,
+      modalMessageSuccess: '',
+      errorMessage: '',
+      showMessageError: false,
+      errorMessageDialog: null as string | null,
+      showMessageErrorDialog: false,
+      showModalConfirm: false,
+      modalMessageConfirm: '',
     }
   },
   computed: {
@@ -278,6 +315,40 @@ export default {
       this.selectedTicketId = ''
       this.isCreating = true
       this.showModal = true
+    },
+    removePedido(pedido: Pedido) {
+      this.modalMessageRemovePedido = `Tem a certeza que deseja eliminar o pedido com o assunto "${pedido.assunto}"?`;
+      this.selectedPedidoToRemove = pedido;
+      this.showModalRemovePedido = true;
+    },
+    async confirmRemovePedido() {
+      if (!this.selectedPedidoToRemove) return;
+
+      try {
+        await api.deleteRequest(this.selectedPedidoToRemove.codigo);
+
+        this.pedidosEnviados = this.pedidosEnviados.filter(
+          p => p.codigo !== this.selectedPedidoToRemove?.codigo
+        );
+
+        this.modalMessageSuccess = 'O pedido foi eliminado com sucesso!';
+        this.showModalSuccess = true;
+      } catch (error) {
+        console.error('Erro ao eliminar pedido:', error);
+        this.errorMessage = 'Erro ao eliminar o pedido. Por favor, tente novamente.';
+        this.showMessageError = true;
+      }
+
+      this.showModalRemovePedido = false;
+      this.selectedPedidoToRemove = null;
+    },
+    handleCreated() {
+      this.showModal = false;
+      this.modalMessageSuccess = 'Pedido enviado com sucesso!';
+      this.showModalSuccess = true;
+    },
+    closeConfirm() {
+      this.showModalConfirm = false;
     }
   },
   async mounted() {
@@ -286,6 +357,7 @@ export default {
     if (!user) return
 
     const allRequests = await api.list_Requests()
+    console.log(allRequests)
     const me = user.id
     this.ticketType = user.type
 

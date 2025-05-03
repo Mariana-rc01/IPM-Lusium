@@ -2420,7 +2420,7 @@
       "courseId": 1,
       "type": "PL",
       "name": "TP5",
-      "classroomId": 22,
+      "classroomId": "3",
       "day": 1,
       "from": "09:00",
       "to": "11:00",
@@ -3025,7 +3025,7 @@
       "from": "09:00",
       "to": "11:00",
       "teacherId": 4,
-      "totalStudentsRegistered": 24
+      "totalStudentsRegistered": 25
     },
     {
       "id": "59",
@@ -8652,63 +8652,68 @@
     },
     {
       "id": "1095",
-      "studentId": "a1",
+      "studentId": null,
       "shiftId": 41
     },
     {
       "id": "1097",
-      "studentId": "a1",
+      "studentId": null,
       "shiftId": 31
     },
     {
       "id": "1098",
-      "studentId": "a1",
+      "studentId": null,
       "shiftId": 5
     },
     {
       "id": "1099",
-      "studentId": "a1",
+      "studentId": null,
       "shiftId": 1
     },
     {
       "id": "1100",
-      "studentId": "a1",
+      "studentId": null,
       "shiftId": 22
     },
     {
       "id": "1096",
-      "studentId": "a1",
+      "studentId": null,
       "shiftId": 34
     },
     {
       "id": "1102",
-      "studentId": "a1",
+      "studentId": null,
       "shiftId": 39
     },
     {
       "id": "1103",
-      "studentId": "a1",
+      "studentId": null,
       "shiftId": 48
     },
     {
       "id": "1104",
-      "studentId": "a1",
+      "studentId": null,
       "shiftId": 27
     },
     {
       "id": "1105",
-      "studentId": "a1",
+      "studentId": null,
       "shiftId": 11
     },
     {
       "id": "1101",
-      "studentId": "a1",
+      "studentId": null,
       "shiftId": 17
     },
     {
       "id": "1106",
       "studentId": "a37",
       "shiftId": 156
+    },
+    {
+      "id": "1107",
+      "studentId": "a6",
+      "shiftId": 58
     }
   ],
   "noAllocations": [
@@ -9215,16 +9220,6 @@
       "response": ""
     },
     {
-      "id": "9",
-      "subject": "IPM - Alterações de Salas",
-      "sender": "d1",
-      "recipient": "all",
-      "date": "12-02-2022",
-      "status": "",
-      "description": "Houve mudanças em alguns horários de IPM, agradecia que confirmassem os vossos horários.",
-      "response": ""
-    },
-    {
       "id": "10",
       "subject": "Alteração temporária de Salas",
       "sender": "d1",
@@ -9275,13 +9270,13 @@
       "response": ""
     },
     {
-      "id": "15",
-      "subject": "Troca de turnos",
+      "id": "16",
+      "subject": "Atualização de horários",
       "sender": "d1",
       "recipient": "all",
       "date": "02-05-2025",
       "status": "",
-      "description": "Não irei fazer troca de turnos esta semana.",
+      "description": "Mudei as salas de alguns horários.",
       "response": ""
     }
   ]
