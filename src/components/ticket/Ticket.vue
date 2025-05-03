@@ -348,10 +348,14 @@ const submitRequest = async () => {
   const userStore = useUserStore()
   const me = userStore.user!.id
   const today = new Date().toISOString().slice(0, 10)
+  let recipient = 'all'
+  if (userStore.user?.type === 'student' || userStore.user?.type === 'teacher') {
+    recipient = 'd1'
+  }
   const created = await createRequest({
     subject: newSubject.value,
     sender: me,
-    recipient: userStore.user?.type ? 'all' : 'd1',
+    recipient: recipient,
     date: today.split('-').reverse().join('-'),
     status: "",
     description: newDescription.value,
