@@ -59,7 +59,7 @@ watch(
   }
 );
 
-const userType = ref(userStore.user.type);
+const userType = ref(userStore.user?.type || 'guest');
 </script>
 
 <template>
