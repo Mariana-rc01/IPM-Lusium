@@ -262,9 +262,9 @@
           <div>
             <div class="text-sm font-medium">{{ student.id }} - {{ student.name }}</div>
             <div class="flex items-center text-xs text-gray-500">
-              <BriefcaseIcon v-if="student.status === 'Trabalhador-Estudante'" class="h-3 w-3 mr-1" />
-              <DumbbellIcon v-else-if="student.status === 'Atleta'" class="h-3 w-3 mr-1" />
-              <span>{{ student.status }}</span>
+              <BriefcaseIcon v-if="student.specialStatus === 'working student'" class="h-3 w-3 mr-1" />
+              <DumbbellIcon v-else-if="student.specialStatus === 'athlete'" class="h-3 w-3 mr-1" />
+              <span>{{ student.specialStatus }}</span>
             </div>
           </div>
             </div>
@@ -310,8 +310,8 @@
           <td class="py-3 px-4 text-sm truncate">{{ student.name }}</td>
           <td class="py-3 px-4 text-sm text-center">
             <div class="flex justify-center">
-              <BriefcaseIcon v-if="student.status === 'Trabalhador-Estudante'" class="h-5 w-5" />
-              <DumbbellIcon v-else-if="student.status === 'Atleta'" class="h-5 w-5" />
+              <BriefcaseIcon v-if="student.specialStatus === 'working student'" class="h-5 w-5" />
+              <DumbbellIcon v-else-if="student.specialStatus === 'athlete'" class="h-5 w-5" />
             </div>
           </td>
           <td class="py-3 px-4 text-sm text-center">
